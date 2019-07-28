@@ -1,0 +1,15 @@
+#ribbon {
+    display: grid;
+    background-color: rgb(202, 202, 202);
+    grid-template-rows: 25px;
+    #bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, 30px);
+        background-color: aqua;
+    }
+    #controlls {
+        display: grid;
+        grid-template-columns: 40vw 60vw;
+        background-color: aquamarine;
+    }
+}
