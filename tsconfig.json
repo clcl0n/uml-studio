@@ -5,9 +5,12 @@
         "noImplicitAny": true,
         "module": "commonjs",
         "target": "es6",
+        "importHelpers": true,
+        "allowJs": true,
         "jsx": "react",
         "baseUrl": "src",
         "paths": {
+            "@utils/svgCanvas/*": ["utils/svgCanvas/*"],
             "@components/*": ["components/*"],
             "@enums/*": ["typings/enums/*"],
             "@interfaces/*": ["typings/interfaces/*"],

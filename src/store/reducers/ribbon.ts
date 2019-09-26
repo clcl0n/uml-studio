@@ -4,8 +4,7 @@ import { CHANGE_OPERATION } from '@actions/ribbon';
 const ribbonReducer = (state = '', action: IChangeOperationAction) => {
     switch(action.type) {
         case CHANGE_OPERATION:
-            state = action.payload;
-            break;
+            return action.payload;
         default:
             return state;
     }

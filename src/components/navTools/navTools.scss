@@ -1,0 +1,17 @@
+@import '../../common/style/globalColors.scss';
+
+#bar {
+    display: grid;
+    background-color: $base-dark-color;
+    color: $text-color;
+    ul.list-items {
+        display: none;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        .list-item {
+            display: grid;
+            justify-self: center;
+        }
+    }
+}

@@ -1,15 +1,31 @@
+@import '../../common/style/globalColors.scss';
+
 #ribbon {
     display: grid;
     background-color: rgb(202, 202, 202);
-    grid-template-rows: 25px;
-    #bar {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, 30px);
-        background-color: aqua;
-    }
+    grid-template-rows: 25px auto;
     #controlls {
         display: grid;
-        grid-template-columns: 40vw 60vw;
-        background-color: aquamarine;
+        height: 160px;
+        grid-template-columns: 40vw auto;
+        background-color: $base-color;
+    }
+}
+
+#elements {
+    display: flex;
+    flex-direction: row;
+    overflow-x: scroll;
+    .element {
+        display: flex;
+        flex-direction: column;
+        margin-right: 20px;
+        height: 140px;
+        .element-svg {
+            height: 110px;
+        }
+        .element-label {
+            text-align: center;
+        }
     }
 }
