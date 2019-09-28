@@ -1,4 +1,4 @@
-import ribbonOperationsEnum from '@enums/ribbonOperationsEnum';
+import ribbonOperationsEnum from '@enums/storeActions/ribbonOperationsEnum';
 import IChangeOperationAction from '@interfaces/IChangeOperationAction';
 import { CHANGE_OPERATION } from '@actions/ribbon';
 

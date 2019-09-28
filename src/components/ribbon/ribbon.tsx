@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './ribbon.scss';
-import RibbonOperationsEnum from '@enums/ribbonOperationsEnum';
+import RibbonOperationsEnum from '@enums/storeActions/ribbonOperationsEnum';
 import NavTools from '@components/navTools';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeOperation } from '../../store/actions/ribbon';
@@ -24,7 +24,7 @@ function Ribbon() {
                     <img src='src/assets/icons/tools/outline-undo-24px.svg' alt='delete'/>
                 </div>
                 <div id='elements'>
-                    <div onClick={() => dispatch(changeOperation(RibbonOperationsEnum.ADD_NEW_COMPOSITION))} className='element'>
+                    <div onClick={() => dispatch(changeOperation(RibbonOperationsEnum.ADD_NEW_TABLE))} className='element'>
                         <img className='element-svg' src='src/assets/icons/table.svg' alt='table'/>
                         <label className='element-label'>Table</label>
                     </div>

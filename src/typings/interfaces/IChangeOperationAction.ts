@@ -1,4 +1,4 @@
-import RibbonModeEnum from '@enums/ribbonOperationsEnum';
+import RibbonModeEnum from '@enums/storeActions/ribbonOperationsEnum';
 import { CHANGE_OPERATION } from '@actions/ribbon';
 
 export default interface IChangeOperationAction {
