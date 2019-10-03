@@ -27,6 +27,7 @@ function Canvas() {
 
 
     const draw = (element: ClassDiagramElementsEnum, event: React.MouseEvent<SVGElement, MouseEvent>) => {
+        event.persist();
         dispatch(drawNewElement(element, event));
         updateCanvasElements();
     };
