@@ -1,4 +1,7 @@
-export interface IClassProps {
+import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+
+export interface IClassElementProps {
+    type: ClassDiagramElementsEnum.TABLE,
     umlClassFrame: {
         x: number;
         y: number;
