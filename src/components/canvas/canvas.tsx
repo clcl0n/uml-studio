@@ -7,14 +7,14 @@ import { drawNewElement } from 'store/actions/canvas';
 
 import ICanvasElement from '@interfaces/ICanvasElement';
 import Class from '@components/classDiagram/class';
-import { IClassElementProps } from '@interfaces/IClassElementProps';
+import { IUMLClassElementProps } from '@interfaces/IUMLClassElementProps';
 import IStoreState from '@interfaces/IStoreState';
 
 function createElements(elementsProps: Array<ICanvasElement>) {
     return elementsProps.map((elementProps: ICanvasElement, index: number) => {
         switch(elementProps.type) {
             case ClassDiagramElementsEnum.TABLE:
-                return <Class key={index} {...(elementProps as IClassElementProps)}/>
+                return <Class key={index} {...(elementProps as IUMLClassElementProps)}/>
         }
     });
 }

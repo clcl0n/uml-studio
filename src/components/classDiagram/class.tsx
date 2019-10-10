@@ -1,26 +1,75 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './class.scss';
-import { IClassElementProps } from '@interfaces/IClassElementProps';
+import { IUMLClassElementProps } from '@interfaces/IUMLClassElementProps';
 
-function Class(props: IClassElementProps) {
+function Class(props: IUMLClassElementProps) {
+    const [joints, updateJoints] = React.useState([]);
+    const classPropsHover = (index: number) => {
+        updateJoints([
+            <circle onClick={() => console.warn('circle')} key={1} cx={props.separators.properties.x} cy={props.separators.properties.y + (index * 25) + 12.5} r={5}/>,
+            <circle onClick={() => console.warn('circle')} key={2} cx={props.separators.properties.x + props.width} cy={props.separators.properties.y + (index * 25) + 12.5} r={5}/>
+        ]);
+    };
+    const classPropsLeave = () => {
+        updateJoints([]);
+    };
+
+    const classProperties = props.classProperties.map((classProperty, index) => {
+        return (    
+            <g key={index}>
+                <g
+                    onMouseOver={(e) => classPropsHover(index)}
+                >
+                    <rect
+                        onClick={() => console.warn('rect')}
+                        className='test'
+                        fill='none'
+                        x={props.separators.properties.x}
+                        y={(props.separators.properties.y + (index * 25))}
+                        width={props.width}
+                        height={props.row.height}
+                    />
+                </g>
+                <text onClick={() => console.warn('text')} className='umlClassName' x={props.className.x} y={props.separators.properties.y + (index * 25) + 12}>{'test'}</text>
+            </g>
+        );
+    });
+    const classMethods = props.classMethods.map((classMethod, index) => {
+        return <rect key='index'/>
+    });
+
     return (
-        <g>
-            <rect
-                className='umlClassFrame'
-                x={props.umlClassFrame.x}
-                y={props.umlClassFrame.y}
-                height={props.umlClassFrame.height}
-                width={props.umlClassFrame.width}
-            />
-            <text className='umlClassName' x={props.umlClassName.x} y={props.umlClassName.y}>{props.umlClassName.text}</text>
-            <line
-                className='nameAttrSeparator'
-                x1={props.separators.nameAttrSeparator.x1}
-                y1={props.separators.nameAttrSeparator.y1}
-                x2={props.separators.nameAttrSeparator.x2}
-                y2={props.separators.nameAttrSeparator.y2}
-            />
+        <g className='umlClass' onMouseLeave={() => classPropsLeave()}>
+            <g>
+                <rect
+                    onClick={() => console.warn('frame')}
+                    x={props.frame.x}
+                    y={props.frame.y}
+                    width={props.width}
+                    height={props.height}
+                    stroke='black'
+                    fill='none'
+                    strokeWidth='1'
+                />
+                <path
+                    d={`M ${props.separators.properties.x} ${props.separators.properties.y} l ${props.width} 0`}
+                    stroke='black'
+                />
+                {classMethods.length > 0 && <path/>}
+            </g>
+            <g className='classHeader'>
+                <text className='umlClassName' x={props.className.x} y={props.className.y}>{props.className.text}</text>
+            </g>
+            <g className='classProperties'>
+                {...classProperties}
+            </g>
+            <g className='classMethods'>
+                {...classMethods}
+            </g>
+            <g>
+                {...joints}
+            </g>
         </g>
     );
 }
