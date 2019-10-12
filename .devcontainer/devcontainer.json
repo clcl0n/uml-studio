@@ -1,0 +1,50 @@
+{
+    "name": "UML Studio",
+    "dockerFile": "Dockerfile",
+    "context": "..",
+    // "workspaceMount": "src=${localWorkspaceFolder},dst=/workspace,type=bind,consistency=delegated",
+    // "workspaceFolder": "/workspace",
+    "appPort": 3000,
+    "extensions": [
+		"christian-kohler.npm-intellisense",
+		"eamodio.gitlens",
+		"ms-vscode-remote.remote-containers",
+		"ms-vscode.vscode-typescript-tslint-plugin"
+	],
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/zsh"
+    },
+    // "postCreateCommand": "yarn"
+}
+// {
+//     "name": "dev",
+//     "context": "..",
+//     "dockerFile": "../../dockerImages/development/Dockerfile",
+    // "workspaceMount": "src=${localWorkspaceFolder}/..,dst=/workspace,type=bind,consistency=delegated",
+//     "workspaceFolder": "/workspace/microservices",
+//     "runArgs": [
+//         "--network",
+//         "gadgets",
+//         "--hostname",
+//         "devserver",
+//         "--name",
+//         "devserver",
+//         "-e",
+//         "CASSANDRA=cassandra_1",
+//         "-e",
+//         "RABBITMQ=rabbitmq_1",
+//         "-e",
+//         "PORTAINER=portainer"
+//     ],
+//     "settings": {
+//         "terminal.integrated.shell.linux": "/bin/bash"
+//     }, // Add the IDs of extensions you want installed when the container is created in the array below.     
+//     "extensions": [
+//         "ms-vscode.csharp",
+//         "eamodio.gitlens",
+//         "ms-python.python",
+//         "lawrencegrant.cql"
+//     ], // Uncomment the next line if you want to publish any ports.     
+//     // "appPort": []     // Uncomment the next line to run commands after the container is created - for example installing git.     
+//     "postCreateCommand": "cp /workspace/Etc/Certificates/server.pem /etc/ssl/certs/soitronRoot.pem"
+// }

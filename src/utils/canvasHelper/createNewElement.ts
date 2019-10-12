@@ -13,7 +13,7 @@ const createNewElement = (element: ClassDiagramElementsEnum, event: React.MouseE
             const rowHeight: number = 25;
 
             const table: IUMLClassElementProps = {
-                id: element
+                id: element,
                 type: ClassDiagramElementsEnum.TABLE,
                 height,
                 width,
