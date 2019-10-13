@@ -1,7 +1,6 @@
 {
     "name": "UML Studio",
     "dockerFile": "Dockerfile",
-    "appPort": [3000],
     "extensions": [
 		"christian-kohler.npm-intellisense",
 		"eamodio.gitlens",

@@ -10,7 +10,7 @@
     "svgr": "svgr --ext tsx -d src/assets/icons/ assets/icons/",
     "production-build": "webpack --mode production",
     "development-build": "webpack --mode development",
-    "dev-server-build": "webpack-dev-server --open"
+    "dev-server-build": "webpack-dev-server --port 3000 --open"
   },
   "devDependencies": {
     "@svgr/cli": "^4.3.2",
