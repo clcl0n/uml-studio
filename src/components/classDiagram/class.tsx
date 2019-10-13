@@ -2,13 +2,15 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './class.scss';
 import { IUMLClassElementProps } from '@interfaces/IUMLClassElementProps';
+import Joint from './joint';
+import ClassProperty from './classProperty';
 
 function Class(props: IUMLClassElementProps) {
     const [joints, updateJoints] = React.useState([]);
     const classPropsHover = (index: number) => {
         updateJoints([
-            <circle onClick={() => console.warn('circle')} key={1} cx={props.separators.properties.x} cy={props.separators.properties.y + (index * 25) + 12.5} r={5}/>,
-            <circle onClick={() => console.warn('circle')} key={2} cx={props.separators.properties.x + props.width} cy={props.separators.properties.y + (index * 25) + 12.5} r={5}/>
+            <Joint key={1} {...{x: props.separators.properties.x, y: props.separators.properties.y + (index * 25) + 12.5, radius: 5}}/>,
+            <Joint key={2} {...{x: props.separators.properties.x + props.width, y: props.separators.properties.y + (index * 25) + 12.5, radius: 5}}/>
         ]);
     };
     const classPropsLeave = () => {
@@ -16,7 +18,7 @@ function Class(props: IUMLClassElementProps) {
     };
 
     const classProperties = props.classProperties.map((classProperty, index) => {
-        return (    
+        return (   
             <g key={index}>
                 <g
                     onMouseOver={(e) => classPropsHover(index)}
