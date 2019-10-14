@@ -1,9 +1,10 @@
-import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
-import CanvasEnum from '@enums/storeActions/canvasEnum';
+import RibbonModeEnum from '@enums/storeActions/ribbonOperationsEnum';
 
-export function drawNewElement(element: ClassDiagramElementsEnum, event: React.MouseEvent<SVGElement, MouseEvent>) {
+export function drawNewElement(element: RibbonModeEnum, event: React.MouseEvent<SVGElement, MouseEvent>) {
     return {
-        type: CanvasEnum.ADD_NEW_ELEMENT,
-        payload: { element, event }
+        type: element,
+        payload: { 
+            event
+        }
     }
 }

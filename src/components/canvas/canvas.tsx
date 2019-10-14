@@ -9,12 +9,13 @@ import ICanvasElement from '@interfaces/ICanvasElement';
 import Class from '@components/classDiagram/class';
 import { IUMLClassElementProps } from '@interfaces/IUMLClassElementProps';
 import IStoreState from '@interfaces/IStoreState';
+import RibbonModeEnum from '@enums/storeActions/ribbonOperationsEnum';
 
 function createElements(elementsProps: Array<ICanvasElement>) {
     return elementsProps.map((elementProps: ICanvasElement, index: number) => {
         switch(elementProps.type) {
             case ClassDiagramElementsEnum.TABLE:
-                return <Class key={index} {...(elementProps as IUMLClassElementProps)}/>
+                return <Class key={index} {...(elementProps as IUMLClassElementProps)}/>;
         }
     });
 }
@@ -22,11 +23,12 @@ function createElements(elementsProps: Array<ICanvasElement>) {
 function Canvas() {
     const dispatch = useDispatch();
     const elements = useSelector((state: IStoreState) => state.canvas.elements);
+    const elementTypeToDraw = useSelector((state: any) => state.ribbon);
     const [canvasElements, setCanvasElements] = React.useState(createElements(elements));
     const updateCanvasElements = () => setCanvasElements(createElements(elements));
 
 
-    const draw = (element: ClassDiagramElementsEnum, event: React.MouseEvent<SVGElement, MouseEvent>) => {
+    const draw = (element: RibbonModeEnum, event: React.MouseEvent<SVGElement, MouseEvent>) => {
         event.persist();
         dispatch(drawNewElement(element, event));
         updateCanvasElements();
@@ -34,7 +36,7 @@ function Canvas() {
     
     return (
         <div id='canvas'>
-            <svg onClick={(event) => draw(ClassDiagramElementsEnum.TABLE, event)} id='svg-canvas' width='100%' height='100%'>
+            <svg onClick={(event) => draw(elementTypeToDraw, event)} id='svg-canvas' width='100%' height='100%'>
                 {...canvasElements}
             </svg>
         </div>

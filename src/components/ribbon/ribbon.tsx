@@ -5,6 +5,7 @@ import RibbonOperationsEnum from '@enums/storeActions/ribbonOperationsEnum';
 import NavTools from '@components/navTools';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeOperation } from '../../store/actions/ribbon';
+import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 
 function Ribbon() {
     const ribbon = useSelector((state: any) => state.ribbon);
@@ -28,7 +29,7 @@ function Ribbon() {
                         <img className='element-svg' src='src/assets/icons/table.svg' alt='table'/>
                         <label className='element-label'>Table</label>
                     </div>
-                    <div className='element'>
+                    <div onClick={() => dispatch(changeOperation(RibbonOperationsEnum.ADD_NEW_ASSOCIATION))} className='element'>
                         <img className='element-svg' src='src/assets/icons/simple-table.svg' alt='simple-table'/>
                         <label className='element-label'>Simple Table</label>
                     </div>
