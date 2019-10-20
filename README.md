@@ -21,7 +21,7 @@ yarn
 ### Run Locally
  * With hot reload 🔥 feature
  ```
- yarn build: dev
+ yarn build:dev
  ```
 ### Run in Docker 🐋 via VS Code
 1. Open __VS Code__
