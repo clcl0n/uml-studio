@@ -29,8 +29,8 @@ yarn
 3. Via __Remote - Containers__ extension connect to Docker container
 4. Run build:
 * With hot reload 🔥 feature
-    ```
-    yarn build:dev
-    ```
+```
+yarn build:dev
+```
 
 
