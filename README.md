@@ -19,26 +19,18 @@ yarn
 ## Development build 🚧
 
 ### Run Locally
- * Without hot reload 🔥 feature
- ```
- yarn development-build
- ```
  * With hot reload 🔥 feature
  ```
- yarn dev-server-build
+ yarn build: dev
  ```
 ### Run in Docker 🐋 via VS Code
 1. Open __VS Code__
 2. Open __uml-studio.code-workspace__
 3. Via __Remote - Containers__ extension connect to Docker container
 4. Run build:
-    * Without hot reload 🔥 feature
+* With hot reload 🔥 feature
     ```
-    yarn development-build
-    ```
-    * With hot reload 🔥 feature
-    ```
-    yarn dev-server-build
+    yarn build:dev
     ```
 
 
