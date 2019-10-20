@@ -5,17 +5,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import { drawNewElement } from 'store/actions/canvas';
 
-import ICanvasElement from '@interfaces/ICanvasElement';
+import IBaseElement from '@interfaces/elements/IBaseElement';
 import Class from '@components/classDiagram/class';
-import { IUMLClassElementProps } from '@interfaces/IUMLClassElementProps';
+import IClassElement from '@interfaces/elements/IClassElement';
 import IStoreState from '@interfaces/IStoreState';
 import RibbonModeEnum from '@enums/storeActions/ribbonOperationsEnum';
 
-function createElements(elementsProps: Array<ICanvasElement>) {
-    return elementsProps.map((elementProps: ICanvasElement, index: number) => {
-        switch(elementProps.type) {
+function createElements(elementsProps: Array<IBaseElement>) {
+    return elementsProps.map((elementProps: IBaseElement, index: number) => {
+        switch(elementProps.elementData.type) {
             case ClassDiagramElementsEnum.TABLE:
-                return <Class key={index} {...(elementProps as IUMLClassElementProps)}/>;
+                return <Class key={index} {...(elementProps as IClassElement)}/>;
         }
     });
 }

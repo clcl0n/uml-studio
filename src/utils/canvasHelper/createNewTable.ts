@@ -1,0 +1,111 @@
+import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import IClassElement from '@interfaces/elements/IClassElement';
+import IClassElementProperty from '@interfaces/elements/class/IClassElementProperty';
+import IClassElementMethod from '@interfaces/elements/class/IClassElementMethod';
+
+const createNewTableElement = (event: React.MouseEvent<SVGElement, MouseEvent>): IClassElement => {
+    const width: number = 100;
+    const height: number = 150;
+    const xElementCenter: number = event.nativeEvent.offsetX;
+    const yElementCenter: number = event.nativeEvent.offsetY;
+    const x: number = xElementCenter - (width / 2);
+    const y: number = yElementCenter - (height / 2);
+    // const x: number = event.nativeEvent.offsetX;
+    // const y: number = event.nativeEvent.offsetY;
+    // const xElementCenter: number = event.nativeEvent.offsetX - (width / 2);
+    // const yElementCenter: number = event.nativeEvent.offsetY - (height / 2);
+    const fontPixelSize: number = 12;
+    const fontMargin: number = 5;
+    const rowHeight: number = 25;
+
+    const classMethods: Array<IClassElementMethod> = [
+        {
+            accessModifier: 'public',
+            name: 'method_1'
+        }
+    ]
+    const classProperties: Array<IClassElementProperty> = [
+        {
+            accessModifier: 'public',
+            name: 'method_2'
+        }
+    ]
+
+    const newTable: IClassElement = {
+        elementData: {
+            id: 'id',
+            type: ClassDiagramElementsEnum.TABLE,
+            className: 'class Name',
+            classProperties,
+            classMethods
+        },
+        elementGraphicData: {
+            fontPixelSize: fontPixelSize,
+            fontMargin: fontMargin,
+            rowHeight: rowHeight,
+            frame: {
+                height: height,
+                width: width,
+                x,
+                y,
+                xCenter: xElementCenter,
+                yCenter: yElementCenter,
+                sections: {
+                    head: {
+                        y
+                    },
+                    properties: {
+                        y: y + rowHeight
+                    },
+                    methods: {
+                        y: classProperties.length * rowHeight
+                    }
+                }
+            }
+        }
+    };
+
+    return newTable;
+    // const table: IUMLClassElementProps = {
+    //     id: 'id',
+    //     type: ClassDiagramElementsEnum.TABLE,
+    //     height,
+    //     width,
+    //     classMethods: [{
+    //         name: 'method'
+    //     }],
+    //     classProperties: [
+    //         {
+    //             name: 'field'
+    //         },
+    //         {
+    //             name: 'field2'  
+    //         }
+    //     ],
+    //     frame: {
+    //         x: xElementCenter,
+    //         y: yElementCenter,
+    //     },
+    //     row: {
+    //         height: rowHeight
+    //     },
+    //     className: {
+    //         x: event.nativeEvent.offsetX,
+    //         y: (event.nativeEvent.offsetY - (height / 2) + fontPixelSize + fontMargin),
+    //         text: 'test-test-test'
+    //     },
+    //     separators: {
+    //         properties: {
+    //             x: xElementCenter,
+    //             y: event.nativeEvent.offsetY - (height / 2) + fontPixelSize + fontMargin * 2,
+    //         },
+    //         methods: {
+    //             x: 0,
+    //             y: 0,
+    //         }
+    //     }
+    // }
+    // return table;
+}
+
+export default createNewTableElement;
