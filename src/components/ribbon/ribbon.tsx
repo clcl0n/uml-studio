@@ -6,10 +6,9 @@ import NavTools from '@components/navTools';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeOperation } from '../../store/actions/ribbon';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import CanvasEnum from '@enums/storeActions/canvasEnum';
 
 function Ribbon() {
-    const ribbon = useSelector((state: any) => state.ribbon);
-    const dispatch = useDispatch();
     return (
         <div id='ribbon'>
             <NavTools/>
@@ -25,11 +24,17 @@ function Ribbon() {
                     <img src='src/assets/icons/tools/outline-undo-24px.svg' alt='delete'/>
                 </div>
                 <div id='elements'>
-                    <div onClick={() => dispatch(changeOperation(RibbonOperationsEnum.ADD_NEW_TABLE))} className='element'>
-                        <img className='element-svg' src='src/assets/icons/table.svg' alt='table'/>
+                    <div className='element'>
+                        <img
+                            draggable={true}
+                            onDragStart={(ev) => ev.dataTransfer.setData('elementType', CanvasEnum.ADD_NEW_CLASS)}
+                            className='element-svg'
+                            src='src/assets/icons/table.svg'
+                            alt='table'
+                        />
                         <label className='element-label'>Table</label>
                     </div>
-                    <div onClick={() => dispatch(changeOperation(RibbonOperationsEnum.ADD_NEW_ASSOCIATION))} className='element'>
+                    <div className='element'>
                         <img className='element-svg' src='src/assets/icons/simple-table.svg' alt='simple-table'/>
                         <label className='element-label'>Simple Table</label>
                     </div>

@@ -2,8 +2,9 @@ import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import IClassElement from '@interfaces/elements/IClassElement';
 import IClassElementProperty from '@interfaces/elements/class/IClassElementProperty';
 import IClassElementMethod from '@interfaces/elements/class/IClassElementMethod';
+import { v4 } from 'uuid';
 
-const createNewTableElement = (event: React.MouseEvent<SVGElement, MouseEvent>): IClassElement => {
+const createNewTableElement = (event: React.DragEvent<HTMLDivElement>): IClassElement => {
     const width: number = 100;
     const height: number = 150;
     const xElementCenter: number = event.nativeEvent.offsetX;
@@ -33,7 +34,7 @@ const createNewTableElement = (event: React.MouseEvent<SVGElement, MouseEvent>):
 
     const newTable: IClassElement = {
         elementData: {
-            id: 'id',
+            id: v4(),
             type: ClassDiagramElementsEnum.TABLE,
             className: 'class Name',
             classProperties,

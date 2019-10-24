@@ -3,22 +3,30 @@ import CanvasEnum from '@enums/storeActions/canvasEnum';
 import ICanvasReducerPayload from '@interfaces/ICanvasReducerPayload';
 import createNewTable from 'utils/canvasHelper/createNewTable';
 import createNewAssociation from 'utils/canvasHelper/createNewAssociation';
-import RibbonModeEnum from '@enums/storeActions/ribbonOperationsEnum';
-import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 
 const initialState: ICanvasStoreState = {
+    currentlyDrawingRelationship: null,
     elements: []
 }
 
 const canvasReducer = (state = initialState, payload: ICanvasReducerPayload) => {
     switch (payload.type) {
-        case RibbonModeEnum.ADD_NEW_TABLE:
+        case CanvasEnum.ADD_NEW_CLASS:
             const newTableElement = createNewTable(payload.payload.event);
             state.elements.push(newTableElement);
             return state;
-        case RibbonModeEnum.ADD_NEW_ASSOCIATION:
-            const newAssociationElement = createNewAssociation();
-            state.elements.push(newAssociationElement);
+        case CanvasEnum.ADD_NEW_ASSOCIATION:
+            // const newAssociationElement = createNewAssociation();
+            state.elements.push(state.currentlyDrawingRelationship);
+            state.currentlyDrawingRelationship = null;
+            return state;
+        case CanvasEnum.ADD_NEW_CURRENTLY_DRAWING_RELATIONSHIP:
+            state.currentlyDrawingRelationship = createNewAssociation(payload.payload.event);
+            return state;
+        case CanvasEnum.EDIT_CURRENTLY_DRAWING_RELATIONSHIP:
+            const event = payload.payload.event as React.MouseEvent<HTMLDivElement, MouseEvent>;
+            state.currentlyDrawingRelationship.elementGraphicData.x2 = event.nativeEvent.offsetX;
+            state.currentlyDrawingRelationship.elementGraphicData.y2 = event.nativeEvent.offsetY;
             return state;
         default:
             return state;

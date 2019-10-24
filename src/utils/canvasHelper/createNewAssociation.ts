@@ -1,19 +1,20 @@
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
-import IAssociationElement from '@interfaces/elements/IAssociationElement';
+import IRelationElement from '@interfaces/elements/IRelationElement';
+import { v4 } from 'uuid';
 
-const createNewAssociation = (): IAssociationElement => {
-    const newAssociation: IAssociationElement = {
+const createNewAssociation = (event: React.MouseEvent<HTMLDivElement, MouseEvent>): IRelationElement => {
+    const newAssociation: IRelationElement = {
         elementData: {
-            id: 'id',
+            id: v4(),
             type: ClassDiagramElementsEnum.ASSOCIATION
         },
         elementGraphicData: {
             fontMargin: 5,
             fontPixelSize: 12,
-            x1: 1,
-            y1: 10,
-            x2: 10,
-            y2: 10
+            x1: event.nativeEvent.offsetX,
+            y1: event.nativeEvent.offsetX,
+            x2: 0,
+            y2: 0
         }
     }
 

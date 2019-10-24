@@ -6,26 +6,33 @@ import Joint from './joint';
 import ClassProperty from './classProperty';
 import IClassElementProperty from '@interfaces/elements/class/IClassElementProperty';
 import IClassElementMethod from '@interfaces/elements/class/IClassElementMethod';
+import { useDispatch, useSelector } from 'react-redux';
+import IStoreState from '@interfaces/IStoreState';
+import { drawNewElement } from 'store/actions/canvas';
+import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import CanvasEnum from '@enums/storeActions/canvasEnum';
 
 function Class(props: IClassElement) {
-    const [joints, updateJoints] = React.useState([]);
+    // const [jointsGraphicData, updateJointsPosition] = React.useState([]);
+    const [jointsData, updateJoints] = React.useState({isMouseDown: false});
+    const dispatch = useDispatch();
+    // const isDrawing = useSelector((store: IStoreState) => store.canvas.isDrawing);
     // to-do
     // draging
     // const classPropsHover = (index: number) => {
-    //     updateJoints([
-    //         <Joint key={1} {...{x: props.elementGraphicData.frame.x, y: props.elementGraphicData, radius: 5}}/>,
-    //         <Joint key={2} {...{x: props.elementGraphicData.frame.x + props.elementGraphicData.frame.width, y: props.separators.properties.y + (index * 25) + 12.5, radius: 5}}/>
-    //     ]);
+        // updateJoints([
+            // <Joint key={2} {...{x: props.elementGraphicData.frame.x + props.elementGraphicData.frame.width, y: props.separators.properties.y + (index * 25) + 12.5, radius: 5}}/>
+        // ]);
     // };
-    const classPropsLeave = () => {
-        updateJoints([]);
-    };
+    // const classPropsLeave = () => {
+    //     updateJoints([]);
+    // };
 
     const classProperties = props.elementData.classProperties.map((classProperty: IClassElementProperty, index) => {
         const classPropertiesProps = {
-            index: index + 1,
+            index: index,
             x: props.elementGraphicData.frame.x,
-            y: props.elementGraphicData.frame.y,
+            y: props.elementGraphicData.frame.sections.properties.y,
             xTest: props.elementGraphicData.frame.xCenter,
             rowHeight: props.elementGraphicData.rowHeight,
             width: props.elementGraphicData.frame.width,
@@ -34,7 +41,9 @@ function Class(props: IClassElement) {
         };
 
         return (
-            <ClassProperty key={index} {...classPropertiesProps}/>
+            <g key={index} onMouseOver={() => console.warn('over')}>
+                <ClassProperty {...classPropertiesProps}/>
+            </g>
         );
     });
     
@@ -42,8 +51,12 @@ function Class(props: IClassElement) {
         return <rect key={index}/>
     });
 
+    const drawAssociation = (event: React.MouseEvent<SVGGElement, MouseEvent>) => {
+        dispatch(drawNewElement(CanvasEnum.ADD_NEW_CURRENTLY_DRAWING_RELATIONSHIP, event));
+    }
+
     return (
-        <g className='umlClass' onMouseLeave={() => classPropsLeave()}>
+        <g className='umlClass' onMouseLeave={() => console.warn('to-do')}>
             <g>
                 <rect
                     onClick={() => console.warn('frame')}
@@ -72,7 +85,10 @@ function Class(props: IClassElement) {
                 {...classMethods}
             </g>
             <g>
-                {...joints}
+                <g onMouseDown={(event) => updateJoints({isMouseDown: true})} onMouseLeave={(event) => jointsData.isMouseDown && drawAssociation(event)}>
+                    <Joint key={1} {...{x: props.elementGraphicData.frame.x, y: props.elementGraphicData.frame.y, radius: 5}}/>,
+                </g>
+                {/* {...joints} */}
             </g>
         </g>
     );
