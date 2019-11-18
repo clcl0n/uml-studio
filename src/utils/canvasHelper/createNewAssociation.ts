@@ -15,7 +15,8 @@ const createNewAssociation = (event: React.MouseEvent<HTMLDivElement, MouseEvent
             y1: event.nativeEvent.offsetX,
             x2: 0,
             y2: 0
-        }
+        },
+        elementFunctionality: {}
     }
 
     return newAssociation;

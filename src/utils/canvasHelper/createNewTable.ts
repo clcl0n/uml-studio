@@ -63,7 +63,8 @@ const createNewTableElement = (event: React.DragEvent<HTMLDivElement>): IClassEl
                     }
                 }
             }
-        }
+        },
+        elementFunctionality: {}
     };
 
     return newTable;

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import IClassPropertyElementProps from '@interfaces/elements/class/IClassPropertyElementProps';
 
-function ClassProperty(props: {index: number, x: number, y: number, xTest: number, rowHeight: number, width: number, fontPixelSize: number, name: string}) {
+function ClassProperty(props: IClassPropertyElementProps) {
     return (
         <g>
             <g>
