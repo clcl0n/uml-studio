@@ -19,7 +19,6 @@ function Class(props: IClassElement) {
             fontPixelSize: props.elementGraphicData.fontPixelSize,
             name: classProperty.name
         };
-
         return (
             <g key={index} onMouseOver={() => console.warn('over')}>
                 <ClassProperty {...classPropertiesProps}/>
