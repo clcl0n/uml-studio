@@ -4,11 +4,11 @@ import IClassElementProperty from '@interfaces/elements/class/IClassElementPrope
 import IClassElementMethod from '@interfaces/elements/class/IClassElementMethod';
 import { v4 } from 'uuid';
 
-const createNewTableElement = (event: React.DragEvent<HTMLDivElement>): IClassElement => {
+const createNewTableElement = (graphicData: {x: number, y: number}): IClassElement => {
     const width: number = 100;
     const height: number = 150;
-    const xElementCenter: number = event.nativeEvent.offsetX;
-    const yElementCenter: number = event.nativeEvent.offsetY;
+    const xElementCenter: number = graphicData.x;
+    const yElementCenter: number = graphicData.y;
     const x: number = xElementCenter - (width / 2);
     const y: number = yElementCenter - (height / 2);
     // const x: number = event.nativeEvent.offsetX;

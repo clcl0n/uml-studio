@@ -6,8 +6,44 @@ import ClassProperty from './classProperty';
 import IClassElementProperty from '@interfaces/elements/class/IClassElementProperty';
 import IClassElementMethod from '@interfaces/elements/class/IClassElementMethod';
 import IClassPropertyElementProps from '@interfaces/elements/class/IClassPropertyElementProps';
+import ICLassElementData from '@interfaces/elements/class/IClassElementData';
+import IClassElementGraphicData from '@interfaces/elements/class/IClassElementGraphicData';
+import Joint from './joint';
+import IElementFunctionality from '@interfaces/elements/IElementFunctionality';
+
+function createJoints(elementData: ICLassElementData, elementGraphicData: IClassElementGraphicData, elementFunctionality: IElementFunctionality) {
+    let joints = new Array<JSX.Element>();
+
+    for (let i = 0; i < 3; i++) {
+        joints.push(
+            <Joint
+                key={i}
+                radius={5}
+                onJointClick={elementFunctionality.onJointClick}
+                x={elementGraphicData.frame.x + ((elementGraphicData.frame.width / 2) * i)}
+                y={elementGraphicData.frame.y}
+            />
+        );
+    }
+
+    for (let i = 0; i < 3; i++) {
+        joints.push(
+            <Joint
+                key={i + 3}
+                radius={5}
+                onJointClick={elementFunctionality.onJointClick}
+                x={elementGraphicData.frame.x + ((elementGraphicData.frame.width / 2) * i)}
+                y={elementGraphicData.frame.y + elementGraphicData.frame.height}
+            />
+        );
+    }
+
+    return joints;
+}
 
 function Class(props: IClassElement) {
+    const [joints, setJoints] = React.useState([]);
+
     const classProperties = props.elementData.classProperties.map((classProperty: IClassElementProperty, index) => {
         const classPropertiesProps: IClassPropertyElementProps = {
             index: index,
@@ -32,7 +68,12 @@ function Class(props: IClassElement) {
 
 
     return (
-        <g className='umlClass'>
+        <g
+            className='umlClass'
+            pointerEvents='all'
+            onMouseOver={() => setJoints(createJoints(props.elementData, props.elementGraphicData, props.elementFunctionality))}
+            onMouseLeave={() => setJoints([])}
+        >
             <g>
                 <rect
                     x={props.elementGraphicData.frame.x}
@@ -41,9 +82,7 @@ function Class(props: IClassElement) {
                     height={props.elementGraphicData.frame.height}
                     stroke='black'
                     fill='none'
-                    strokeWidth='1'
-                    onMouseOver={() => props.elementFunctionality.onFrameOver()}
-                    onMouseLeave={() => props.elementFunctionality.onFrameLeave()}
+                    strokeWidth='3'
                 />
 
                 <path
@@ -66,6 +105,9 @@ function Class(props: IClassElement) {
             </g>
             <g className='classMethods'>
                 {...classMethods}
+            </g>
+            <g>
+                {...joints}
             </g>
         </g>
     );

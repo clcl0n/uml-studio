@@ -11,12 +11,12 @@ const initialState: ICanvasStoreState = {
 const canvasReducer = (state = initialState, payload: ICanvasReducerPayload) => {
     switch (payload.type) {
         case CanvasEnum.ADD_NEW_CLASS:
-            const newTableElement = createNewTable(payload.payload.event);
+            const newTableElement = createNewTable(payload.graphicData as {x: number, y: number});
             state.elements.push(newTableElement);
             return state;
         case CanvasEnum.ADD_NEW_ASSOCIATION:
-            // to-do
-            // state.elements.push();
+            const newAssociationElement = createNewAssociation(payload.graphicData as {x1: number, y1: number, x2: number, y2: number});
+            state.elements.push(newAssociationElement);
             return state;
         default:
             return state;

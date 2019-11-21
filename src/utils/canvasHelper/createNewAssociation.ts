@@ -2,7 +2,7 @@ import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import IRelationElement from '@interfaces/elements/IRelationElement';
 import { v4 } from 'uuid';
 
-const createNewAssociation = (event: React.MouseEvent<HTMLDivElement, MouseEvent>): IRelationElement => {
+const createNewAssociation = (graphicData: {x1: number, y1: number, x2: number, y2: number}): IRelationElement => {
     const newAssociation: IRelationElement = {
         elementData: {
             id: v4(),
@@ -11,10 +11,10 @@ const createNewAssociation = (event: React.MouseEvent<HTMLDivElement, MouseEvent
         elementGraphicData: {
             fontMargin: 5,
             fontPixelSize: 12,
-            x1: event.nativeEvent.offsetX,
-            y1: event.nativeEvent.offsetX,
-            x2: 0,
-            y2: 0
+            x1: graphicData.x1,
+            y1: graphicData.y1,
+            x2: graphicData.x2,
+            y2: graphicData.y2
         },
         elementFunctionality: {}
     }

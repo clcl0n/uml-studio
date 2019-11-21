@@ -1,4 +1,3 @@
 export default interface IElementFunctionality {
-    onFrameOver?: () => void;
-    onFrameLeave?: () => void;
+    onJointClick?: (event: React.MouseEvent) => void;
 }
