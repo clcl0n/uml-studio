@@ -75,10 +75,13 @@ function Canvas() {
         if (isDrawingRelation) {
             event.persist();
 
-            let fixX = 0.1;
-            let fixY = 0.1;
+            let fixX = -0.5;
+            let fixY = 0.5;
             if (currentlyDrawingRelation.y1 > event.nativeEvent.offsetY) {
-                fixY = -0.1;
+                fixY = -0.5;
+            }
+            if (currentlyDrawingRelation.x1 > event.nativeEvent.offsetX) {
+                let fixX = 0.5;
             }
 
             setCurrentlyDrawingRelation({
