@@ -74,11 +74,18 @@ function Canvas() {
     const updateDrawingRelation = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         if (isDrawingRelation) {
             event.persist();
+
+            let fixX = 0.1;
+            let fixY = 0.1;
+            if (currentlyDrawingRelation.y1 > event.nativeEvent.offsetY) {
+                fixY = -0.1;
+            }
+
             setCurrentlyDrawingRelation({
                 x1: currentlyDrawingRelation.x1,
                 y1: currentlyDrawingRelation.y1,
-                x2: event.nativeEvent.offsetX - 0.1,
-                y2: event.nativeEvent.offsetY - 0.1
+                x2: event.nativeEvent.offsetX - fixX,
+                y2: event.nativeEvent.offsetY - fixY
             })
         }
     }
