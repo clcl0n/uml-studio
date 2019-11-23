@@ -1,10 +1,8 @@
 import ICanvasStoreState from '@interfaces/ICanvasStoreState';
 import CanvasEnum from '@enums/storeActions/canvasEnum';
 import ICanvasReducerPayload from '@interfaces/ICanvasReducerPayload';
-import createNewTableElement from 'utils/canvasHelper/createNewTableElement';
-import createNewAssociationElement from 'utils/canvasHelper/createNewAssociationElement';
-import RibbonModeEnum from '@enums/storeActions/ribbonOperationsEnum';
-import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import createNewTable from 'utils/canvasHelper/createNewTable';
+import createNewAssociation from 'utils/canvasHelper/createNewAssociation';
 
 const initialState: ICanvasStoreState = {
     elements: []
@@ -12,12 +10,12 @@ const initialState: ICanvasStoreState = {
 
 const canvasReducer = (state = initialState, payload: ICanvasReducerPayload) => {
     switch (payload.type) {
-        case RibbonModeEnum.ADD_NEW_TABLE:
-            const newTableElement = createNewTableElement(payload.payload.event);
+        case CanvasEnum.ADD_NEW_CLASS:
+            const newTableElement = createNewTable(payload.graphicData as {x: number, y: number});
             state.elements.push(newTableElement);
             return state;
-        case RibbonModeEnum.ADD_NEW_ASSOCIATION:
-            const newAssociationElement = createNewAssociationElement();
+        case CanvasEnum.ADD_NEW_ASSOCIATION:
+            const newAssociationElement = createNewAssociation(payload.graphicData as {x1: number, y1: number, x2: number, y2: number});
             state.elements.push(newAssociationElement);
             return state;
         default:

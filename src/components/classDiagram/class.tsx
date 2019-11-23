@@ -1,67 +1,104 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './class.scss';
-import { IUMLClassElementProps } from '@interfaces/IUMLClassElementProps';
-import Joint from './joint';
+import IClassElement from '@interfaces/elements/IClassElement';
 import ClassProperty from './classProperty';
+import IClassElementProperty from '@interfaces/elements/class/IClassElementProperty';
+import IClassElementMethod from '@interfaces/elements/class/IClassElementMethod';
+import IClassPropertyElementProps from '@interfaces/elements/class/IClassPropertyElementProps';
+import ICLassElementData from '@interfaces/elements/class/IClassElementData';
+import IClassElementGraphicData from '@interfaces/elements/class/IClassElementGraphicData';
+import Joint from './joint';
+import IElementFunctionality from '@interfaces/elements/IElementFunctionality';
 
-function Class(props: IUMLClassElementProps) {
-    const [joints, updateJoints] = React.useState([]);
-    const classPropsHover = (index: number) => {
-        updateJoints([
-            <Joint key={1} {...{x: props.separators.properties.x, y: props.separators.properties.y + (index * 25) + 12.5, radius: 5}}/>,
-            <Joint key={2} {...{x: props.separators.properties.x + props.width, y: props.separators.properties.y + (index * 25) + 12.5, radius: 5}}/>
-        ]);
-    };
-    const classPropsLeave = () => {
-        updateJoints([]);
-    };
+function createJoints(elementData: ICLassElementData, elementGraphicData: IClassElementGraphicData, elementFunctionality: IElementFunctionality) {
+    let joints = new Array<JSX.Element>();
 
-    const classProperties = props.classProperties.map((classProperty, index) => {
-        return (   
-            <g key={index}>
-                <g
-                    onMouseOver={(e) => classPropsHover(index)}
-                >
-                    <rect
-                        onClick={() => console.warn('rect')}
-                        className='test'
-                        fill='none'
-                        x={props.separators.properties.x}
-                        y={(props.separators.properties.y + (index * 25))}
-                        width={props.width}
-                        height={props.row.height}
-                    />
-                </g>
-                <text onClick={() => console.warn('text')} className='umlClassName' x={props.className.x} y={props.separators.properties.y + (index * 25) + 12}>{'test'}</text>
+    for (let i = 0; i < 3; i++) {
+        joints.push(
+            <Joint
+                key={i}
+                radius={5}
+                onJointClick={elementFunctionality.onJointClick}
+                x={elementGraphicData.frame.x + ((elementGraphicData.frame.width / 2) * i)}
+                y={elementGraphicData.frame.y}
+            />
+        );
+    }
+
+    for (let i = 0; i < 3; i++) {
+        joints.push(
+            <Joint
+                key={i + 3}
+                radius={5}
+                onJointClick={elementFunctionality.onJointClick}
+                x={elementGraphicData.frame.x + ((elementGraphicData.frame.width / 2) * i)}
+                y={elementGraphicData.frame.y + elementGraphicData.frame.height}
+            />
+        );
+    }
+
+    return joints;
+}
+
+function Class(props: IClassElement) {
+    const [joints, setJoints] = React.useState([]);
+
+    const classProperties = props.elementData.classProperties.map((classProperty: IClassElementProperty, index) => {
+        const classPropertiesProps: IClassPropertyElementProps = {
+            index: index,
+            x: props.elementGraphicData.frame.x,
+            y: props.elementGraphicData.frame.sections.properties.y,
+            xTest: props.elementGraphicData.frame.xCenter,
+            rowHeight: props.elementGraphicData.rowHeight,
+            width: props.elementGraphicData.frame.width,
+            fontPixelSize: props.elementGraphicData.fontPixelSize,
+            name: classProperty.name
+        };
+        return (
+            <g key={index} onMouseOver={() => console.warn('over')}>
+                <ClassProperty {...classPropertiesProps}/>
             </g>
         );
     });
-    const classMethods = props.classMethods.map((classMethod, index) => {
-        return <rect key='index'/>
+    
+    const classMethods = props.elementData.classMethods.map((classMethod: IClassElementMethod, index) => {
+        return <rect key={index}/>
     });
 
+
     return (
-        <g className='umlClass' onMouseLeave={() => classPropsLeave()}>
+        <g
+            className='umlClass'
+            pointerEvents='all'
+            onMouseOver={() => setJoints(createJoints(props.elementData, props.elementGraphicData, props.elementFunctionality))}
+            onMouseLeave={() => setJoints([])}
+        >
             <g>
                 <rect
-                    onClick={() => console.warn('frame')}
-                    x={props.frame.x}
-                    y={props.frame.y}
-                    width={props.width}
-                    height={props.height}
+                    x={props.elementGraphicData.frame.x}
+                    y={props.elementGraphicData.frame.y}
+                    width={props.elementGraphicData.frame.width}
+                    height={props.elementGraphicData.frame.height}
                     stroke='black'
                     fill='none'
-                    strokeWidth='1'
+                    strokeWidth='3'
                 />
+
                 <path
-                    d={`M ${props.separators.properties.x} ${props.separators.properties.y} l ${props.width} 0`}
+                    d={`M ${props.elementGraphicData.frame.x} ${props.elementGraphicData.frame.y + props.elementGraphicData.rowHeight} l ${props.elementGraphicData.frame.width} 0`}
                     stroke='black'
                 />
-                {classMethods.length > 0 && <path/>}
+                {props.elementData.classMethods.length > 0 && <path/>}
             </g>
             <g className='classHeader'>
-                <text className='umlClassName' x={props.className.x} y={props.className.y}>{props.className.text}</text>
+                <text
+                    className='umlClassName'
+                    x={props.elementGraphicData.frame.xCenter}
+                    y={props.elementGraphicData.frame.y + (props.elementGraphicData.rowHeight / 2)}
+                >
+                    {props.elementData.className}
+                </text>
             </g>
             <g className='classProperties'>
                 {...classProperties}

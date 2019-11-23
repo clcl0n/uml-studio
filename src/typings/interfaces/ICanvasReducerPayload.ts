@@ -1,7 +1,6 @@
 import CanvasEnum from '@enums/storeActions/canvasEnum';
-import RibbonModeEnum from '@enums/storeActions/ribbonOperationsEnum';
 
 export default interface ICanvasReducerPayload {
-    type: RibbonModeEnum,
-    payload: any
+    type: CanvasEnum,
+    graphicData: {x: number, y: number} | {x1: number, y1: number, x2: number, y2: number}
 }
