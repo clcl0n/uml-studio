@@ -1,4 +1,4 @@
 import IElement from './IElement';
-import IRelationSegmentsGraphicData from './IRelationSegmentsGraphicData';
+import IRelationGraphicData from './IRelationGraphicData';
 
-export default interface IRelationElement extends IElement<{}, IRelationSegmentsGraphicData> {}
+export default interface IRelationElement extends IElement<{}, IRelationGraphicData> {}
