@@ -4,8 +4,8 @@ import IRelationElement from '@interfaces/elements/IRelationElement';
 import RelationSegment from './relationSegment';
 
 function Association(props: IRelationElement) {
-    let segments = props.elementGraphicData.segments.map((segment) => {
-        return <RelationSegment {...segment} />
+    let segments = props.elementGraphicData.segments.map((segment, index) => {
+        return <RelationSegment key={index} {...segment} />
     });
 
     return (
