@@ -5,4 +5,5 @@ import IRelationElement from './elements/IRelationElement';
 
 export default interface ICanvasStoreState {
     elements: Array<IElement<IElementData, IElementGraphicData>>;
+    selectedElementId: string;
 }

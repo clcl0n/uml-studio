@@ -36,8 +36,10 @@
   },
   "dependencies": {
     "@svgr/webpack": "^4.3.2",
+    "@types/lodash-es": "^4.17.3",
     "@types/react-redux": "^7.1.1",
     "@types/uuid": "^3.4.5",
+    "lodash-es": "^4.17.15",
     "react-redux": "^7.1.0",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",

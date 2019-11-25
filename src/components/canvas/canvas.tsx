@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './canvas.scss';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import { drawNewElement } from 'store/actions/canvas';
+import { isEqual } from 'lodash-es';
 
 import IBaseElement from '@interfaces/elements/IBaseElement';
 import Class from '@components/classDiagram/class';
@@ -49,8 +50,11 @@ function createElements(
 }
 
 function Canvas() {
-    const dispatch = useDispatch();
-    const elements = useSelector((state: IStoreState) => state.canvas.elements);
+    const dispatch = useDispatch(); 
+    const elements = useSelector((state: IStoreState) => state.canvas.elements, (left, right) => {
+        return !isEqual(left, right);
+    });
+    
     const [isDrawingRelation, setIsDrawingRelation] = React.useState(false);
     const [currentlyDrawingRelation, setCurrentlyDrawingRelation] = React.useState({
         x1: 0,
@@ -58,17 +62,12 @@ function Canvas() {
         x2: 0,
         y2: 0
     });
-
     
-    const [canvasElements, setCanvasElements] = React.useState(createElements(elements, setIsDrawingRelation, setCurrentlyDrawingRelation));
-    const updateCanvasElements = () => setCanvasElements(createElements(elements, setIsDrawingRelation, setCurrentlyDrawingRelation));
-
     const addNewElement = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         event.persist();
         const type = event.dataTransfer.getData('elementType') as CanvasEnum;
         dispatch(drawNewElement(type, { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY }));
-        updateCanvasElements();
     };
 
     const updateDrawingRelation = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -103,7 +102,6 @@ function Canvas() {
                 x2: currentlyDrawingRelation.x2,
                 y2: currentlyDrawingRelation.y2
             }));
-            updateCanvasElements();
             setCurrentlyDrawingRelation({
                 x1: 0,
                 y1: 0,
@@ -117,8 +115,8 @@ function Canvas() {
         <div id='canvas' onClick={(ev) => stopDrawingRelation(ev)} onMouseMove={(ev) => updateDrawingRelation(ev)} onDragOver={(ev) => ev.preventDefault()} onDrop={(event) => addNewElement(event)}>
             <svg id='svg-canvas' width='100%' height='100%'>
                 <g>
-                    {...canvasElements}
-                </g>
+                    {...createElements(elements, setIsDrawingRelation, setCurrentlyDrawingRelation)}
+                </g>    
                 <line stroke='black' x1={currentlyDrawingRelation.x1} x2={currentlyDrawingRelation.x2} y1={currentlyDrawingRelation.y1} y2={currentlyDrawingRelation.y2}/>
             </svg>
         </div>

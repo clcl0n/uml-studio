@@ -6,7 +6,8 @@ import { v4 } from 'uuid';
 
 const createNewTableElement = (graphicData: {x: number, y: number}): IClassElement => {
     const width: number = 100;
-    const height: number = 150;
+    const rowHeight: number = 25;
+    const height: number = 3 * rowHeight;
     const xElementCenter: number = graphicData.x;
     const yElementCenter: number = graphicData.y;
     const x: number = xElementCenter - (width / 2);
@@ -17,7 +18,6 @@ const createNewTableElement = (graphicData: {x: number, y: number}): IClassEleme
     // const yElementCenter: number = event.nativeEvent.offsetY - (height / 2);
     const fontPixelSize: number = 12;
     const fontMargin: number = 5;
-    const rowHeight: number = 25;
 
     const classMethods: Array<IClassElementMethod> = [
         {
@@ -59,7 +59,7 @@ const createNewTableElement = (graphicData: {x: number, y: number}): IClassEleme
                         y: y + rowHeight
                     },
                     methods: {
-                        y: classProperties.length * rowHeight
+                        y: y + ((classProperties.length + 1) * rowHeight)
                     }
                 }
             }

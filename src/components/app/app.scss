@@ -9,3 +9,8 @@ body, p {
     height: 100vh;
     grid-template-rows: 185px auto;
 }
+
+#uml-editor-body {
+    display: flex;
+    flex-direction: row;
+}

@@ -4,12 +4,16 @@ import './app.scss';
 
 import Ribbon from '@components/ribbon';
 import Canvas from '@components/canvas';
+import SideBar from '@components/sideBar';
 
 const app = () => {
     return (
         <div id='uml-editor-studio'>
             <Ribbon/>
-            <Canvas/>
+            <div id='uml-editor-body'>
+                <Canvas/>
+                <SideBar/>
+            </div>
         </div>
     );
 };
