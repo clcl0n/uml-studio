@@ -61,7 +61,7 @@ function Class(props: IClassElement) {
             name: classProperty.name
         };
         return (
-            <g key={index} onMouseOver={() => console.warn('over')}>
+            <g key={index}>
                 <ClassProperty {...classPropertiesProps}/>
             </g>
         );
@@ -81,7 +81,7 @@ function Class(props: IClassElement) {
         };
 
         return (
-            <g key={index} onMouseOver={() => console.warn('over')}>
+            <g key={index}>
                 <ClassProperty {...classMethodProps}/>
             </g>
         );

@@ -4,6 +4,7 @@ import IClassElement from '@interfaces/elements/IClassElement';
 import { useDispatch } from 'react-redux';
 import { updateElement } from 'store/actions/canvas';
 import CanvasEnum from '@enums/storeActions/canvasEnum';
+import * as log from 'loglevel';
 
 function ClassEditOptions(props: IClassElement) {
     const dispatch = useDispatch();
@@ -40,9 +41,8 @@ function ClassEditOptions(props: IClassElement) {
         });
     };
 
-    console.warn('update');
-
     const addNewClassProperties = () => {
+        log.debug(`Added new Class Property. Class Id: ${props.elementData.id}`);
         props.elementData.classProperties.push({
             accessModifier: 'public',
             name: ''
@@ -51,6 +51,7 @@ function ClassEditOptions(props: IClassElement) {
     }
 
     const addNewClassMethods = () => {
+        log.debug(`Added new Class Method. Class Id: ${props.elementData.id}`);
         props.elementData.classMethods.push({
             accessModifier: 'public',
             name: ''
