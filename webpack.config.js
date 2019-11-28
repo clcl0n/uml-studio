@@ -4,6 +4,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin }  = require('clean-webpack-plugin');
 const WriteFilePlugin  = require('write-file-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const WebpackBar = require('webpackbar');
 
 module.exports = {
     entry: path.resolve(__dirname, 'src/index.tsx'),
@@ -16,6 +17,24 @@ module.exports = {
         plugins: [
             new TsconfigPathsPlugin()
         ]
+    },
+    devServer: {
+        stats: {
+            colors: true,
+            hash: false,
+            version: false,
+            timings: false,
+            assets: false,
+            chunks: false,
+            modules: false,
+            reasons: false,
+            children: false,
+            source: false,
+            errors: false,
+            errorDetails: false,
+            warnings: false,
+            publicPath: false
+        }
     },
     module: {
         rules: [
@@ -60,10 +79,10 @@ module.exports = {
     },
     plugins: [
         new WriteFilePlugin(),
-        new webpack.ProgressPlugin(),
         new CleanWebpackPlugin(),
         new HtmlWebPackPlugin({
             template: './public/index.html'
-        })
+        }),
+        new WebpackBar()
     ]
 };
