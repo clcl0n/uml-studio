@@ -30,7 +30,7 @@ module.exports = {
             reasons: false,
             children: false,
             source: false,
-            errors: false,
+            errors: true,
             errorDetails: false,
             warnings: false,
             publicPath: false
