@@ -1,8 +1,8 @@
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import IClassElement from '@interfaces/elements/IClassElement';
-import IClassElementProperty from '@interfaces/elements/class/IClassElementProperty';
-import IClassElementMethod from '@interfaces/elements/class/IClassElementMethod';
+import IClassElementMethod from '@interfaces/elements/class/IClassMethodData';
 import { v4 } from 'uuid';
+import IClassPropertyData from '@interfaces/elements/class/IClassPropertyData';
 
 const createNewTableElement = (graphicData: {x: number, y: number}): IClassElement => {
     const width: number = 100;
@@ -25,7 +25,7 @@ const createNewTableElement = (graphicData: {x: number, y: number}): IClassEleme
             name: 'method_1'
         }
     ]
-    const classProperties: Array<IClassElementProperty> = [
+    const classProperties: Array<IClassPropertyData> = [
         {
             accessModifier: 'public',
             name: 'method_2'

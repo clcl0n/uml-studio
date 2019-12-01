@@ -1,4 +1,4 @@
-export default interface IClassElementFrame {
+export default interface IClassFrameGraphicData {
     width: number;
     height: number;
     x: number;

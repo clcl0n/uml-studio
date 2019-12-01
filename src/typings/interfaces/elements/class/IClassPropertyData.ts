@@ -1,4 +1,4 @@
-export default interface IClassElementMethod {
+export default interface IClassPropertyData {
     accessModifier: string;
     name: string;
 }

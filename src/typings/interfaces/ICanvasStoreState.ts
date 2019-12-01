@@ -1,7 +1,7 @@
 import IElement from './elements/IElement';
 import IElementData from './elements/IElementData';
 import IElementGraphicData from './elements/IElementGraphicData';
-import IRelationElement from './elements/IRelationElement';
+import IRelationElement from './elements/relation/IRelationElement';
 
 export default interface ICanvasStoreState {
     elements: Array<IElement<IElementData, IElementGraphicData>>;

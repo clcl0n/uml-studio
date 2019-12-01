@@ -12,7 +12,7 @@ import Association from '@components/classDiagram/association';
 import IClassElement from '@interfaces/elements/IClassElement';
 import IStoreState from '@interfaces/IStoreState';
 import CanvasEnum from '@enums/storeActions/canvasEnum';
-import IRelationElement from '@interfaces/elements/IRelationElement';
+import IRelationElement from '@interfaces/elements/relation/IRelationElement';
 
 function createElements(
         elementsProps: Array<IBaseElement>,

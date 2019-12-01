@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import IRelationSegment from '@interfaces/elements/IRelationSegment';
+import ISegmentGraphicDat from '@interfaces/elements/segment/ISegmentGraphicData';
 
-function RelationSegment(props: IRelationSegment) {
+function RelationSegment(props: ISegmentGraphicDat) {
     return (
         <path stroke='black' d={`M ${props.x} ${props.y} l ${props.lineToX} ${props.lineToY}`}/>
     )

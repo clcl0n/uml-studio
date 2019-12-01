@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import IRelationElement from '@interfaces/elements/IRelationElement';
+import IRelationElement from '@interfaces/elements/relation/IRelationElement';
 import RelationSegment from './relationSegment';
 import RelationDirection from '@enums/relationDirection';
 import { useDispatch } from 'react-redux';
