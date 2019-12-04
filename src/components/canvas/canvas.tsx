@@ -13,10 +13,11 @@ import IClassElement from '@interfaces/elements/IClassElement';
 import IStoreState from '@interfaces/IStoreState';
 import CanvasEnum from '@enums/storeActions/canvasEnum';
 import IRelationElement from '@interfaces/elements/relation/IRelationElement';
+import CanvasOperationEnum from '@enums/canvasOperationEnum';
 
 function createElements(
         elementsProps: Array<IBaseElement>,
-        setIsDrawingRelation: React.Dispatch<React.SetStateAction<boolean>>,
+        updateCanvasOperation: React.Dispatch<React.SetStateAction<string>>,
         setCurrentlyDrawingRelation: React.Dispatch<React.SetStateAction<{
             x1: number;
             y1: number;
@@ -30,7 +31,7 @@ function createElements(
             case ClassDiagramElementsEnum.TABLE:
                 let classElementProps = elementProps as IClassElement;
                 classElementProps.elementFunctionality.onJointClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-                    setIsDrawingRelation(true);
+                    updateCanvasOperation(CanvasOperationEnum.DRAWING_NEW_RELATION);
                     setCurrentlyDrawingRelation({
                         x1: event.nativeEvent.offsetX,
                         y1: event.nativeEvent.offsetY,
@@ -55,7 +56,7 @@ function Canvas() {
         return !isEqual(left, right);
     });
     
-    const [isDrawingRelation, setIsDrawingRelation] = React.useState(false);
+    const [canvasOperation, updateCanvasOperation] = React.useState('');
     const [currentlyDrawingRelation, setCurrentlyDrawingRelation] = React.useState({
         x1: 0,
         y1: 0,
@@ -71,31 +72,29 @@ function Canvas() {
     };
 
     const updateDrawingRelation = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (isDrawingRelation) {
-            event.persist();
+        event.persist();
 
-            let fixX = -0.5;
-            let fixY = 0.5;
-            if (currentlyDrawingRelation.y1 > event.nativeEvent.offsetY) {
-                fixY = -0.5;
-            }
-            if (currentlyDrawingRelation.x1 > event.nativeEvent.offsetX) {
-                let fixX = 0.5;
-            }
-
-            setCurrentlyDrawingRelation({
-                x1: currentlyDrawingRelation.x1,
-                y1: currentlyDrawingRelation.y1,
-                x2: event.nativeEvent.offsetX - fixX,
-                y2: event.nativeEvent.offsetY - fixY
-            })
+        let fixX = -0.5;
+        let fixY = 0.5;
+        if (currentlyDrawingRelation.y1 > event.nativeEvent.offsetY) {
+            fixY = -0.5;
         }
+        if (currentlyDrawingRelation.x1 > event.nativeEvent.offsetX) {
+            let fixX = 0.5;
+        }
+
+        setCurrentlyDrawingRelation({
+            x1: currentlyDrawingRelation.x1,
+            y1: currentlyDrawingRelation.y1,
+            x2: event.nativeEvent.offsetX - fixX,
+            y2: event.nativeEvent.offsetY - fixY
+        })
     }
 
     const stopDrawingRelation = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.persist();
-        if (isDrawingRelation && (event.target as any).nodeName === 'circle') {
-            setIsDrawingRelation(false);
+        if ((event.target as any).nodeName === 'circle') {
+            updateCanvasOperation(CanvasOperationEnum.NONE);
             dispatch(drawNewElement(CanvasEnum.ADD_NEW_ASSOCIATION, {
                 x1: currentlyDrawingRelation.x1,
                 y1: currentlyDrawingRelation.y1,
@@ -111,11 +110,32 @@ function Canvas() {
         }
     }
 
+    const canvasMouseClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        switch(canvasOperation) {
+            case 'DRAWING_NEW_RELATION':
+                stopDrawingRelation(event);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const canvasMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        switch(canvasOperation) {
+            case 'DRAWING_NEW_RELATION':
+                updateDrawingRelation(event);
+                break;
+            default:
+                break;
+        }
+    };
+
+
     return (
-        <div id='canvas' onClick={(ev) => stopDrawingRelation(ev)} onMouseMove={(ev) => updateDrawingRelation(ev)} onDragOver={(ev) => ev.preventDefault()} onDrop={(event) => addNewElement(event)}>
+        <div id='canvas' onClick={(ev) => canvasMouseClick(ev)} onMouseMove={(ev) => canvasMouseMove(ev)} onDragOver={(ev) => ev.preventDefault()} onDrop={(event) => addNewElement(event)}>
             <svg id='svg-canvas' width='100%' height='100%'>
                 <g>
-                    {...createElements(elements, setIsDrawingRelation, setCurrentlyDrawingRelation)}
+                    {...createElements(elements, updateCanvasOperation, setCurrentlyDrawingRelation)}
                 </g>    
                 <line stroke='black' x1={currentlyDrawingRelation.x1} x2={currentlyDrawingRelation.x2} y1={currentlyDrawingRelation.y1} y2={currentlyDrawingRelation.y2}/>
             </svg>
