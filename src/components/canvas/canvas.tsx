@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import './canvas.scss';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
-import { drawNewElement } from 'store/actions/canvas';
+import { drawNewElement, updateElement } from 'store/actions/canvas';
 import { isEqual } from 'lodash-es';
 
 import IBaseElement from '@interfaces/elements/IBaseElement';
@@ -14,10 +14,12 @@ import IStoreState from '@interfaces/IStoreState';
 import CanvasEnum from '@enums/storeActions/canvasEnum';
 import IRelationElement from '@interfaces/elements/relation/IRelationElement';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import updateRelation from 'utils/canvasHelper/updateRelation';
+import Direction from '@enums/Direction';
 
 function createElements(
         elementsProps: Array<IBaseElement>,
-        updateCanvasOperation: React.Dispatch<React.SetStateAction<string>>,
+        updateCanvasOperation: React.Dispatch<React.SetStateAction<{type: CanvasOperationEnum, data: any}>>,
         setCurrentlyDrawingRelation: React.Dispatch<React.SetStateAction<{
             x1: number;
             y1: number;
@@ -31,7 +33,10 @@ function createElements(
             case ClassDiagramElementsEnum.TABLE:
                 let classElementProps = elementProps as IClassElement;
                 classElementProps.elementFunctionality.onJointClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-                    updateCanvasOperation(CanvasOperationEnum.DRAWING_NEW_RELATION);
+                    updateCanvasOperation({
+                        type: CanvasOperationEnum.DRAWING_NEW_RELATION,
+                        data: {}
+                    });
                     setCurrentlyDrawingRelation({
                         x1: event.nativeEvent.offsetX,
                         y1: event.nativeEvent.offsetY,
@@ -43,6 +48,15 @@ function createElements(
                 return <Class key={index} {...classElementProps}/>;
             case ClassDiagramElementsEnum.ASSOCIATION:
                 const el = elementProps as IRelationElement;
+                el.elementFunctionality.onSegmentMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, segmentId: string) => {
+                    updateCanvasOperation({
+                        type: CanvasOperationEnum.UPDATE_RELATION,
+                        data: {
+                            relation: el,
+                            segmentId: segmentId
+                        }
+                    });
+                };
                 return (
                     <Association key={index} {...el}/>
                 );
@@ -56,7 +70,7 @@ function Canvas() {
         return !isEqual(left, right);
     });
     
-    const [canvasOperation, updateCanvasOperation] = React.useState('');
+    const [canvasOperation, updateCanvasOperation] = React.useState({type: '', data: {}});
     const [currentlyDrawingRelation, setCurrentlyDrawingRelation] = React.useState({
         x1: 0,
         y1: 0,
@@ -94,7 +108,10 @@ function Canvas() {
     const stopDrawingRelation = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.persist();
         if ((event.target as any).nodeName === 'circle') {
-            updateCanvasOperation(CanvasOperationEnum.NONE);
+            updateCanvasOperation({
+                type: CanvasOperationEnum.NONE,
+                data: {}
+            });
             dispatch(drawNewElement(CanvasEnum.ADD_NEW_ASSOCIATION, {
                 x1: currentlyDrawingRelation.x1,
                 y1: currentlyDrawingRelation.y1,
@@ -111,9 +128,16 @@ function Canvas() {
     }
 
     const canvasMouseClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        switch(canvasOperation) {
-            case 'DRAWING_NEW_RELATION':
+        switch(canvasOperation.type) {
+            case CanvasOperationEnum.DRAWING_NEW_RELATION:
                 stopDrawingRelation(event);
+                break;
+            case CanvasOperationEnum.UPDATE_RELATION:
+                //stop
+                updateCanvasOperation({
+                    type: CanvasOperationEnum.NONE,
+                    data: {}
+                });
                 break;
             default:
                 break;
@@ -121,9 +145,13 @@ function Canvas() {
     };
 
     const canvasMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        switch(canvasOperation) {
-            case 'DRAWING_NEW_RELATION':
+        switch(canvasOperation.type) {
+            case CanvasOperationEnum.DRAWING_NEW_RELATION:
                 updateDrawingRelation(event);
+                break;
+            case CanvasOperationEnum.UPDATE_RELATION:
+                const t = updateRelation(Direction.HORIZONTAL, (canvasOperation.data as any).relation, (canvasOperation.data as any).segmentId, { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
+                dispatch(updateElement(t));
                 break;
             default:
                 break;

@@ -1,9 +1,9 @@
 import ISegmentGraphicDat from '../segment/ISegmentGraphicData';
-import RelationDirection from '@enums/relationDirection';
-import I2DCoordinates from '@interfaces/ICoordinates';
+import Direction from '@enums/Direction';
+import I2DCoordinates from '@interfaces/I2DCoordinates';
 
 export default interface IRelationGraphicData {
     head: I2DCoordinates;
     segments: Array<ISegmentGraphicDat>;
-    direction: RelationDirection;
+    direction: Direction;
 }

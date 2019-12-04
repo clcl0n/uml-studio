@@ -5,6 +5,7 @@ import createNewTable from 'utils/canvasHelper/createNewTable';
 import createNewAssociation from 'utils/canvasHelper/createNewAssociation';
 import updateTable from 'utils/canvasHelper/updateTable';
 import * as log from 'loglevel';
+import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 
 const initialState: ICanvasStoreState = {
     elements: [],
@@ -29,9 +30,17 @@ const canvasReducer = (state = initialState, payload: ICanvasReducerPayload) => 
             return state;
         case CanvasEnum.UPDATE_ELEMENT:
             const index = state.elements.findIndex((element) => element.elementData.id == payload.data.elementData.id);
-            state.elements[index] = updateTable(payload.data);
-            log.debug(`Redux - updated element with id: ${payload.data.elementData.id}`);
-            return state;
+            switch (payload.data.elementData.type as ClassDiagramElementsEnum) {
+                case ClassDiagramElementsEnum.TABLE:
+                    state.elements[index] = updateTable(payload.data);
+                    log.debug(`Redux - updated class element with id: ${payload.data.elementData.id}`);
+                    return state;
+                case ClassDiagramElementsEnum.ASSOCIATION:
+                    state.elements[index] = payload.data;
+                    return state;
+                default:
+                    return state;
+            }
         default:
             return state;
     }

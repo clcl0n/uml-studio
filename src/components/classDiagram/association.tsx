@@ -2,19 +2,19 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import IRelationElement from '@interfaces/elements/relation/IRelationElement';
 import RelationSegment from './relationSegment';
-import RelationDirection from '@enums/relationDirection';
+import Direction from '@enums/Direction';
 import { useDispatch } from 'react-redux';
 import { selectElement } from 'store/actions/canvas';
 
 function Association(props: IRelationElement) {
     const dispatch = useDispatch();
     let segments = props.elementGraphicData.segments.map((segment, index) => {
-        return <RelationSegment key={index} {...segment} />
+        return <RelationSegment key={index} graphicData={segment} functionality={props.elementFunctionality} />
     });
 
     //to-do UP DOWN in future
     let headDirection = 0;
-    if (props.elementGraphicData.direction === RelationDirection.RIGHT) {
+    if (props.elementGraphicData.direction === Direction.RIGHT) {
         headDirection = -10;
     } else {
         headDirection = 10;
