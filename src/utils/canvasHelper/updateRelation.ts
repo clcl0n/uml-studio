@@ -10,15 +10,21 @@ const updateRelation = (direction: Direction, relation: IRelationElement, moving
     const movingSegmentGraphicData = relation.elementGraphicData.segments.find((segment) => segment.id === movingSegmentId);
     const movingSegmentData = relation.elementData.segments.find((segment) => segment.id === movingSegmentId);
     const dependentSegments = relation.elementGraphicData.segments.filter((segment) => segment.id === movingSegmentData.toSegmentId || segment.id === movingSegmentData.fromSegmentId); 
+    const dependentSegmentsData = relation.elementData.segments.filter((segment) => segment.id === movingSegmentData.toSegmentId || segment.id === movingSegmentData.fromSegmentId); 
     let movingDirection = Direction.NONE;
 
     const updateHorizontalDependentSegments = () => {
         dependentSegments.forEach((segment) => {
-            if (segment.x === movingSegmentGraphicData.x) {
-                segment.x = cooridates.x;
-                segment.lineToX -= cooridates.x - movingSegmentGraphicData.x;
-            } else {
+            const segmentData = dependentSegmentsData.find(s => s.id ===  segment.id);
+            if (segmentData.isStart || segmentData.isEnd) {
                 segment.lineToX += cooridates.x - movingSegmentGraphicData.x;
+            } else {
+                if (segment.x === movingSegmentGraphicData.x) {
+                    segment.x = cooridates.x;
+                    segment.lineToX -= cooridates.x - movingSegmentGraphicData.x;
+                } else {
+                    segment.lineToX += cooridates.x - movingSegmentGraphicData.x;
+                }
             }
         });
         movingSegmentGraphicData.x = cooridates.x;
@@ -26,11 +32,16 @@ const updateRelation = (direction: Direction, relation: IRelationElement, moving
 
     const updateVerticalDependentSegments = () => {
         dependentSegments.forEach((segment) => {
-            if (segment.y === movingSegmentGraphicData.y) {
-                segment.y = cooridates.y;
-                segment.lineToY -= cooridates.y - movingSegmentGraphicData.y;
+            const segmentData = dependentSegmentsData.find(s => s.id ===  segment.id);
+            if (segmentData.isStart || segmentData.isEnd) {
+                    segment.lineToY += cooridates.y - movingSegmentGraphicData.y;
             } else {
-                segment.lineToY += cooridates.y - movingSegmentGraphicData.y;
+                if (segment.y === movingSegmentGraphicData.y) {
+                    segment.y = cooridates.y;
+                    segment.lineToY -= cooridates.y - movingSegmentGraphicData.y;
+                } else {
+                    segment.lineToY += cooridates.y - movingSegmentGraphicData.y;
+                }
             }
         });
         movingSegmentGraphicData.y = cooridates.y;
@@ -43,6 +54,8 @@ const updateRelation = (direction: Direction, relation: IRelationElement, moving
 
     const insertStartingSegment = (lineToX: number, lineToY: number, direction: Direction) => {
         const newId = v4();
+        console.warn(`x: ${relation.elementGraphicData.tail.x}`);
+        console.warn(`y: ${relation.elementGraphicData.tail.y}`);
         insertSegment(
             {
                 id: newId,
@@ -60,7 +73,7 @@ const updateRelation = (direction: Direction, relation: IRelationElement, moving
                 lineToY
             }
         );
-        direction === Direction.VERTICAL ? updateVerticalDependentSegments : updateHorizontalDependentSegments;
+        direction === Direction.VERTICAL ? updateVerticalDependentSegments() : updateHorizontalDependentSegments();
         movingSegmentData.isStart = false;
         movingSegmentData.fromSegmentId = newId;
     };
@@ -84,7 +97,7 @@ const updateRelation = (direction: Direction, relation: IRelationElement, moving
                 lineToY
             }
         );
-        direction === Direction.VERTICAL ? updateVerticalDependentSegments : updateHorizontalDependentSegments;
+        direction === Direction.VERTICAL ? updateVerticalDependentSegments() : updateHorizontalDependentSegments();
         movingSegmentData.isEnd = false;
         movingSegmentData.toSegmentId = newId;
     };
