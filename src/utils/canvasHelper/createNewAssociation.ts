@@ -53,6 +53,10 @@ const createNewAssociation = (graphicData: {x1: number, y1: number, x2: number, 
         elementGraphicData: {
             fontMargin: 5,
             fontPixelSize: 12,
+            tail: {
+                x: graphicData.x1,
+                y: graphicData.y1
+            },
             head: {
                 x: graphicData.x2,
                 y: graphicData.y2

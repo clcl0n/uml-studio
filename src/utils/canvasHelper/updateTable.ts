@@ -1,4 +1,4 @@
-import IClassElement from "@interfaces/elements/IClassElement";
+import IClassElement from '@interfaces/elements/IClassElement';
 
 const updateTable = (table: IClassElement) => {
     table.elementGraphicData.frame.sections.methods.y = table.elementGraphicData.frame.y + (

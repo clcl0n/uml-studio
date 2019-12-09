@@ -92,6 +92,8 @@ function Class(props: IClassElement) {
         <g
             className='umlClass'
             pointerEvents='all'
+            onMouseDown={(ev) => props.elementFunctionality.onClassMouseDown(ev, props.elementData.id)}
+            onMouseUp={(ev) => props.elementFunctionality.onClassMouseUp(ev)}
             onClick={() => dispatch(selectElement(props.elementData.id))}
             onMouseOver={() => setJoints(createJoints(props.elementData, props.elementGraphicData, props.elementFunctionality))}
             onMouseLeave={() => setJoints([])}
