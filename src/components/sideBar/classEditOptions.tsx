@@ -8,19 +8,22 @@ import * as log from 'loglevel';
 
 function ClassEditOptions(props: IClassElement) {
     const dispatch = useDispatch();
+
+    const removeProperty = (index: number) => {
+        props.elementData.classProperties
+    };
     
     const editProperties = () => {
         return props.elementData.classProperties.map((classProperty, index) => {
             return (
-                <input
-                    key={index}
-                    type='text'
-                    value={classProperty.name}
-                    onChange={(ev) => {
-                        classProperty.name = ev.target.value;
-                        dispatch(updateElement(props));
-                    }}
-                />
+                <div key={index}>
+                    <input
+                        type='text'
+                        value={classProperty.name}
+                        onChange={(ev) => { classProperty.name = ev.target.value; dispatch(updateElement(props));}}
+                    />
+                    <button onClick={(ev) => removeProperty(index)} >Remove</button>
+                </div>
             );
         });        
     };

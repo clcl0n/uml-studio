@@ -1,11 +1,12 @@
 import ICanvasStoreState from '@interfaces/ICanvasStoreState';
 import CanvasEnum from '@enums/storeActions/canvasEnum';
 import ICanvasReducerPayload from '@interfaces/ICanvasReducerPayload';
-import createNewTable from 'utils/canvasHelper/createNewTable';
+import createNewClassElement from 'utils/canvasHelper/createNewClassElement';
 import createNewAssociation from 'utils/canvasHelper/createNewAssociation';
 import updateTable from 'utils/canvasHelper/updateTable';
 import * as log from 'loglevel';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import I2DCoordinates from '@interfaces/I2DCoordinates';
 
 const initialState: ICanvasStoreState = {
     elements: [],
@@ -15,9 +16,14 @@ const initialState: ICanvasStoreState = {
 const canvasReducer = (state = initialState, payload: ICanvasReducerPayload) => {
     switch (payload.type) {
         case CanvasEnum.ADD_NEW_CLASS:
-            const newTableElement = createNewTable(payload.data as {x: number, y: number});
-            log.debug(`Redux - added new class with id: ${newTableElement.elementData.id}`);
-            state.elements.push(newTableElement);
+            const newClassElement = createNewClassElement(payload.data as I2DCoordinates, true);
+            log.debug(`Redux - added new class with id: ${newClassElement.elementData.id}`);
+            state.elements.push(newClassElement);
+            return state;
+        case CanvasEnum.ADD_NEW_FULL_CLASS:
+            const newFullClassElement = createNewClassElement(payload.data as I2DCoordinates, false);
+            log.debug(`Redux - added new full class with id: ${newFullClassElement.elementData.id}`);
+            state.elements.push(newFullClassElement);
             return state;
         case CanvasEnum.ADD_NEW_ASSOCIATION:
             const newAssociationElement = createNewAssociation(payload.data as {x1: number, y1: number, x2: number, y2: number});
