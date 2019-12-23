@@ -16,7 +16,6 @@ function ClassProperty(props: IClassPropertyElementProps) {
                 />
             </g>
             <text
-                onClick={() => console.warn('text')}
                 className='umlClassName'
                 x={props.xTest}
                 y={(props.y + (props.index * props.rowHeight) + props.fontPixelSize)}

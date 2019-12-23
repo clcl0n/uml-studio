@@ -3,13 +3,17 @@ import * as ReactDOM from 'react-dom';
 import './class.scss';
 import IClassElement from '@interfaces/elements/IClassElement';
 import ClassProperty from './classProperty';
-import IClassElementProperty from '@interfaces/elements/class/IClassElementProperty';
-import IClassElementMethod from '@interfaces/elements/class/IClassElementMethod';
+import IClassElementProperty from '@interfaces/elements/class/IClassPropertyData';
+import IClassElementMethod from '@interfaces/elements/class/IClassMethodData';
 import IClassPropertyElementProps from '@interfaces/elements/class/IClassPropertyElementProps';
-import ICLassElementData from '@interfaces/elements/class/IClassElementData';
-import IClassElementGraphicData from '@interfaces/elements/class/IClassElementGraphicData';
+import ICLassElementData from '@interfaces/elements/class/IClassData';
+import IClassElementGraphicData from '@interfaces/elements/class/IClassGraphicData';
 import Joint from './joint';
 import IElementFunctionality from '@interfaces/elements/IElementFunctionality';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectElement } from 'store/actions/canvas';
+import CanvasEnum from '@enums/storeActions/canvasEnum';
+import IStoreState from '@interfaces/IStoreState';
 
 function createJoints(elementData: ICLassElementData, elementGraphicData: IClassElementGraphicData, elementFunctionality: IElementFunctionality) {
     let joints = new Array<JSX.Element>();
@@ -42,6 +46,7 @@ function createJoints(elementData: ICLassElementData, elementGraphicData: IClass
 }
 
 function Class(props: IClassElement) {
+    const dispatch = useDispatch();
     const [joints, setJoints] = React.useState([]);
 
     const classProperties = props.elementData.classProperties.map((classProperty: IClassElementProperty, index) => {
@@ -56,14 +61,30 @@ function Class(props: IClassElement) {
             name: classProperty.name
         };
         return (
-            <g key={index} onMouseOver={() => console.warn('over')}>
+            <g key={index}>
                 <ClassProperty {...classPropertiesProps}/>
             </g>
         );
     });
     
+    //to-do interface from property to method
     const classMethods = props.elementData.classMethods.map((classMethod: IClassElementMethod, index) => {
-        return <rect key={index}/>
+        const classMethodProps: IClassPropertyElementProps = {
+            index: index,
+            x: props.elementGraphicData.frame.x,
+            y: props.elementGraphicData.frame.sections.methods.y,
+            xTest: props.elementGraphicData.frame.xCenter,
+            rowHeight: props.elementGraphicData.rowHeight,
+            width: props.elementGraphicData.frame.width,
+            fontPixelSize: props.elementGraphicData.fontPixelSize,
+            name: classMethod.name
+        };
+
+        return (
+            <g key={index}>
+                <ClassProperty {...classMethodProps}/>
+            </g>
+        );
     });
 
 
@@ -71,6 +92,9 @@ function Class(props: IClassElement) {
         <g
             className='umlClass'
             pointerEvents='all'
+            onMouseDown={(ev) => props.elementFunctionality.onClassMouseDown(ev, props.elementData.id)}
+            onMouseUp={(ev) => props.elementFunctionality.onClassMouseUp(ev)}
+            onClick={() => dispatch(selectElement(props.elementData.id))}
             onMouseOver={() => setJoints(createJoints(props.elementData, props.elementGraphicData, props.elementFunctionality))}
             onMouseLeave={() => setJoints([])}
         >
@@ -89,7 +113,10 @@ function Class(props: IClassElement) {
                     d={`M ${props.elementGraphicData.frame.x} ${props.elementGraphicData.frame.y + props.elementGraphicData.rowHeight} l ${props.elementGraphicData.frame.width} 0`}
                     stroke='black'
                 />
-                {props.elementData.classMethods.length > 0 && <path/>}
+                {props.elementData.classMethods.length > 0 && <path
+                    d={`M ${props.elementGraphicData.frame.x} ${props.elementGraphicData.frame.sections.methods.y} l ${props.elementGraphicData.frame.width} 0`}
+                    stroke='black'
+                />}
             </g>
             <g className='classHeader'>
                 <text

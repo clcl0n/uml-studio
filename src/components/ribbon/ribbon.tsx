@@ -29,13 +29,18 @@ function Ribbon() {
                             draggable={true}
                             onDragStart={(ev) => ev.dataTransfer.setData('elementType', CanvasEnum.ADD_NEW_CLASS)}
                             className='element-svg'
-                            src='src/assets/icons/table.svg'
+                            src='src/assets/icons/class.svg'
                             alt='table'
                         />
                         <label className='element-label'>Table</label>
                     </div>
                     <div className='element'>
-                        <img className='element-svg' src='src/assets/icons/simple-table.svg' alt='simple-table'/>
+                        <img
+                            draggable={true}
+                            onDragStart={(ev) => ev.dataTransfer.setData('elementType', CanvasEnum.ADD_NEW_FULL_CLASS)}
+                            className='element-svg'
+                            src='src/assets/icons/class-full.svg'
+                            alt='simple-table'/>
                         <label className='element-label'>Simple Table</label>
                     </div>
                     <div className='element'>
