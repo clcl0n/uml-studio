@@ -1,1 +1,0 @@
-export const CHANGE_OPERATION = 'CHANGE_OPERATION';
