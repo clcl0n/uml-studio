@@ -4,7 +4,7 @@ import './ribbon.scss';
 import NavTools from './nav-tools';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
 
-function Ribbon() {
+const Ribbon = () => {
     return (
         <div id='ribbon'>
             <NavTools/>

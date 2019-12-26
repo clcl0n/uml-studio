@@ -9,7 +9,7 @@ import { addNewClassProperty, updateClass, addNewClassMethod, updateClassMethod,
 import { v4 } from 'uuid';
 import IStoreState from '@interfaces/IStoreState';
 
-function ClassEditOptions(props: { class: IClass }) {
+const ClassEditOptions = (props: { class: IClass }) => {
     const dispatch = useDispatch();
     const selectedClassMethods = useSelector((state: IStoreState) => props.class.classMethodIds.map((id) => {
         return state.umlClassDiagram.classMethods.byId[id];

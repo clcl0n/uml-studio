@@ -5,7 +5,6 @@ import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelat
 import ICoordinates from '@interfaces/ICoordinates';
 import Direction from '@enums/direction';
 import SegmentDirection from '@enums/segmentDirection';
-import RelationshipSegment from '@components/app/canvas/class-diagram/relationships/relationhips-segment/relationshipSegment';
 
 const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRelationship, relationshipSegments: Array<IRelationshipSegment>, movingSegmentId: string, cooridates: ICoordinates) => {
     const movingSegment = relationshipSegments.find((segment) => segment.id === movingSegmentId);
