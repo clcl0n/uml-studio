@@ -8,9 +8,44 @@ import IClassRowProps from '@interfaces/class-diagram/class/IClassRowProps';
 import ClassRow from './classRow';
 import { selectNewElement } from '@store/actions/canvas';
 import { useDispatch } from 'react-redux';
+import IClassProps from '@interfaces/class-diagram/class/IClassProps';
+import ICoordinates from '@interfaces/ICoordinates';
+import Joint from './joint';
 
-const Class = (props: { class: IClass, properties: Array<IClassPropertyData>, methods: Array<IClassMethodData> }) => {
+const createJoints = (coordinates: ICoordinates, width: number, height: number, onJointClick: any) => {
+    let joints = new Array<JSX.Element>();
+
+    for (let i = 0; i < 3; i++) {
+        joints.push(
+            <Joint
+                key={i}
+                radius={5}
+                onJointClick={onJointClick}
+                x={coordinates.x + ((width / 2) * i)}
+                y={coordinates.y}
+            />
+        );
+    }
+
+    for (let i = 0; i < 3; i++) {
+        joints.push(
+            <Joint
+                key={i + 3}
+                radius={5}
+                onJointClick={onJointClick}
+                x={coordinates.x + ((width / 2) * i)}
+                y={coordinates.y + height}
+            />
+        );
+    }
+
+    return joints;
+};
+
+const Class = (props: IClassProps) => {
     const dispatch = useDispatch();
+    const [joints, setJoints] = React.useState([]);
+
     const createNewClassRow = (index: number, rowName: string, y: number) => {
         const classRowProps: IClassRowProps = {
             index,
@@ -51,8 +86,8 @@ const Class = (props: { class: IClass, properties: Array<IClassPropertyData>, me
             // onMouseDown={(ev) => props.elementFunctionality.onClassMouseDown(ev, props.elementData.id)}
             // onMouseUp={(ev) => props.elementFunctionality.onClassMouseUp(ev)}
             onClick={(ev) => onClassClick(ev)}
-            // onMouseOver={() => setJoints(createJoints(props.elementData, props.class, props.elementFunctionality))}
-            // onMouseLeave={() => setJoints([])}
+            onMouseOver={() => setJoints(createJoints({ x: props.class.x, y: props.class.y }, props.class.width, props.class.height, props.functionality.onJointClick))}
+            onMouseLeave={() => setJoints([])}
         >
             <g>
                 <rect
@@ -86,9 +121,9 @@ const Class = (props: { class: IClass, properties: Array<IClassPropertyData>, me
             <g className='classMethods'>
                 {...classMethods}
             </g>
-            {/* <g>
+            <g>
                 {...joints}
-            </g> */}
+            </g>
         </g>
     );
 };

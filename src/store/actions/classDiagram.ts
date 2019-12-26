@@ -4,6 +4,8 @@ import ICoordinates from '@interfaces/ICoordinates';
 import IClassMethodData from '@interfaces/class-diagram/class/IClassMethodData';
 import IClassPropertyData from '@interfaces/class-diagram/class/IClassPropertyData';
 import IClass from '@interfaces/class-diagram/class/IClass';
+import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
+import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
 
 export const updateClass = (data: IClass): IReducerPayload<ClassDiagramActionEnum, IClass> => {
     return {
@@ -57,6 +59,34 @@ export const updateClassPropetry = (data: IClassPropertyData): IReducerPayload<C
 export const removeClassProperty = (data: IClassPropertyData): IReducerPayload<ClassDiagramActionEnum, IClassPropertyData> => {
     return {
         type: ClassDiagramActionEnum.REMOVE_CLASS_PROPERTY,
+        data
+    };
+};
+
+export const addNewRelationship = (data: IRelationship): IReducerPayload<ClassDiagramActionEnum, IRelationship> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_RELATIONSHIP,
+        data
+    };
+};
+
+export const updateRelationship = (data: IRelationship): IReducerPayload<ClassDiagramActionEnum, IRelationship> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_RELATIONSHIP,
+        data
+    };
+};
+
+export const addNewRelationshipSegment = (data: IRelationshipSegment): IReducerPayload<ClassDiagramActionEnum, IRelationshipSegment> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_RELATIONSHIP_SEGMENT,
+        data
+    };
+};
+
+export const updateRelationshipSegment = (data: IRelationshipSegment): IReducerPayload<ClassDiagramActionEnum, IRelationshipSegment> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_RELATIONSHIP_SEGMENT,
         data
     };
 };
