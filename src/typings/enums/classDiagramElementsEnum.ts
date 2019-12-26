@@ -1,10 +1,10 @@
 enum ClassDiagramElementsEnum {
-    TABLE = 'table',
-    ASSOCIATION = 'association',
-    DEPENDENCY = 'dependency',
-    AGGREGATION = 'aggregation',
-    COMPOSITION = 'composition',
-    INHERITANCE = 'inheritance'
+    CLASS = 'CLASS',
+    ASSOCIATION = 'ASSOCIATION',
+    DEPENDENCY = 'DEPENDENCY',
+    AGGREGATION = 'AGGREGATION',
+    COMPOSITION = 'COMPOSITION',
+    INHERITANCE = 'INHERITANCE'
 }
 
 export default ClassDiagramElementsEnum;

@@ -14,7 +14,8 @@
             "@components/*": ["components/*"],
             "@enums/*": ["typings/enums/*"],
             "@interfaces/*": ["typings/interfaces/*"],
-            "@actions/*": ["typings/actions/*"]
+            "@actions/*": ["typings/actions/*"],
+            "@store/*": ["store/*"]
         }
     },
     "include": [
