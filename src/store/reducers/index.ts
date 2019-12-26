@@ -1,10 +1,10 @@
-import canvasReducer from './canvas';
-import ribbonReducer from './ribbon';
 import { combineReducers } from 'redux';
+import umlClassDiagram from './uml-class-diagram';
+import canvas from './canvas';
 
 const combinedReducers = combineReducers({
-    ribbon: ribbonReducer,
-    canvas: canvasReducer
+    umlClassDiagram,
+    canvas
 });
 
 export default combinedReducers;

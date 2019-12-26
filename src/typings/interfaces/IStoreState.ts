@@ -1,5 +1,8 @@
-import ICanvasStoreState from './ICanvasStoreState';
+import IClassDiagramState from './class-diagram/IClassDiagramState';
+import ICanvasState from './ICanvasState';
 
 export default interface IStoreState {
-    canvas: ICanvasStoreState;
+    ribbon: string;
+    canvas: ICanvasState;
+    umlClassDiagram: IClassDiagramState;
 }

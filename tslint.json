@@ -12,7 +12,7 @@
             "options": "single"
         },
         "no-console": false,
-        "semicolon": false,
+        "semicolon": true,
         "jsx-no-lambda": false
     },
     "rulesDirectory": [

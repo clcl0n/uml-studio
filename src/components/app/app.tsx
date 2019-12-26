@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './app.scss';
 
-import Ribbon from '@components/ribbon';
-import Canvas from '@components/canvas';
-import SideBar from '@components/sideBar';
+import Ribbon from '@components/app/ribbon';
+import Canvas from './canvas';
+import SideBar from '@components/app/side-bar';
 
 const app = () => {
     return (
