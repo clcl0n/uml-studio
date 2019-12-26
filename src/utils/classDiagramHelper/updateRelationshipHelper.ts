@@ -9,13 +9,12 @@ import RelationshipSegment from '@components/app/canvas/class-diagram/relationsh
 
 const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRelationship, relationshipSegments: Array<IRelationshipSegment>, movingSegmentId: string, cooridates: ICoordinates) => {
     const movingSegment = relationshipSegments.find((segment) => segment.id === movingSegmentId);
-    const dependentSegments = relationshipSegments.filter((segment) => segment.id === movingSegment.toSegmentId || movingSegment.fromSegmentId);
+    const dependentSegments = relationshipSegments.filter((segment) => segment.id === movingSegment.toSegmentId || segment.id === movingSegment.fromSegmentId);
     let movingDirection = Direction.NONE;
     
     const updateHorizontalDependentSegments = () => {
         dependentSegments.forEach((segment) => {
-            const segmentData = dependentSegments.find(s => s.id ===  segment.id);
-            if (segmentData.isStart || segmentData.isEnd) {
+            if (segment.isStart) {
                 segment.lineToX += cooridates.x - movingSegment.x;
             } else {
                 if (segment.x === movingSegment.x) {
@@ -31,8 +30,7 @@ const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRe
 
     const updateVerticalDependentSegments = () => {
         dependentSegments.forEach((segment) => {
-            const segmentData = dependentSegments.find(s => s.id ===  segment.id);
-            if (segmentData.isStart || segmentData.isEnd) {
+            if (segment.isStart || segment.isEnd) {
                     segment.lineToY += cooridates.y - movingSegment.y;
             } else {
                 if (segment.y === movingSegment.y) {
@@ -67,7 +65,7 @@ const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRe
                 lineToY
             }
         );
-        direction === SegmentDirection.VERTICAL ? updateVerticalDependentSegments() : updateHorizontalDependentSegments();
+        direction === SegmentDirection.HORIZONTAL ? updateVerticalDependentSegments() : updateHorizontalDependentSegments();
         movingSegment.isStart = false;
         movingSegment.fromSegmentId = newId;
     };
@@ -88,7 +86,7 @@ const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRe
                 lineToY
             }
         );
-        direction === SegmentDirection.VERTICAL ? updateVerticalDependentSegments() : updateHorizontalDependentSegments();
+        direction === SegmentDirection.HORIZONTAL ? updateVerticalDependentSegments() : updateHorizontalDependentSegments();
         movingSegment.isEnd = false;
         movingSegment.toSegmentId = newId;
     };
