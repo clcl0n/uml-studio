@@ -4,22 +4,14 @@ import './interface-head.scss';
 import IInterfaceHead from '@interfaces/class-diagram/interface/IInterfaceHead';
 
 const InterfaceHead = (props: IInterfaceHead) => {
-    const { graphicData, title } = props;
+    const { graphicData, data } = props;
     return (
         <g>
-            <text
-                className='interface'
-                x={graphicData.textX}
-                y={graphicData.elementTitleY}
-            >
+            <text className='interface' x={graphicData.title.x} y={graphicData.title.y}>
                 {'<<interface>>'}
             </text>
-            <text
-                className='interface-name'
-                x={graphicData.textX}
-                y={graphicData.textY}
-            >
-                {title}
+            <text className='interface-name' x={graphicData.text.x} y={graphicData.text.y}>
+                {data.text}
             </text>
         </g>
     );

@@ -28,10 +28,12 @@ const createNewInterfaceHelper = (coordinates: ICoordinates) => {
 
     const newInterface: IInterface = {
         id: v4(),
-        className: 'interface Name',
         type: ClassDiagramElementsEnum.INTERFACE,
-        interfaceMethodIds: [interfaceMethodId],
-        interfacePropertyIds: [interfacePropertyId],
+        data: {
+            interfaceName: 'interface Name',
+            interfaceMethodIds: [interfaceMethodId],
+            interfacePropertyIds: [interfacePropertyId],
+        },
         graphicData: {
             frame,
             sections: {

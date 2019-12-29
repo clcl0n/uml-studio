@@ -39,8 +39,10 @@ const Class = (props: IClassProps) => {
         const classAttributeProps: IClassAttribute<IClassMethod | IClassProperty> = {
             data: classAttribute,
             graphicData: {
-                textX: frame.xCenter,
-                textY: y + (index * frame.rowHeight) + frame.fontPixelSize
+                text: {
+                    x: frame.xCenter,
+                    y: y + (index * frame.rowHeight) + frame.fontPixelSize
+                }
             }
         };
 
@@ -95,10 +97,14 @@ const Class = (props: IClassProps) => {
 
     const classHeadData: IClassHead = {
         graphicData: {
-            textX: frame.xCenter,
-            textY: frame.y + (frame.rowHeight / 2)
+            text: {
+                x: frame.xCenter,
+                y: frame.y + (frame.rowHeight / 2)
+            }
         },
-        title: 'class name'
+        data: {
+            text: 'class name'
+        }
     };
 
     return (

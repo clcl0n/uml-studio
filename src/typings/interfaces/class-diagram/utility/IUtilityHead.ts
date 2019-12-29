@@ -1,8 +1,4 @@
-export default interface IUtilityHead {
-    graphicData: {
-        textX: number;
-        textY: number;
-        elementTitleY: number;
-    };
-    title: string;
-}
+import IFrameHead from '../common/IFrameHead';
+import ICoordinates from '@interfaces/ICoordinates';
+
+export default interface IUtilityHead extends IFrameHead<{ text: string; }, { text: ICoordinates; title: ICoordinates; }> {}

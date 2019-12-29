@@ -38,8 +38,10 @@ const Utility = (props: IUtilityProps) => {
         const classAttributeProps: IClassAttribute<IUtilityMethod | IUtilityProperty> = {
             data: classAttribute,
             graphicData: {
-                textX: frame.xCenter,
-                textY: y + (index * frame.rowHeight) + frame.fontPixelSize
+                text: {
+                    x: frame.xCenter,
+                    y: y + (index * frame.rowHeight) + frame.fontPixelSize
+                }
             }
         };
 
@@ -94,11 +96,18 @@ const Utility = (props: IUtilityProps) => {
 
     const interfaceHeadData: IUtilityHead = {
         graphicData: {
-            textX: frame.xCenter,
-            textY: frame.y + frame.rowHeight,
-            elementTitleY: frame.y + (frame.rowHeight / 2)
+            text: {
+                x: frame.xCenter,
+                y: frame.y + frame.rowHeight
+            },
+            title: {
+                x: frame.xCenter,
+                y: frame.y + (frame.rowHeight / 2)
+            }
         },
-        title: 'utility name'
+        data: {
+            text: 'utility name'
+        }
     };
 
     return (

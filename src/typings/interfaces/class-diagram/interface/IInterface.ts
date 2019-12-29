@@ -1,16 +1,5 @@
-import IClass from '../class/IClass';
-import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
-import IFrame from '../common/IFrame';
-import IClassFrameSections from '../class/IClassFrameSections';
+import IBaseElement from '../common/IBaseElement';
+import IInterfaceGraphicData from './IInterfaceGraphicData';
+import IInterfaceData from './IInterfaceData';
 
-export default interface IInterface {
-    id: string;
-    type: ClassDiagramElementsEnum;
-    className: string;
-    graphicData: {
-        frame: IFrame;
-        sections: IClassFrameSections
-    };
-    interfacePropertyIds: Array<string>;
-    interfaceMethodIds: Array<string>;
-}
+export default interface IInterface extends IBaseElement<IInterfaceGraphicData, IInterfaceData> {}

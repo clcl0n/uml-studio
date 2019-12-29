@@ -12,20 +12,21 @@ import AccessModifierEnum from '@enums/accessModifierEnum';
 
 const ClassEditOptions = (props: { class: IClass }) => {
     const dispatch = useDispatch();
-    const selectedClassMethods = useSelector((state: IStoreState) => props.class.classMethodIds.map((id) => {
+    const { data } = props.class;
+    const selectedClassMethods = useSelector((state: IStoreState) => data.classMethodIds.map((id) => {
         return state.umlClassDiagram.classMethods.byId[id];
     }));
-    const selectedClassProperties = useSelector((state: IStoreState) => props.class.classPropertyIds.map((id) => {
+    const selectedClassProperties = useSelector((state: IStoreState) => data.classPropertyIds.map((id) => {
         return state.umlClassDiagram.classProperties.byId[id];
     }));
 
     const updateClassGraphic = (classElement: IClass): IClass => {
         classElement.graphicData.sections.methods.y = classElement.graphicData.frame.y + (
-            (classElement.classPropertyIds.length + 1) * classElement.graphicData.frame.rowHeight
+            (data.classPropertyIds.length + 1) * classElement.graphicData.frame.rowHeight
         );
 
         classElement.graphicData.frame.height = (
-            classElement.classPropertyIds.length + classElement.classMethodIds.length + 1
+            data.classPropertyIds.length + data.classMethodIds.length + 1
         ) * classElement.graphicData.frame.rowHeight;
         
         return classElement;
@@ -33,14 +34,14 @@ const ClassEditOptions = (props: { class: IClass }) => {
 
     const removeProperty = (classProperty: IClassProperty) => {
         const updatedClass = {...props.class};
-        updatedClass.classPropertyIds.splice(updatedClass.classPropertyIds.indexOf(classProperty.id, 1));
+        updatedClass.data.classPropertyIds.splice(updatedClass.data.classPropertyIds.indexOf(classProperty.id, 1));
         dispatch(updateClass(updateClassGraphic(updatedClass)));
         dispatch(removeClassProperty(classProperty));
     };
 
     const removeMethod = (classMethod: IClassMethod) => {
         const updatedClass = {...props.class};
-        updatedClass.classMethodIds.splice(updatedClass.classMethodIds.indexOf(classMethod.id), 1);
+        updatedClass.data.classMethodIds.splice(updatedClass.data.classMethodIds.indexOf(classMethod.id), 1);
         dispatch(updateClass(updateClassGraphic(updatedClass)));
         dispatch(removeClassMethod(classMethod));
     };
@@ -98,7 +99,7 @@ const ClassEditOptions = (props: { class: IClass }) => {
             name: ''
         }));
         const updatedClass: IClass = {...props.class};
-        updatedClass.classPropertyIds.push(newPropertyId);
+        updatedClass.data.classPropertyIds.push(newPropertyId);
         dispatch(updateClass(updateClassGraphic(updatedClass)));
     };
 
@@ -111,13 +112,13 @@ const ClassEditOptions = (props: { class: IClass }) => {
             name: ''
         }));
         const updatedClass: IClass = {...props.class};
-        updatedClass.classMethodIds.push(newMethodId);
+        updatedClass.data.classMethodIds.push(newMethodId);
         dispatch(updateClass(updateClassGraphic(updatedClass)));
     };
 
     const onClassNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const updatedClass: IClass = {...props.class};
-        updatedClass.className = event.target.value;
+        updatedClass.data.className = event.target.value;
         dispatch(updateClass(updateClassGraphic(updatedClass)));
     };
 
@@ -126,7 +127,7 @@ const ClassEditOptions = (props: { class: IClass }) => {
             <p>{props.class.type}</p>
             <p>Class Name</p>
             <input
-                value={props.class.className}
+                value={data.className}
                 onChange={(ev) => onClassNameChange(ev)}
                 type='text'
             />

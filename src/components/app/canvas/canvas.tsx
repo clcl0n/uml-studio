@@ -35,8 +35,8 @@ const createElements = (
         elements.push(
             ...classDiagram.classes.allIds.map((id) => {
                 const classElement = classDiagram.classes.byId[id];
-                const classProperties = classElement.classPropertyIds.map((id) => classDiagram.classProperties.byId[id]);
-                const classMethods = classElement.classMethodIds.map((id) => classDiagram.classMethods.byId[id]);
+                const classProperties = classElement.data.classPropertyIds.map((id) => classDiagram.classProperties.byId[id]);
+                const classMethods = classElement.data.classMethodIds.map((id) => classDiagram.classMethods.byId[id]);
                 
                 const props: IClassProps = {
                     class: classElement,
@@ -91,8 +91,8 @@ const createElements = (
             }),
             ...classDiagram.interfaces.allIds.map((id) => {
                 const interfaceElement = classDiagram.interfaces.byId[id];
-                const interfaceProperties = interfaceElement.interfacePropertyIds.map((id) => classDiagram.interfaceProperties.byId[id]);
-                const interfaceMethods = interfaceElement.interfaceMethodIds.map((id) => classDiagram.interfaceMethods.byId[id]);
+                const interfaceProperties = interfaceElement.data.interfacePropertyIds.map((id) => classDiagram.interfaceProperties.byId[id]);
+                const interfaceMethods = interfaceElement.data.interfaceMethodIds.map((id) => classDiagram.interfaceMethods.byId[id]);
                 
                 const props: IInterfaceProps = {
                     interface: interfaceElement,
@@ -124,8 +124,8 @@ const createElements = (
             }),
             ...classDiagram.utilities.allIds.map((id) => {
                 const utilityElement = classDiagram.utilities.byId[id];
-                const utilityProperties = utilityElement.utilityPropertyIds.map((id) => classDiagram.utilityProperties.byId[id]);
-                const utilityMethods = utilityElement.utilityMethodIds.map((id) => classDiagram.utilityMethods.byId[id]);
+                const utilityProperties = utilityElement.data.utilityPropertyIds.map((id) => classDiagram.utilityProperties.byId[id]);
+                const utilityMethods = utilityElement.data.utilityMethodIds.map((id) => classDiagram.utilityMethods.byId[id]);
                 
                 const props: IUtilityProps = {
                     utility: utilityElement,

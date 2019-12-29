@@ -28,10 +28,12 @@ const createNewUtilityHelper = (coordinates: ICoordinates) => {
 
     const newUtility: IUtility = {
         id: v4(),
-        className: 'utility Name',
         type: ClassDiagramElementsEnum.UTILITY,
-        utilityMethodIds: [utilityMethodId],
-        utilityPropertyIds: [utilityPropertyId],
+        data: {
+            utilityName: 'utility Name',
+            utilityMethodIds: [utilityMethodId],
+            utilityPropertyIds: [utilityPropertyId],
+        },
         graphicData: {
             frame,
             sections: {

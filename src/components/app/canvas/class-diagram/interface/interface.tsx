@@ -38,8 +38,10 @@ const Interface = (props: IInterfaceProps) => {
         const classAttributeProps: IClassAttribute<IInterfaceMethod | IInterfaceProperty> = {
             data: classAttribute,
             graphicData: {
-                textX: frame.xCenter,
-                textY: y + (index * frame.rowHeight) + frame.fontPixelSize
+                text: {
+                    x: frame.xCenter,
+                    y: y + (index * frame.rowHeight) + frame.fontPixelSize
+                }
             }
         };
 
@@ -94,11 +96,18 @@ const Interface = (props: IInterfaceProps) => {
 
     const interfaceHeadData: IInterfaceHead = {
         graphicData: {
-            textX: frame.xCenter,
-            textY: frame.y + frame.rowHeight,
-            elementTitleY: frame.y + (frame.rowHeight / 2)
+            text: {
+                x: frame.xCenter,
+                y: frame.y + frame.rowHeight,
+            },
+            title: {
+                x: frame.xCenter,
+                y: frame.y + (frame.rowHeight / 2)
+            }
         },
-        title: 'interface name'
+        data: {
+            text: 'interface name'
+        }
     };
 
     return (

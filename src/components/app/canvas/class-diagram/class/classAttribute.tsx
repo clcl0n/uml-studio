@@ -8,11 +8,7 @@ const ClassAttribute = (props: { classAttribute: IClassAttribute<IClassMethod | 
     const { data, graphicData } = props.classAttribute;
     
     return (
-        <text
-            className='umlClassName'
-            x={graphicData.textX}
-            y={graphicData.textY}
-        >
+        <text className='umlClassName' x={graphicData.text.x} y={graphicData.text.y}>
             {data.name}
         </text>
     );

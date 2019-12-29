@@ -26,10 +26,12 @@ const createNewClass = (coordinates: ICoordinates) => {
 
     const newClass: IClass = {
         id: v4(),
-        className: 'class Name',
         type: ClassDiagramElementsEnum.CLASS,
-        classMethodIds: [classMethodId],
-        classPropertyIds: [classPropertyId],
+        data: {
+            className: 'class Name',
+            classMethodIds: [classMethodId],
+            classPropertyIds: [classPropertyId],
+        },
         graphicData: {
             frame,
             sections: {

@@ -1,7 +1,4 @@
-export default interface IClassHead {
-    graphicData: {
-        textX: number;
-        textY: number;
-    };
-    title: string;
-}
+import ICoordinates from '@interfaces/ICoordinates';
+import IFrameHead from '../common/IFrameHead';
+
+export default interface IClassHead extends IFrameHead<{ text: string }, { text: ICoordinates }> {}
