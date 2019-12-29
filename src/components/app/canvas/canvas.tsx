@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
 import createNewClass from 'utils/classDiagramHelper/createNewClass';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
-import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty } from '@store/actions/classDiagram';
+import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty } from '@store/actions/classDiagram';
 import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
 import Class from './class-diagram/class/class';
 import IClassProps from '@interfaces/class-diagram/class/IClassProps';
@@ -18,6 +18,12 @@ import IRelationship from '@interfaces/class-diagram/relationships/IRelationship
 import updateRelationshipHelper from 'utils/classDiagramHelper/updateRelationshipHelper';
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
 import createNewInterfaceHelper from 'utils/classDiagramHelper/createNewInterfaceHelper';
+import Interface from './class-diagram/interface/interface';
+import IInterfaceProps from '@interfaces/class-diagram/interface/IInterfaceProps';
+import IUtility from '@interfaces/class-diagram/utility/IUtility';
+import createNewUtilityHelper from 'utils/classDiagramHelper/createNewUtilityHelper';
+import IUtilityProps from '@interfaces/class-diagram/utility/IUtilityProps';
+import Utility from './class-diagram/utility/utility';
 
 const createElements = (
         classDiagram: IClassDiagramState,
@@ -84,7 +90,70 @@ const createElements = (
                 );
             }),
             ...classDiagram.interfaces.allIds.map((id) => {
-                return <div key={id}/>;
+                const interfaceElement = classDiagram.interfaces.byId[id];
+                const interfaceProperties = interfaceElement.interfacePropertyIds.map((id) => classDiagram.interfaceProperties.byId[id]);
+                const interfaceMethods = interfaceElement.interfaceMethodIds.map((id) => classDiagram.interfaceMethods.byId[id]);
+                
+                const props: IInterfaceProps = {
+                    interface: interfaceElement,
+                    properties: interfaceProperties,
+                    methods: interfaceMethods,
+                    functionality: {
+                        onJointClick: (event: React.MouseEvent) => {
+                            event.persist();
+                            let circleElement = event.target as SVGCircleElement;
+                            const cx = parseInt(circleElement.getAttribute('cx'));
+                            const cy = parseInt(circleElement.getAttribute('cy'));
+                            updateCanvasOperation({
+                                type: CanvasOperationEnum.DRAWING_NEW_RELATION,
+                                data: {}
+                            });
+                            setCurrentlyDrawingRelation({
+                                x1: cx,
+                                y1: cy,
+                                x2: cx,
+                                y2: cy
+                            });
+                        }
+                    }
+                };
+
+                return (
+                    <Interface key={id} {...props}/>
+                );
+            }),
+            ...classDiagram.utilities.allIds.map((id) => {
+                const utilityElement = classDiagram.utilities.byId[id];
+                const utilityProperties = utilityElement.utilityPropertyIds.map((id) => classDiagram.utilityProperties.byId[id]);
+                const utilityMethods = utilityElement.utilityMethodIds.map((id) => classDiagram.utilityMethods.byId[id]);
+                
+                const props: IUtilityProps = {
+                    utility: utilityElement,
+                    properties: utilityProperties,
+                    methods: utilityMethods,
+                    functionality: {
+                        onJointClick: (event: React.MouseEvent) => {
+                            event.persist();
+                            let circleElement = event.target as SVGCircleElement;
+                            const cx = parseInt(circleElement.getAttribute('cx'));
+                            const cy = parseInt(circleElement.getAttribute('cy'));
+                            updateCanvasOperation({
+                                type: CanvasOperationEnum.DRAWING_NEW_RELATION,
+                                data: {}
+                            });
+                            setCurrentlyDrawingRelation({
+                                x1: cx,
+                                y1: cy,
+                                x2: cx,
+                                y2: cy
+                            });
+                        }
+                    }
+                };
+
+                return (
+                    <Utility key={id} {...props}/>
+                );
             })
         );
 
@@ -230,6 +299,10 @@ const Canvas = () => {
             case RibbonOperationEnum.ADD_NEW_PRIMITIVE_TYPE:
                 break;
             case RibbonOperationEnum.ADD_NEW_UTILITY:
+                const { newUtility, newUtilityProperty, newUtilityMethod } = createNewUtilityHelper(coordinates);
+                dispatch(addNewUtilityMethod(newUtilityMethod));
+                dispatch(addNewUtilityProperty(newUtilityProperty));
+                dispatch(addNewUtility(newUtility));
                 break;
         }
     };

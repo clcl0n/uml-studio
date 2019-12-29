@@ -7,6 +7,9 @@ import IRelationshipSegment from './relationships/IRelationshipSegment';
 import IInterface from './interface/IInterface';
 import IInterfaceMethod from './interface/IInterfaceMethod';
 import IInterfaceProperty from './interface/IInterfaceProperty';
+import IUtility from './utility/IUtility';
+import IUtilityMethod from './utility/IUtilityMethod';
+import IUtilityProperty from './utility/IUtilityProperty';
 
 export default interface IClassDiagramState {
     selectedElementId: string;
@@ -18,4 +21,7 @@ export default interface IClassDiagramState {
     interfaces: IReduxEntity<IInterface>;
     interfaceMethods: IReduxEntity<IInterfaceMethod>;
     interfaceProperties: IReduxEntity<IInterfaceProperty>;
+    utilities: IReduxEntity<IUtility>;
+    utilityMethods: IReduxEntity<IUtilityMethod>;
+    utilityProperties: IReduxEntity<IUtilityProperty>;
 }

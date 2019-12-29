@@ -9,7 +9,6 @@ import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunction
 import FrameSegment from '../common/frameSegment';
 import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
 import FrameHead from '../common/frameHead';
-import IFrameHead from '@interfaces/class-diagram/common/IFrameHead';
 import FrameRow from '../common/frameRow';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import ClassAttribute from './classAttribute';
@@ -17,6 +16,8 @@ import IClassAttribute from '@interfaces/class-diagram/class/IClassAttribute';
 import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import Joints from '../common/joints';
+import ClassHead from './classHead';
+import IClassHead from '@interfaces/class-diagram/class/IClassHead';
 
 const Class = (props: IClassProps) => {
     const dispatch = useDispatch();
@@ -92,12 +93,12 @@ const Class = (props: IClassProps) => {
         }
     };
 
-    const frameHeadData: IFrameHead = {
-        title: 'class name',
+    const classHeadData: IClassHead = {
         graphicData: {
-            x: frame.xCenter,
-            y: frame.y + (frame.rowHeight / 2)
-        }
+            textX: frame.xCenter,
+            textY: frame.y + (frame.rowHeight / 2)
+        },
+        title: 'class name'
     };
 
     return (
@@ -105,7 +106,9 @@ const Class = (props: IClassProps) => {
             graphicData={frame}
             functionality={frameFunctionality}
         >
-            <FrameHead {...frameHeadData} />
+            <FrameHead>
+                <ClassHead classHead={classHeadData}/>
+            </FrameHead>
             <FrameSegment graphicData={classPropertiesSegment}>
                 {...classProperties}
             </FrameSegment>

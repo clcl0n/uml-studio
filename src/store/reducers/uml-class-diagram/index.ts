@@ -7,6 +7,9 @@ import relationshipSegmentsReducer from './relationshipSegments';
 import interfacesReducer from './interfaces';
 import interfaceMethodsReducer from './interfaceMethods';
 import interfacePropertiesReducer from './interfaceProperties';
+import utilitiesReducer from './utilities';
+import utilityMethodsReducer from './utilityMethods';
+import utilityPropertiesReducer from './utilityProperties';
 
 const umlClassDiagramReducer = combineReducers({
     classes: classesReducer,
@@ -16,7 +19,10 @@ const umlClassDiagramReducer = combineReducers({
     relationshipSegments: relationshipSegmentsReducer,
     interfaces: interfacesReducer,
     interfaceMethods: interfaceMethodsReducer,
-    interfaceProperties: interfacePropertiesReducer
+    interfaceProperties: interfacePropertiesReducer,
+    utilities: utilitiesReducer,
+    utilityMethods: utilityMethodsReducer,
+    utilityProperties: utilityPropertiesReducer
 });
 
 export default umlClassDiagramReducer; 

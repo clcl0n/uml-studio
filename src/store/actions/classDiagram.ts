@@ -9,6 +9,9 @@ import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelat
 import IInterface from '@interfaces/class-diagram/interface/IInterface';
 import IInterfaceProperty from '@interfaces/class-diagram/interface/IInterfaceProperty';
 import IInterfaceMethod from '@interfaces/class-diagram/interface/IInterfaceMethod';
+import IUtility from '@interfaces/class-diagram/utility/IUtility';
+import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty';
+import IUtilityMethod from '@interfaces/class-diagram/utility/IUtilityMethod';
 
 export const updateClass = (data: IClass): IReducerPayload<ClassDiagramActionEnum, IClass> => {
     return {
@@ -111,6 +114,27 @@ export const addNewInterfaceProperty = (data: IInterfaceProperty): IReducerPaylo
 export const addNewInterfaceMethod = (data: IInterfaceMethod): IReducerPayload<ClassDiagramActionEnum, IInterfaceMethod> => {
     return {
         type: ClassDiagramActionEnum.ADD_NEW_INTERFACE_METHOD,
+        data
+    };
+};
+
+export const addNewUtility = (data: IUtility): IReducerPayload<ClassDiagramActionEnum, IUtility> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_UTILITY,
+        data
+    };  
+};
+
+export const addNewUtilityProperty = (data: IUtilityProperty): IReducerPayload<ClassDiagramActionEnum, IUtilityProperty> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_UTILITY_PROPERTY,
+        data
+    };
+};
+
+export const addNewUtilityMethod = (data: IUtilityMethod): IReducerPayload<ClassDiagramActionEnum, IUtilityMethod> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_UTILITY_METHOD,
         data
     };
 };

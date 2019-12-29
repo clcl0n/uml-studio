@@ -1,37 +1,37 @@
 import ICoordinates from '@interfaces/ICoordinates';
 import createFrameHelper from './createFrameHelper';
-import IInterface from '@interfaces/class-diagram/interface/IInterface';
+import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import { v4 } from 'uuid';
 import AccessModifierEnum from '@enums/accessModifierEnum';
-import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
+import IUtility from '@interfaces/class-diagram/utility/IUtility';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 
-const createNewInterfaceHelper = (coordinates: ICoordinates) => {
+const createNewUtilityHelper = (coordinates: ICoordinates) => {
     const frame = createFrameHelper(coordinates);
 
-    const interfacePropertyId = v4();
-    const newInterfaceProperty: IClassProperty = {
-        id: interfacePropertyId,
+    const utilityPropertyId = v4();
+    const newUtilityProperty: IClassProperty = {
+        id: utilityPropertyId,
         accessModifier: AccessModifierEnum.PUBLIC,
         name: 'property_1'
     };
 
-    const interfaceMethodId = v4();
-    const newInterfaceMethod: IClassMethod = {
-        id: interfaceMethodId,
+    const utilityMethodId = v4();
+    const newUtilityMethod: IClassMethod = {
+        id: utilityMethodId,
         accessModifier: AccessModifierEnum.PUBLIC,
         name: 'method_1'
     };
 
     frame.height += (frame.rowHeight / 2);
 
-    const newInterface: IInterface = {
+    const newUtility: IUtility = {
         id: v4(),
-        className: 'interface Name',
-        type: ClassDiagramElementsEnum.INTERFACE,
-        interfaceMethodIds: [interfaceMethodId],
-        interfacePropertyIds: [interfacePropertyId],
+        className: 'utility Name',
+        type: ClassDiagramElementsEnum.UTILITY,
+        utilityMethodIds: [utilityMethodId],
+        utilityPropertyIds: [utilityPropertyId],
         graphicData: {
             frame,
             sections: {
@@ -49,10 +49,10 @@ const createNewInterfaceHelper = (coordinates: ICoordinates) => {
     };
 
     return {
-        newInterface,
-        newInterfaceProperty,
-        newInterfaceMethod
+        newUtility,
+        newUtilityProperty,
+        newUtilityMethod
     };
 };
 
-export default createNewInterfaceHelper;
+export default createNewUtilityHelper;

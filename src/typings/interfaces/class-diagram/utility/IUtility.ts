@@ -3,7 +3,7 @@ import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import IFrame from '../common/IFrame';
 import IClassFrameSections from '../class/IClassFrameSections';
 
-export default interface IInterface {
+export default interface IUtility {
     id: string;
     type: ClassDiagramElementsEnum;
     className: string;
@@ -11,6 +11,6 @@ export default interface IInterface {
         frame: IFrame;
         sections: IClassFrameSections
     };
-    interfacePropertyIds: Array<string>;
-    interfaceMethodIds: Array<string>;
+    utilityPropertyIds: Array<string>;
+    utilityMethodIds: Array<string>;
 }

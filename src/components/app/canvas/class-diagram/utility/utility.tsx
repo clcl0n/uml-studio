@@ -1,29 +1,29 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import IInterfaceProps from '@interfaces/class-diagram/interface/IInterfaceProps';
 import { useDispatch } from 'react-redux';
-import Frame from '../common/frame';
-import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
-import { selectNewElement } from '@store/actions/canvas';
-import Joints from '../common/joints';
-import FrameHead from '../common/frameHead';
-import InterfaceHead from './interfaceHead';
-import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
+import IUtilityProps from '@interfaces/class-diagram/utility/IUtilityProps';
+import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
+import IUtilityMethod from '@interfaces/class-diagram/utility/IUtilityMethod';
+import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty';
+import IClassAttribute from '@interfaces/class-diagram/class/IClassAttribute';
 import FrameRow from '../common/frameRow';
 import ClassAttribute from '../class/classAttribute';
-import IInterfaceMethod from '@interfaces/class-diagram/interface/IInterfaceMethod';
-import IInterfaceProperty from '@interfaces/class-diagram/interface/IInterfaceProperty';
-import IClassAttribute from '@interfaces/class-diagram/class/IClassAttribute';
-import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
+import { selectNewElement } from '@store/actions/canvas';
+import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
+import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
+import Joints from '../common/joints';
+import IUtilityHead from '@interfaces/class-diagram/utility/IUtilityHead';
+import Frame from '../common/frame';
+import FrameHead from '../common/frameHead';
+import UtilityHead from './utilityHead';
 import FrameSegment from '../common/frameSegment';
-import IInterfaceHead from '@interfaces/class-diagram/interface/IInterfaceHead';
 
-const Interface = (props: IInterfaceProps) => {
+const Utility = (props: IUtilityProps) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
-    const { frame, sections } = props.interface.graphicData;
-    
-    const createNewInterfaceRow = (index: number, classAttribute: IInterfaceMethod | IInterfaceProperty, y: number) => {
+    const { frame, sections } = props.utility.graphicData;
+
+    const createNewUtilityRow = (index: number, classAttribute: IUtilityMethod | IUtilityProperty, y: number) => {
         const frameRowProps: IFrameRow = {
             graphicData: {
                 index,
@@ -35,7 +35,7 @@ const Interface = (props: IInterfaceProps) => {
                 fontPixelSize: frame.fontPixelSize,
             }
         };
-        const classAttributeProps: IClassAttribute<IInterfaceMethod | IInterfaceProperty> = {
+        const classAttributeProps: IClassAttribute<IUtilityMethod | IUtilityProperty> = {
             data: classAttribute,
             graphicData: {
                 textX: frame.xCenter,
@@ -49,12 +49,11 @@ const Interface = (props: IInterfaceProps) => {
             </FrameRow>
         );
     };
-
-    const onInterfaceClick = (ev: React.MouseEvent) => {
-        dispatch(selectNewElement(props.interface.id));
+    const onUtilityClick = (ev: React.MouseEvent) => {
+        dispatch(selectNewElement(props.utility.id));
     };
 
-    const interfacePropertiesSegment: IFrameSegmentGraphicData = {
+    const utilityPropertiesSegment: IFrameSegmentGraphicData = {
         segmentSeparator: {
             x: frame.x,
             y: sections.properties.y,
@@ -63,7 +62,7 @@ const Interface = (props: IInterfaceProps) => {
         }
     };
 
-    const interfaceMethodsSegment: IFrameSegmentGraphicData = {
+    const utilityMethodsSegment: IFrameSegmentGraphicData = {
         segmentSeparator: {
             x: frame.x,
             y: sections.methods.y,
@@ -72,11 +71,12 @@ const Interface = (props: IInterfaceProps) => {
         }
     };
 
-    const interfaceProperties = props.properties.map((classProperty, index) => createNewInterfaceRow(index, classProperty, sections.properties.y));
-    const interfaceMethods = props.methods.map((classMethods, index) => createNewInterfaceRow(index, classMethods, sections.methods.y));
+
+    const interfaceProperties = props.properties.map((classProperty, index) => createNewUtilityRow(index, classProperty, sections.properties.y));
+    const interfaceMethods = props.methods.map((classMethods, index) => createNewUtilityRow(index, classMethods, sections.methods.y));
 
     const frameFunctionality: IFrameFunctionality = {
-        onFrameClick: onInterfaceClick,
+        onFrameClick: onUtilityClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
             setJoints(<g/>);
         },
@@ -92,29 +92,29 @@ const Interface = (props: IInterfaceProps) => {
         }
     };
 
-    const interfaceHeadData: IInterfaceHead = {
+    const interfaceHeadData: IUtilityHead = {
         graphicData: {
             textX: frame.xCenter,
             textY: frame.y + frame.rowHeight,
             elementTitleY: frame.y + (frame.rowHeight / 2)
         },
-        title: 'interface name'
+        title: 'utility name'
     };
 
     return (
         <Frame graphicData={frame} functionality={frameFunctionality}>
-             <FrameHead>
-                 <InterfaceHead {...interfaceHeadData}/>
-             </FrameHead>
-             <FrameSegment graphicData={interfacePropertiesSegment}>
+                <FrameHead>
+                    <UtilityHead {...interfaceHeadData}/>
+                </FrameHead>
+                <FrameSegment graphicData={utilityPropertiesSegment}>
                 {...interfaceProperties}
-             </FrameSegment>
-             <FrameSegment graphicData={interfaceMethodsSegment}>
+                </FrameSegment>
+                <FrameSegment graphicData={utilityMethodsSegment}>
                 {...interfaceMethods}
-             </FrameSegment>
-             {joints}
+                </FrameSegment>
+                {joints}
         </Frame>
     );
 };
 
-export default Interface;
+export default Utility;
