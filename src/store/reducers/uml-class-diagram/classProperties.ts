@@ -1,15 +1,15 @@
 import IReduxEntity from '@interfaces/IReduxEntity';
 import IReducerPayload from '@interfaces/IReducerPayload';
 import ClassDiagramActionEnum from '@enums/classDiagramActionEnum';
-import IClassPropertyData from '@interfaces/class-diagram/class/IClassPropertyData';
+import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 
-const classPropertiesState: IReduxEntity<IClassPropertyData> = {
+const classPropertiesState: IReduxEntity<IClassProperty> = {
     byId: {},
     allIds: []
 };
 
-const classPropertiesReducer = (state = classPropertiesState, payload: IReducerPayload<ClassDiagramActionEnum, IClassPropertyData>) => {
-    let newState: IReduxEntity<IClassPropertyData>;
+const classPropertiesReducer = (state = classPropertiesState, payload: IReducerPayload<ClassDiagramActionEnum, IClassProperty>) => {
+    let newState: IReduxEntity<IClassProperty>;
     switch(payload.type) {
         case ClassDiagramActionEnum.ADD_NEW_CLASS_PROPERTY:
             newState = {

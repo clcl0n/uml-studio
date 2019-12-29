@@ -5,6 +5,75 @@ import NavTools from './nav-tools';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
 
 const Ribbon = () => {
+    const onElementDragStart = (event: React.DragEvent, ribbonOperation: RibbonOperationEnum) => {
+        event.dataTransfer.setData('elementType', ribbonOperation);
+    };
+    const allElementsData = [
+        {
+            alt: 'table',
+            label: 'Empty Class',
+            src: 'src/assets/icons/class-simple.svg',
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_EMPTY_CLASS
+        },
+        {
+            alt: 'full class',
+            label: 'Class',
+            src: 'src/assets/icons/class-full.svg',
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_CLASS
+        },
+        {
+            alt: 'utility',
+            label: 'utility',
+            src: 'src/assets/icons/utility.svg',
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_UTILITY
+        },
+        {
+            alt: 'primitive',
+            label: 'Primitive Type',
+            src: 'src/assets/icons/primitive.svg',
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_PRIMITIVE_TYPE
+        },
+        {
+            alt: 'object',
+            label: 'Object',
+            src: 'src/assets/icons/object.svg',
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_OBJECT
+        },
+        {
+            alt: 'interface',
+            label: 'Interface',
+            src: 'src/assets/icons/interface.svg',
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_INTERFACE
+        },
+        {
+            alt: 'enumeration',
+            label: 'Enumeration',
+            src: 'src/assets/icons/enumeration.svg',
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_ENUMERATION
+        },
+        {
+            alt: 'dataType',
+            label: 'Data Type',
+            src: 'src/assets/icons/dataType.svg',
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_DATA_TYPE
+        }
+    ];
+
+    const allElements = allElementsData.map((elementData, index) => {
+        return (
+            <div key={index} className='element'>
+                <img
+                    draggable='true'
+                    onDragStart={(ev) => onElementDragStart(ev, elementData.ribbonOperation)}
+                    className='element-svg'
+                    src={elementData.src}
+                    alt={elementData.alt}
+                />
+                <label className='element-label'>{elementData.label}</label>
+            </div>
+        );
+    });
+
     return (
         <div id='ribbon'>
             <NavTools/>
@@ -20,30 +89,7 @@ const Ribbon = () => {
                     <img src='src/assets/icons/tools/outline-undo-24px.svg' alt='delete'/>
                 </div>
                 <div id='elements'>
-                    <div className='element'>
-                        <img
-                            draggable={true}
-                            onDragStart={(ev) => ev.dataTransfer.setData('elementType', RibbonOperationEnum.ADD_NEW_EMPTY_CLASS)}
-                            className='element-svg'
-                            src='src/assets/icons/class.svg'
-                            alt='table'
-                        />
-                        <label className='element-label'>Empty Class</label>
-                    </div>
-                    <div className='element'>
-                        <img
-                            draggable={true}
-                            onDragStart={(ev) => ev.dataTransfer.setData('elementType', RibbonOperationEnum.ADD_NEW_CLASS)}
-                            className='element-svg'
-                            src='src/assets/icons/class-full.svg'
-                            alt='simple-table'
-                        />
-                        <label className='element-label'>Class</label>
-                    </div>
-                    <div className='element'>
-                        <img className='element-svg' src='src/assets/icons/frame-fragment.svg' alt='frame-fragment'/>
-                        <label className='element-label'>Frame Fragment</label>
-                    </div>
+                    {...allElements}
                 </div>
             </div>
         </div>

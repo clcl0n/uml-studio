@@ -3,11 +3,12 @@ import * as ReactDOM from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import * as log from 'loglevel';
 import IClass from '@interfaces/class-diagram/class/IClass';
-import IClassPropertyData from '@interfaces/class-diagram/class/IClassPropertyData';
-import IClassMethodData from '@interfaces/class-diagram/class/IClassMethodData';
+import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
+import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import { addNewClassProperty, updateClass, addNewClassMethod, updateClassMethod, updateClassPropetry, removeClassMethod, removeClassProperty } from '@store/actions/classDiagram';
 import { v4 } from 'uuid';
 import IStoreState from '@interfaces/IStoreState';
+import AccessModifierEnum from '@enums/accessModifierEnum';
 
 const ClassEditOptions = (props: { class: IClass }) => {
     const dispatch = useDispatch();
@@ -19,39 +20,39 @@ const ClassEditOptions = (props: { class: IClass }) => {
     }));
 
     const updateClassGraphic = (classElement: IClass): IClass => {
-        classElement.sections.methods.y = classElement.y + (
-            (classElement.classPropertyIds.length + 1) * classElement.rowHeight
+        classElement.graphicData.sections.methods.y = classElement.graphicData.frame.y + (
+            (classElement.classPropertyIds.length + 1) * classElement.graphicData.frame.rowHeight
         );
 
-        classElement.height = (
+        classElement.graphicData.frame.height = (
             classElement.classPropertyIds.length + classElement.classMethodIds.length + 1
-        ) * classElement.rowHeight;
+        ) * classElement.graphicData.frame.rowHeight;
         
         return classElement;
     };
 
-    const removeProperty = (classProperty: IClassPropertyData) => {
+    const removeProperty = (classProperty: IClassProperty) => {
         const updatedClass = {...props.class};
         updatedClass.classPropertyIds.splice(updatedClass.classPropertyIds.indexOf(classProperty.id, 1));
         dispatch(updateClass(updateClassGraphic(updatedClass)));
         dispatch(removeClassProperty(classProperty));
     };
 
-    const removeMethod = (classMethod: IClassMethodData) => {
+    const removeMethod = (classMethod: IClassMethod) => {
         const updatedClass = {...props.class};
         updatedClass.classMethodIds.splice(updatedClass.classMethodIds.indexOf(classMethod.id), 1);
         dispatch(updateClass(updateClassGraphic(updatedClass)));
         dispatch(removeClassMethod(classMethod));
     };
     
-    const updateMethod = (newMethodName: string, classMethod: IClassMethodData) => {
+    const updateMethod = (newMethodName: string, classMethod: IClassMethod) => {
         dispatch(updateClassMethod({
             ...classMethod,
             name: newMethodName
         }));
     };
 
-    const updateProperty = (newPropertyName: string, classProperty: IClassPropertyData) => {
+    const updateProperty = (newPropertyName: string, classProperty: IClassProperty) => {
         dispatch(updateClassPropetry({
             ...classProperty,
             name: newPropertyName
@@ -93,7 +94,7 @@ const ClassEditOptions = (props: { class: IClass }) => {
         const newPropertyId = v4();
         dispatch(addNewClassProperty({
             id: newPropertyId,
-            accessModifier: 'public',
+            accessModifier: AccessModifierEnum.PUBLIC,
             name: ''
         }));
         const updatedClass: IClass = {...props.class};
@@ -106,7 +107,7 @@ const ClassEditOptions = (props: { class: IClass }) => {
         const newMethodId = v4();
         dispatch(addNewClassMethod({
             id: newMethodId,
-            accessModifier: 'public',
+            accessModifier: AccessModifierEnum.PUBLIC,
             name: ''
         }));
         const updatedClass: IClass = {...props.class};

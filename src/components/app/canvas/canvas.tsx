@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
 import createNewClass from 'utils/classDiagramHelper/createNewClass';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
-import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment } from '@store/actions/classDiagram';
+import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty } from '@store/actions/classDiagram';
 import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
 import Class from './class-diagram/class/class';
 import IClassProps from '@interfaces/class-diagram/class/IClassProps';
@@ -17,6 +17,7 @@ import SegmentDirection from '@enums/segmentDirection';
 import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
 import updateRelationshipHelper from 'utils/classDiagramHelper/updateRelationshipHelper';
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
+import createNewInterfaceHelper from 'utils/classDiagramHelper/createNewInterfaceHelper';
 
 const createElements = (
         classDiagram: IClassDiagramState,
@@ -81,6 +82,9 @@ const createElements = (
                         functionality={{onSegmentMove}}
                     />
                 );
+            }),
+            ...classDiagram.interfaces.allIds.map((id) => {
+                return <div key={id}/>;
             })
         );
 
@@ -201,12 +205,31 @@ const Canvas = () => {
     const CanvasOnDrop = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         event.persist();
+        const coordinates = { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY };
         switch(event.dataTransfer.getData('elementType') as RibbonOperationEnum) {
             case RibbonOperationEnum.ADD_NEW_CLASS:
-                const newClass = createNewClass({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
+                const newClass = createNewClass(coordinates);
                 dispatch(addNewClassMethod(newClass.newClassMethod));
                 dispatch(addNewClassProperty(newClass.newClassProperty));
                 dispatch(addNewClass(newClass.newClass));
+                break;
+            case RibbonOperationEnum.ADD_NEW_DATA_TYPE:
+                break;
+            case RibbonOperationEnum.ADD_NEW_EMPTY_CLASS:
+                break;
+            case RibbonOperationEnum.ADD_NEW_ENUMERATION:
+                break;
+            case RibbonOperationEnum.ADD_NEW_INTERFACE:
+                const { newInterface, newInterfaceMethod, newInterfaceProperty } = createNewInterfaceHelper(coordinates);
+                dispatch(addNewInterfaceMethod(newInterfaceMethod));
+                dispatch(addNewInterfaceProperty(newInterfaceProperty));
+                dispatch(addNewInterface(newInterface));
+                break;
+            case RibbonOperationEnum.ADD_NEW_OBJECT:
+                break;
+            case RibbonOperationEnum.ADD_NEW_PRIMITIVE_TYPE:
+                break;
+            case RibbonOperationEnum.ADD_NEW_UTILITY:
                 break;
         }
     };

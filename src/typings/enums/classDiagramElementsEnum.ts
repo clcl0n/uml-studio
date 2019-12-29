@@ -4,7 +4,8 @@ enum ClassDiagramElementsEnum {
     DEPENDENCY = 'DEPENDENCY',
     AGGREGATION = 'AGGREGATION',
     COMPOSITION = 'COMPOSITION',
-    INHERITANCE = 'INHERITANCE'
+    INHERITANCE = 'INHERITANCE',
+    INTERFACE = 'INTERFACE'
 }
 
 export default ClassDiagramElementsEnum;

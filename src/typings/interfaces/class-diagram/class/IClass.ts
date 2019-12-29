@@ -1,29 +1,15 @@
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import IFrame from '@interfaces/class-diagram/common/IFrame';
+import IClassFrameSections from './IClassFrameSections';
 
 export default interface IClass {
     id: string;
     type: ClassDiagramElementsEnum;
     className: string;
-    rowHeight: number;
-    width: number;
-    height: number;
-    x: number;
-    y: number;
-    xCenter: number;
-    yCenter: number;
-    sections: {
-        head: {
-            y: number;
-        },
-        properties: {
-            y: number;
-        }
-        methods: {
-            y: number;
-        }
+    graphicData: {
+        frame: IFrame;
+        sections: IClassFrameSections
     };
-    fontPixelSize: number;
-    fontMargin: number;
     classPropertyIds: Array<string>;
     classMethodIds: Array<string>;
 }

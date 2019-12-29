@@ -1,11 +1,11 @@
 import IClass from './IClass';
-import IClassPropertyData from './IClassPropertyData';
-import IClassMethodData from './IClassMethodData';
+import IClassProperty from './IClassProperty';
+import IClassMethod from './IClassMethod';
 
 export default interface IClassProps {
     class: IClass;
-    properties: Array<IClassPropertyData>;
-    methods: Array<IClassMethodData>;
+    properties: Array<IClassProperty>;
+    methods: Array<IClassMethod>;
     functionality: {
         onJointClick: (event: React.MouseEvent) => void;
     };

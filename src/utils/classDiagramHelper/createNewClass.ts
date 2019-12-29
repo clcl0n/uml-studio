@@ -1,32 +1,26 @@
 import ICoordinates from '@interfaces/ICoordinates';
-import IClassMethodData from '@interfaces/class-diagram/class/IClassMethodData';
+import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import { v4 } from 'uuid';
-import IClassPropertyData from '@interfaces/class-diagram/class/IClassPropertyData';
+import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import IClass from '@interfaces/class-diagram/class/IClass';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import AccessModifierEnum from '@enums/accessModifierEnum';
+import createFrameHelper from './createFrameHelper';
 
 const createNewClass = (coordinates: ICoordinates) => {
-    const width: number = 100;
-    const rowHeight: number = 25;
-    const height: number = 3 * rowHeight;
-    const xElementCenter: number = coordinates.x;
-    const yElementCenter: number = coordinates.y;
-    const x: number = xElementCenter - (width / 2);
-    const y: number = yElementCenter - (height / 2);
-    const fontPixelSize: number = 12;
-    const fontMargin: number = 5;
+    const frame = createFrameHelper(coordinates);
 
     const classPropertyId = v4();
-    const newClassProperty: IClassPropertyData = {
+    const newClassProperty: IClassProperty = {
         id: classPropertyId,
-        accessModifier: 'public',
+        accessModifier: AccessModifierEnum.PUBLIC,
         name: 'property_1'
     };
 
     const classMethodId = v4();
-    const newClassMethod: IClassMethodData = {
+    const newClassMethod: IClassMethod = {
         id: classMethodId,
-        accessModifier: 'public',
+        accessModifier: AccessModifierEnum.PUBLIC,
         name: 'method_1'
     };
 
@@ -36,24 +30,18 @@ const createNewClass = (coordinates: ICoordinates) => {
         type: ClassDiagramElementsEnum.CLASS,
         classMethodIds: [classMethodId],
         classPropertyIds: [classPropertyId],
-        fontMargin,
-        fontPixelSize,
-        rowHeight,
-        height,
-        width,
-        x,
-        y,
-        xCenter: xElementCenter,
-        yCenter: yElementCenter,
-        sections: {
-            head: {
-                y
-            },
-            properties: {
-                y: y + rowHeight
-            },
-            methods: {
-                y: y + (2 * rowHeight)
+        graphicData: {
+            frame,
+            sections: {
+                head: {
+                    y: frame.y
+                },
+                properties: {
+                    y: frame.y + frame.rowHeight
+                },
+                methods: {
+                    y: frame.y + (2 * frame.rowHeight)
+                }
             }
         }
     };
