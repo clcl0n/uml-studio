@@ -12,6 +12,8 @@ import IInterfaceMethod from '@interfaces/class-diagram/interface/IInterfaceMeth
 import IUtility from '@interfaces/class-diagram/utility/IUtility';
 import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty';
 import IUtilityMethod from '@interfaces/class-diagram/utility/IUtilityMethod';
+import IEnumeration from '@interfaces/class-diagram/enumeration/IEnumeration';
+import IEnumerationEntry from '@interfaces/class-diagram/enumeration/IEnumerationEntry';
 
 export const updateClass = (data: IClass): IReducerPayload<ClassDiagramActionEnum, IClass> => {
     return {
@@ -135,6 +137,20 @@ export const addNewUtilityProperty = (data: IUtilityProperty): IReducerPayload<C
 export const addNewUtilityMethod = (data: IUtilityMethod): IReducerPayload<ClassDiagramActionEnum, IUtilityMethod> => {
     return {
         type: ClassDiagramActionEnum.ADD_NEW_UTILITY_METHOD,
+        data
+    };
+};
+
+export const addNewEnumeration = (data: IEnumeration): IReducerPayload<ClassDiagramActionEnum, IEnumeration> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_ENUMERATION,
+        data
+    };  
+};
+
+export const addNewEnumerationEntry = (data: IEnumerationEntry): IReducerPayload<ClassDiagramActionEnum, IEnumerationEntry> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_ENUMERATION_ENTRY,
         data
     };
 };

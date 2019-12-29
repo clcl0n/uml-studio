@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
 import createNewClass from 'utils/classDiagramHelper/createNewClass';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
-import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty } from '@store/actions/classDiagram';
+import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry } from '@store/actions/classDiagram';
 import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
 import Class from './class-diagram/class/class';
 import IClassProps from '@interfaces/class-diagram/class/IClassProps';
@@ -24,6 +24,9 @@ import IUtility from '@interfaces/class-diagram/utility/IUtility';
 import createNewUtilityHelper from 'utils/classDiagramHelper/createNewUtilityHelper';
 import IUtilityProps from '@interfaces/class-diagram/utility/IUtilityProps';
 import Utility from './class-diagram/utility/utility';
+import createNewEnumerationHelper from 'utils/classDiagramHelper/createNewEnumerationHelper';
+import IEnumerationProps from '@interfaces/class-diagram/enumeration/IEnumerationProps';
+import Enumeration from './class-diagram/enumeration/enumeration';
 
 const createElements = (
         classDiagram: IClassDiagramState,
@@ -153,6 +156,37 @@ const createElements = (
 
                 return (
                     <Utility key={id} {...props}/>
+                );
+            }),
+            ...classDiagram.enumerations.allIds.map((id) => {
+                const enumerationElement = classDiagram.enumerations.byId[id];
+                const enumerationEntries = enumerationElement.data.enumerationEntryIds.map((id) => classDiagram.enumerationEntries.byId[id]);
+                
+                const props: IEnumerationProps = {
+                    enumeration: enumerationElement,
+                    entries: enumerationEntries,
+                    functionality: {
+                        onJointClick: (event: React.MouseEvent) => {
+                            event.persist();
+                            let circleElement = event.target as SVGCircleElement;
+                            const cx = parseInt(circleElement.getAttribute('cx'));
+                            const cy = parseInt(circleElement.getAttribute('cy'));
+                            updateCanvasOperation({
+                                type: CanvasOperationEnum.DRAWING_NEW_RELATION,
+                                data: {}
+                            });
+                            setCurrentlyDrawingRelation({
+                                x1: cx,
+                                y1: cy,
+                                x2: cx,
+                                y2: cy
+                            });
+                        }
+                    }
+                };
+
+                return (
+                    <Enumeration key={id} {...props}/>
                 );
             })
         );
@@ -287,6 +321,9 @@ const Canvas = () => {
             case RibbonOperationEnum.ADD_NEW_EMPTY_CLASS:
                 break;
             case RibbonOperationEnum.ADD_NEW_ENUMERATION:
+                const { newEnumeration, newEntry } = createNewEnumerationHelper(coordinates);
+                dispatch(addNewEnumerationEntry(newEntry));
+                dispatch(addNewEnumeration(newEnumeration));
                 break;
             case RibbonOperationEnum.ADD_NEW_INTERFACE:
                 const { newInterface, newInterfaceMethod, newInterfaceProperty } = createNewInterfaceHelper(coordinates);
