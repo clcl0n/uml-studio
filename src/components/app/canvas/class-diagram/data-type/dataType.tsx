@@ -1,30 +1,30 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import './enumeration.scss';
-import IEnumerationProps from '@interfaces/class-diagram/enumeration/IEnumerationProps';
+import './data-type.scss';
+import IDataTypeProps from '@interfaces/class-diagram/data-type/IDataTypeProps';
 import { useDispatch } from 'react-redux';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
+import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
+import IDataTypeEntryProps from '@interfaces/class-diagram/data-type/IDataTypeEntryProps';
+import DataTypeEntry from './dataTypeEntry';
 import FrameRow from '../common/frameRow';
 import { selectNewElement } from '@store/actions/canvas';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
-import IEnumerationHead from '@interfaces/class-diagram/enumeration/IEnumerationHead';
+import IDataTypeHead from '@interfaces/class-diagram/data-type/IDataTypeHead';
+import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
 import Frame from '../common/frame';
 import FrameHead from '../common/frameHead';
-import EnumerationHead from './enumerationHead';
+import DataTypeHead from './dataTypeHead';
 import FrameSegment from '../common/frameSegment';
-import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
-import IEnumerationEntry from '@interfaces/class-diagram/enumeration/IEnumerationEntry';
-import EnumerationEntry from './enumerationEntry';
-import IEnumerationEntryProps from '@interfaces/class-diagram/enumeration/IEnumerationEntryProps';
 
-const Enumeration = (props: IEnumerationProps) => {
+const DataType = (props: IDataTypeProps) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
-    const { frame } = props.enumeration.graphicData;
-    const { data } = props.enumeration;
+    const { frame } = props.dataType.graphicData;
+    const { data } = props.dataType;
 
-    const createNewEnumerationEntry = (index: number, entry: IEnumerationEntry) => {
+    const createNewDataTypeEntry = (index: number, entry: IDataTypeEntry) => {
         const frameRowProps: IFrameRow = {
             graphicData: {
                 index,
@@ -37,7 +37,7 @@ const Enumeration = (props: IEnumerationProps) => {
             }
         };
 
-        const enumerationEntryProps: IEnumerationEntryProps = {
+        const enumerationEntryProps: IDataTypeEntryProps = {
             graphicData: {
                 text: {
                     x: frame.xCenter,
@@ -49,18 +49,17 @@ const Enumeration = (props: IEnumerationProps) => {
 
         return (
             <FrameRow key={index} frameRow={frameRowProps}>
-                <EnumerationEntry {...enumerationEntryProps}/>
+                <DataTypeEntry {...enumerationEntryProps}/>
             </FrameRow>
         );
     };
 
-    const onEnumerationClick = (ev: React.MouseEvent) => {
-        dispatch(selectNewElement(props.enumeration.id));
+    const onDataTypeClick = (ev: React.MouseEvent) => {
+        dispatch(selectNewElement(props.dataType.id));
     };
-
-    const enumerationEntries = props.entries.map((entry, index) => createNewEnumerationEntry(index, entry));
+    const dataTypeEntries = props.entries.map((entry, index) => createNewDataTypeEntry(index, entry));
     const frameFunctionality: IFrameFunctionality = {
-        onFrameClick: onEnumerationClick,
+        onFrameClick: onDataTypeClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
             setJoints(<g/>);
         },
@@ -75,7 +74,7 @@ const Enumeration = (props: IEnumerationProps) => {
             ));
         }
     };
-    const enumerationHeadData: IEnumerationHead = {
+    const enumerationHeadData: IDataTypeHead = {
         graphicData: {
             text: {
                 x: frame.xCenter,
@@ -87,10 +86,9 @@ const Enumeration = (props: IEnumerationProps) => {
             }
         },
         data: {
-            text: data.enumerationName
+            text: data.dataTypeName
         }
     };
-
     const enumerationEntriesSegment: IFrameSegmentGraphicData = {
         segmentSeparator: {
             x: frame.x,
@@ -103,14 +101,14 @@ const Enumeration = (props: IEnumerationProps) => {
     return (
         <Frame graphicData={frame} functionality={frameFunctionality}>
             <FrameHead>
-                <EnumerationHead {...enumerationHeadData}/>
+                <DataTypeHead {...enumerationHeadData}/>
             </FrameHead>
             <FrameSegment graphicData={enumerationEntriesSegment}>
-                {...enumerationEntries}
+                {...dataTypeEntries}
             </FrameSegment>
             {joints}
         </Frame>
     );
 };
 
-export default Enumeration;
+export default DataType;

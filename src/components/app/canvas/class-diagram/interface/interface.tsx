@@ -106,7 +106,7 @@ const Interface = (props: IInterfaceProps) => {
             }
         },
         data: {
-            text: 'interface name'
+            text: props.interface.data.interfaceName
         }
     };
 

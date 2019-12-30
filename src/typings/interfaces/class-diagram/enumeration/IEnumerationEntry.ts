@@ -1,4 +1,3 @@
-export default interface IEnumerationEntry {
-    id: string;
-    value: string;
-}
+import IEntry from '../common/IEntry';
+
+export default interface IEnumerationEntry extends IEntry {}

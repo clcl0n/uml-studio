@@ -106,7 +106,7 @@ const Utility = (props: IUtilityProps) => {
             }
         },
         data: {
-            text: 'utility name'
+            text: props.utility.data.utilityName
         }
     };
 

@@ -103,7 +103,7 @@ const Class = (props: IClassProps) => {
             }
         },
         data: {
-            text: 'class name'
+            text: props.class.data.className
         }
     };
 

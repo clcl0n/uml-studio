@@ -1,0 +1,21 @@
+.dropdown {
+    width: inherit;
+    .selected-option {
+
+    }
+    .options {
+        position: absolute;
+        background-color: #FFF;
+        width: inherit;
+        .option:hover {
+            background-color: blueviolet;
+        }
+    }
+    .option {
+        user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+    }
+}
