@@ -29,7 +29,7 @@ const classPropertiesReducer = (state = classPropertiesState, payload: IReducerP
         case ClassDiagramActionEnum.REMOVE_CLASS_PROPERTY:
             newState = {...state};
             newState.allIds.splice(newState.allIds.indexOf(payload.data.id), 1);
-            newState.byId[payload.data.id] = undefined;
+            delete newState.byId[payload.data.id];
 
             return newState;
         default:

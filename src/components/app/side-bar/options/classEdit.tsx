@@ -9,6 +9,9 @@ import { addNewClassProperty, updateClass, addNewClassMethod, updateClassMethod,
 import { v4 } from 'uuid';
 import IStoreState from '@interfaces/IStoreState';
 import AccessModifierEnum from '@enums/accessModifierEnum';
+import TextOptions from '@components/app/common/textOptions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import './class-edit.scss';
 
 const ClassEditOptions = (props: { class: IClass }) => {
     const dispatch = useDispatch();
@@ -16,6 +19,7 @@ const ClassEditOptions = (props: { class: IClass }) => {
     const selectedClassMethods = useSelector((state: IStoreState) => data.classMethodIds.map((id) => {
         return state.umlClassDiagram.classMethods.byId[id];
     }));
+    const accessModifiers = Object.values(AccessModifierEnum).map((value) => value.toLowerCase());
     const selectedClassProperties = useSelector((state: IStoreState) => data.classPropertyIds.map((id) => {
         return state.umlClassDiagram.classProperties.byId[id];
     }));
@@ -34,7 +38,7 @@ const ClassEditOptions = (props: { class: IClass }) => {
 
     const removeProperty = (classProperty: IClassProperty) => {
         const updatedClass = {...props.class};
-        updatedClass.data.classPropertyIds.splice(updatedClass.data.classPropertyIds.indexOf(classProperty.id, 1));
+        updatedClass.data.classPropertyIds.splice(updatedClass.data.classPropertyIds.indexOf(classProperty.id), 1);
         dispatch(updateClass(updateClassGraphic(updatedClass)));
         dispatch(removeClassProperty(classProperty));
     };
@@ -60,32 +64,69 @@ const ClassEditOptions = (props: { class: IClass }) => {
         }));
     };
 
-    const editProperties = () => {
-        return selectedClassProperties.map((classProperty, index) => {
-            return (
-                <div key={index}>
+    const classAttributeRow = (
+        key: number,
+        classAttribute: IClassProperty | IClassMethod,
+        placeHolder: string,
+        removeAttribute: (attribute: IClassProperty | IClassMethod) => void,
+        onSelectNewOption: (option: AccessModifierEnum) => void,
+        updateAttribute: (newPropertyName: string, classProperty: IClassProperty) => void
+    ) => {
+        return (
+            <tr key={key}>
+                <td>
+                    <TextOptions onSelectNewOption={(option) => onSelectNewOption(option.toUpperCase() as AccessModifierEnum)} defaultOption={classAttribute.accessModifier.toLowerCase()} options={accessModifiers}/>
+                </td>
+                <td>
                     <input
                         type='text'
-                        value={classProperty.name}
-                        onChange={(ev) => updateProperty(ev.target.value, classProperty)}
+                        className='input'
+                        placeholder={placeHolder}
+                        value={classAttribute.name}
+                        onChange={(ev) => updateAttribute(ev.target.value, classAttribute)}
                     />
-                    <button onClick={(ev) => removeProperty(classProperty)}>Remove</button>
-                </div>
-            );
+                </td>
+                <td>
+                    <FontAwesomeIcon onClick={(ev) => removeAttribute(classAttribute)} className='icon' icon='trash-alt'/>
+                </td>
+            </tr>
+        );
+    };
+
+    const editProperties = () => {
+        return selectedClassProperties.map((classProperty, index) => {
+            const newClassProperty = {...classProperty};
+            const onSelectNewOption = (newAccessModifier: AccessModifierEnum) => {
+                newClassProperty.accessModifier = newAccessModifier;
+                updateProperty(newClassProperty.name, newClassProperty);
+            };
+
+            return classAttributeRow(
+                index,
+                classProperty,
+                'Property',
+                removeProperty,
+                onSelectNewOption,
+                updateProperty
+            );  
         });        
     };
 
     const editMethods = () => {
         return selectedClassMethods.map((classMethod, index) => {
-            return (
-                <div key={index}>
-                    <input
-                        type='text'
-                        value={classMethod.name}
-                        onChange={(ev) => updateMethod(ev.target.value, classMethod)}
-                    />
-                    <button onClick={(ev) => removeMethod(classMethod)} >Remove</button>
-                </div>
+            const newClassMethod = {...classMethod};
+            const onSelectNewOption = (newAccessModifier: AccessModifierEnum) => {
+                newClassMethod.accessModifier = newAccessModifier;
+                updateMethod(newClassMethod.name, newClassMethod);
+            };
+            
+            return classAttributeRow(
+                index,
+                classMethod,
+                'Methods',
+                removeMethod,
+                onSelectNewOption,
+                updateMethod
             );
         });
     };
@@ -123,22 +164,51 @@ const ClassEditOptions = (props: { class: IClass }) => {
     };
 
     return (
-        <div>
-            <p>{props.class.type}</p>
-            <p>Class Name</p>
-            <input
-                value={data.className}
-                onChange={(ev) => onClassNameChange(ev)}
-                type='text'
-            />
-            <p>Class Properties</p>
-            {editProperties()}
-            <button onClick={(ev) => addNewClassProperties()}>Add</button>
-            <p>Class Methods</p>
-            {editMethods()}
-            <button onClick={(ev) => addNewClassMethods()}>Add</button>
+        <div className='container' style={{margin: '10px'}}>
+            <div className='field'>
+                <label className='label'>Class Name</label>
+                <div className='control'>
+                    <input
+                        value={data.className}
+                        onChange={(ev) => onClassNameChange(ev)}
+                        type='text'
+                        className='input'
+                        placeholder='Class name'
+                    />
+                </div>
+            </div>
+            <label className='label'>Properties</label>
+            <table className='table is-fullwidth'>
+                <thead className='has-background-grey-light is-size-6'>
+                    <tr>
+                        <th>Modifier</th>
+                        <th>Property</th>
+                        <th>
+                            <FontAwesomeIcon onClick={(ev) => addNewClassProperties()} icon='plus'/>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {editProperties()}
+                </tbody>
+            </table>
+            <label className='label'>Methods</label>
+            <table className='table is-fullwidth'>
+                <thead className='has-background-grey-light is-size-6'>
+                    <tr>
+                        <th>Modifier</th>
+                        <th>Property</th>
+                        <th>
+                            <FontAwesomeIcon onClick={(ev) => addNewClassMethods()} icon='plus'/>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {editMethods()}
+                </tbody>
+            </table>
         </div>
     );
-}
+};
 
 export default ClassEditOptions;

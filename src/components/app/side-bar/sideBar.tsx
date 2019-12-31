@@ -19,7 +19,6 @@ const SideBar = () => {
 
      return (
         <div id='sideBar'>
-            <p>{selectedElement && selectedElement.id}</p>
             {editOptions}
         </div>
     );

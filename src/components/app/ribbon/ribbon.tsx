@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import './ribbon.scss';
 import NavTools from './nav-tools';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Ribbon = () => {
     const onElementDragStart = (event: React.DragEvent, ribbonOperation: RibbonOperationEnum) => {
@@ -79,14 +80,27 @@ const Ribbon = () => {
             <NavTools/>
             <div id='controlls'>
                 <div id='tools'>
-                    <img src='src/assets/icons/tools/baseline-delete-24px.svg' alt='delete'/>
-                    <img src='src/assets/icons/tools/outline-accessibility-24px.svg' alt='delete'/>
-                    <img src='src/assets/icons/tools/outline-account_box-24px.svg' alt='delete'/>
-                    <img src='src/assets/icons/tools/outline-delete-24px.svg' alt='delete'/>
-                    <img src='src/assets/icons/tools/outline-redo-24px.svg' alt='delete'/>
-                    <img src='src/assets/icons/tools/outline-reply-24px.svg' alt='delete'/>
-                    <img src='src/assets/icons/tools/outline-save-24px.svg' alt='delete'/>
-                    <img src='src/assets/icons/tools/outline-undo-24px.svg' alt='delete'/>
+                    <a className='button is-small is-text'>
+                        <FontAwesomeIcon size='lg' icon='print'/>
+                    </a>    
+                    <a className='button is-small is-text'>
+                        <FontAwesomeIcon icon='save'/>
+                    </a>
+                    <a className='button is-small is-text'>
+                        <FontAwesomeIcon icon='undo'/>
+                    </a>
+                    <a className='button is-small is-text'>
+                        <FontAwesomeIcon icon='redo'/>
+                    </a>
+                    <a className='button is-small is-text'>
+                        <FontAwesomeIcon icon='search-plus'/>
+                    </a>
+                    <a className='button is-small is-text'>
+                        100%
+                    </a>
+                    <a className='button is-small is-text'>
+                        <FontAwesomeIcon icon='search-minus'/>
+                    </a>
                 </div>
                 <div id='elements'>
                     {...allElements}

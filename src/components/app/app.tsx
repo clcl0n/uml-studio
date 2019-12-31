@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './app.scss';
+import 'bulma';
 
 import Ribbon from '@components/app/ribbon';
 import Canvas from './canvas';
@@ -11,8 +12,8 @@ const app = () => {
         <div id='uml-editor-studio'>
             <Ribbon/>
             <div id='uml-editor-body'>
-                <Canvas/>
                 <SideBar/>
+                <Canvas/>
             </div>
         </div>
     );

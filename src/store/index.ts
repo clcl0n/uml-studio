@@ -7,6 +7,6 @@ const store = createStore(
     (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__()
 );
 
-log.debug('Redux store created.'); 
+log.debug('Redux store created.');
 
 export default store;
