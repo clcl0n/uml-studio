@@ -197,6 +197,7 @@ const createElements = (
 const Canvas = () => {
     const dispatch = useDispatch();
     const classDiagram = useSelector((state: IStoreState) => state.umlClassDiagram);
+    const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
     const [canvasOperation, updateCanvasOperation] = React.useState({type: '', data: {}});
     const [currentlyDrawingRelation, setCurrentlyDrawingRelation] = React.useState({
         x1: 0,
@@ -343,14 +344,18 @@ const Canvas = () => {
                 break;
         }
     };
+    const width = `${1500*(canvasZoom/100)}px`;
+    const height = `${1000*(canvasZoom/100)}px`;
     return (
         <div id='canvas' onClick={(ev) => canvasMouseClick(ev)} onMouseMove={(ev) => canvasMouseMove(ev)} onDragOver={(ev) => CanvasOnDragOver(ev)} onDrop={(ev) => CanvasOnDrop(ev)}>
-            <svg id='svg-canvas' width='100%' height='100%'>
-                <g>
-                    {...createElements(classDiagram, updateCanvasOperation, setCurrentlyDrawingRelation)}
-                </g>    
-                <line stroke='black' x1={currentlyDrawingRelation.x1} x2={currentlyDrawingRelation.x2} y1={currentlyDrawingRelation.y1} y2={currentlyDrawingRelation.y2}/>
-            </svg>
+                <div style={{width, height}}>
+                <svg viewBox='0 0 1500 1000' transform={`scale(${canvasZoom/100})`}  id='svg-canvas' width='100%' height='100%'>
+                    <g>
+                        {...createElements(classDiagram, updateCanvasOperation, setCurrentlyDrawingRelation)}
+                    </g>    
+                    <line stroke='black' x1={currentlyDrawingRelation.x1} x2={currentlyDrawingRelation.x2} y1={currentlyDrawingRelation.y1} y2={currentlyDrawingRelation.y2}/>
+                </svg>
+                </div>
         </div>
     );
 };

@@ -4,11 +4,17 @@ import './ribbon.scss';
 import NavTools from './nav-tools';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSelector, useDispatch } from 'react-redux';
+import IStoreState from '@interfaces/IStoreState';
+import { canvasZoomIn, canvasZoomOut } from '@store/actions/ribbon';
 
 const Ribbon = () => {
+    const dispatch = useDispatch();
+    const canvasZoom: number = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
     const onElementDragStart = (event: React.DragEvent, ribbonOperation: RibbonOperationEnum) => {
         event.dataTransfer.setData('elementType', ribbonOperation);
     };
+    const zoomStep = 5;
     const allElementsData = [
         {
             alt: 'table',
@@ -92,13 +98,13 @@ const Ribbon = () => {
                     <a className='button is-small is-text'>
                         <FontAwesomeIcon icon='redo'/>
                     </a>
-                    <a className='button is-small is-text'>
+                    <a onClick={(ev) => dispatch(canvasZoomOut(zoomStep))} className='button is-small is-text'>
                         <FontAwesomeIcon icon='search-plus'/>
                     </a>
                     <a className='button is-small is-text'>
-                        100%
+                        {`${canvasZoom}%`}
                     </a>
-                    <a className='button is-small is-text'>
+                    <a onClick={(ev) => dispatch(canvasZoomIn(zoomStep))} className='button is-small is-text'>
                         <FontAwesomeIcon icon='search-minus'/>
                     </a>
                 </div>
