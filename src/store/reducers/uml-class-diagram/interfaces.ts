@@ -20,6 +20,11 @@ const interfacesReducer = (state = interfacesState, payload: IReducerPayload<Cla
             newState.allIds = [...state.allIds, payload.data.id];
 
             return newState;
+        case ClassDiagramActionEnum.UPDATE_INTERFACE:
+            newState = {...state};
+            newState.byId[payload.data.id] = payload.data;
+
+            return newState;
         default:
             return state;
     }

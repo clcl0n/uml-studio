@@ -29,7 +29,7 @@ const Enumeration = (props: IEnumerationProps) => {
             graphicData: {
                 index,
                 x: frame.x,
-                y: frame.y,
+                y: frame.y + frame.rowHeight,
                 xCenter: frame.xCenter,
                 rowHeight: frame.rowHeight,
                 width: frame.width,
@@ -41,7 +41,7 @@ const Enumeration = (props: IEnumerationProps) => {
             graphicData: {
                 text: {
                     x: frame.xCenter,
-                    y: frame.y + (index + 1 * frame.rowHeight) + frame.fontPixelSize
+                    y: frame.y + ((index + 1) * frame.rowHeight) + frame.fontPixelSize
                 }
             },
             entry

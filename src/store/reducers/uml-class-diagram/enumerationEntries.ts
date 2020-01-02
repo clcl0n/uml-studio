@@ -20,7 +20,18 @@ const enumerationEntriesReducer = (state = enumerationEntriesState, payload: IRe
             };
             newState.byId[payload.data.id] = payload.data;
 
-            return newState
+            return newState;
+        case ClassDiagramActionEnum.UPDATE_ENUMERATION_ENTRY:
+            newState = {...state};
+            newState.byId[payload.data.id] = payload.data;
+
+            return newState;
+        case ClassDiagramActionEnum.REMOVE_ENUMERATION_ENTRY:
+            newState = {...state};
+            newState.allIds.splice(newState.allIds.indexOf(payload.data.id), 1);
+            delete newState.byId[payload.data.id];
+
+            return newState;
         default:
             return state;
     }

@@ -20,6 +20,11 @@ const enumerationsReducer = (state = enumerationsState, payload: IReducerPayload
             newState.allIds = [...state.allIds, payload.data.id];
             
             return newState;
+        case ClassDiagramActionEnum.UPDATE_ENUMERATION:
+            newState = {...state};
+            newState.byId[payload.data.id] = payload.data;
+
+            return newState;
         default:
             return state;
     }

@@ -21,6 +21,17 @@ const interfaceMethodsReducer = (state = interfaceMethodsState, payload: IReduce
             newState.byId[payload.data.id] = payload.data;
 
             return newState;
+        case ClassDiagramActionEnum.UPDATE_INTERFACE_METHOD:
+            newState = {...state};
+            newState.byId[payload.data.id] = payload.data;
+
+            return newState;
+        case ClassDiagramActionEnum.REMOVE_INTERFACE_METHOD:
+            newState = {...state};
+            newState.allIds.splice(newState.allIds.indexOf(payload.data.id), 1);
+            delete newState.byId[payload.data.id];
+
+            return newState;
         default:
             return state;
     }

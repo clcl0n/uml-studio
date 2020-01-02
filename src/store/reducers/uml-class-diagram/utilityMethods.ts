@@ -20,6 +20,17 @@ const utilityMethodsReducer = (state = utilityMethodsState, payload: IReducerPay
             newState.allIds = [...state.allIds, payload.data.id];
 
             return newState;
+        case ClassDiagramActionEnum.UPDATE_UTILITY_METHOD:
+            newState = {...state};
+            newState.byId[payload.data.id] = payload.data;
+
+            return newState;
+        case ClassDiagramActionEnum.REMOVE_UTILITY_METHOD:
+            newState = {...state};
+            newState.allIds.splice(newState.allIds.indexOf(payload.data.id), 1);
+            delete newState.byId[payload.data.id];
+
+            return newState;
         default:
             return state;
     }

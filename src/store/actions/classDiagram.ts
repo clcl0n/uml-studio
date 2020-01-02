@@ -57,7 +57,7 @@ export const addNewClassProperty = (data: IClassProperty): IReducerPayload<Class
     };
 };
 
-export const updateClassPropetry = (data: IClassProperty): IReducerPayload<ClassDiagramActionEnum, IClassProperty> => {
+export const updateClassProperty = (data: IClassProperty): IReducerPayload<ClassDiagramActionEnum, IClassProperty> => {
     return {
         type: ClassDiagramActionEnum.UPDATE_CLASS_PROPERTY,
         data
@@ -151,6 +151,97 @@ export const addNewEnumeration = (data: IEnumeration): IReducerPayload<ClassDiag
 export const addNewEnumerationEntry = (data: IEnumerationEntry): IReducerPayload<ClassDiagramActionEnum, IEnumerationEntry> => {
     return {
         type: ClassDiagramActionEnum.ADD_NEW_ENUMERATION_ENTRY,
+        data
+    };
+};
+
+export const updateEnumerationEntry = (data: IEnumerationEntry): IReducerPayload<ClassDiagramActionEnum, IEnumerationEntry> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_ENUMERATION_ENTRY,
+        data
+    };
+};
+
+export const removeEnumerationEntry = (data: IEnumerationEntry): IReducerPayload<ClassDiagramActionEnum, IEnumerationEntry> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_ENUMERATION_ENTRY,
+        data
+    };
+};
+
+export const updateEnumeration = (data: IEnumeration): IReducerPayload<ClassDiagramActionEnum, IEnumeration> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_ENUMERATION,
+        data
+    };
+};
+
+export const updateInterfaceProperty = (data: IInterfaceProperty): IReducerPayload<ClassDiagramActionEnum, IInterfaceProperty> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_INTERFACE_PROPERTY,
+        data
+    };
+};
+
+export const updateInterfaceMethod = (data: IInterfaceMethod): IReducerPayload<ClassDiagramActionEnum, IInterfaceMethod> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_INTERFACE_METHOD,
+        data
+    };
+};
+
+export const removeInterfaceProperty = (data: IInterfaceProperty): IReducerPayload<ClassDiagramActionEnum, IInterfaceProperty> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_INTERFACE_PROPERTY,
+        data
+    };
+};
+
+export const removeInterfaceMethod = (data: IInterfaceMethod): IReducerPayload<ClassDiagramActionEnum, IInterfaceMethod> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_INTERFACE_METHOD,
+        data
+    };
+};
+
+export const updateInterface = (data: IInterface): IReducerPayload<ClassDiagramActionEnum, IInterface> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_INTERFACE,
+        data
+    };
+};
+
+export const updateUtilityMethod = (data: IUtilityMethod): IReducerPayload<ClassDiagramActionEnum, IUtilityMethod> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_UTILITY_METHOD,
+        data
+    };
+};
+
+export const updateUtilityProperty = (data: IUtilityProperty): IReducerPayload<ClassDiagramActionEnum, IUtilityProperty> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_UTILITY_PROPERTY,
+        data
+    };
+};
+
+export const removeUtilityMethod = (data: IUtilityMethod): IReducerPayload<ClassDiagramActionEnum, IUtilityMethod> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_UTILITY_METHOD,
+        data
+    };
+};
+
+export const removeUtilityProperty = (data: IUtilityProperty): IReducerPayload<ClassDiagramActionEnum, IUtilityProperty> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_UTILITY_PROPERTY,
+        data
+    };
+};
+
+export const updateUtility = (data: IUtility): IReducerPayload<ClassDiagramActionEnum, IUtility> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_UTILITY,
         data
     };
 };
