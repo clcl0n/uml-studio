@@ -12,6 +12,8 @@ import IUtilityMethod from './utility/IUtilityMethod';
 import IUtilityProperty from './utility/IUtilityProperty';
 import IEnumeration from './enumeration/IEnumeration';
 import IEnumerationEntry from './enumeration/IEnumerationEntry';
+import IDataType from './data-type/IDataType';
+import IDataTypeEntry from './data-type/IDataTypeEntry';
 
 export default interface IClassDiagramState {
     selectedElementId: string;
@@ -28,4 +30,6 @@ export default interface IClassDiagramState {
     utilityProperties: IReduxEntity<IUtilityProperty>;
     enumerations: IReduxEntity<IEnumeration>;
     enumerationEntries: IReduxEntity<IEnumerationEntry>;
+    dataTypes: IReduxEntity<IDataType>;
+    dataTypeEntries: IReduxEntity<IDataTypeEntry>;
 }

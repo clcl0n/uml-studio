@@ -14,6 +14,8 @@ import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty
 import IUtilityMethod from '@interfaces/class-diagram/utility/IUtilityMethod';
 import IEnumeration from '@interfaces/class-diagram/enumeration/IEnumeration';
 import IEnumerationEntry from '@interfaces/class-diagram/enumeration/IEnumerationEntry';
+import IDataType from '@interfaces/class-diagram/data-type/IDataType';
+import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
 
 export const updateClass = (data: IClass): IReducerPayload<ClassDiagramActionEnum, IClass> => {
     return {
@@ -242,6 +244,41 @@ export const removeUtilityProperty = (data: IUtilityProperty): IReducerPayload<C
 export const updateUtility = (data: IUtility): IReducerPayload<ClassDiagramActionEnum, IUtility> => {
     return {
         type: ClassDiagramActionEnum.UPDATE_UTILITY,
+        data
+    };
+};
+
+export const addNewDataType = (data: IDataType): IReducerPayload<ClassDiagramActionEnum, IDataType> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_DATA_TYPE,
+        data
+    };  
+};
+
+export const addNewDataTypeEntry = (data: IDataTypeEntry): IReducerPayload<ClassDiagramActionEnum, IDataTypeEntry> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_DATA_TYPE_ENTRY,
+        data
+    };
+};
+
+export const updateDataTypeEntry = (data: IDataTypeEntry): IReducerPayload<ClassDiagramActionEnum, IDataTypeEntry> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_DATA_TYPE_ENTRY,
+        data
+    };
+};
+
+export const removeDataTypeEntry = (data: IDataTypeEntry): IReducerPayload<ClassDiagramActionEnum, IDataTypeEntry> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_DATA_TYPE_ENTRY,
+        data
+    };
+};
+
+export const updateDataType = (data: IDataType): IReducerPayload<ClassDiagramActionEnum, IDataType> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_DATA_TYPE,
         data
     };
 };

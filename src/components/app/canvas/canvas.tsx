@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
 import createNewClass from 'utils/classDiagramHelper/createNewClass';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
-import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry } from '@store/actions/classDiagram';
+import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType } from '@store/actions/classDiagram';
 import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
 import Class from './class-diagram/class/class';
 import IClassProps from '@interfaces/class-diagram/class/IClassProps';
@@ -27,6 +27,9 @@ import Utility from './class-diagram/utility/utility';
 import createNewEnumerationHelper from 'utils/classDiagramHelper/createNewEnumerationHelper';
 import IEnumerationProps from '@interfaces/class-diagram/enumeration/IEnumerationProps';
 import Enumeration from './class-diagram/enumeration/enumeration';
+import createNewDataTypeHelper from 'utils/classDiagramHelper/createNewDataTypeHelper';
+import IDataTypeProps from '@interfaces/class-diagram/data-type/IDataTypeProps';
+import DataType from './class-diagram/data-type/dataType';
 
 const createElements = (
         classDiagram: IClassDiagramState,
@@ -188,7 +191,38 @@ const createElements = (
                 return (
                     <Enumeration key={id} {...props}/>
                 );
-            })
+            }),
+            ...classDiagram.dataTypes.allIds.map((id) => {
+                const dataTypeElement = classDiagram.dataTypes.byId[id];
+                const dataTypeEntries = dataTypeElement.data.dataTypeEntryIds.map((id) => classDiagram.dataTypeEntries.byId[id]);
+                
+                const props: IDataTypeProps = {
+                    dataType: dataTypeElement,
+                    entries: dataTypeEntries,
+                    functionality: {
+                        onJointClick: (event: React.MouseEvent) => {
+                            event.persist();
+                            let circleElement = event.target as SVGCircleElement;
+                            const cx = parseInt(circleElement.getAttribute('cx'));
+                            const cy = parseInt(circleElement.getAttribute('cy'));
+                            updateCanvasOperation({
+                                type: CanvasOperationEnum.DRAWING_NEW_RELATION,
+                                data: {}
+                            });
+                            setCurrentlyDrawingRelation({
+                                x1: cx,
+                                y1: cy,
+                                x2: cx,
+                                y2: cy
+                            });
+                        }
+                    }
+                };
+
+                return (
+                    <DataType key={id} {...props}/>
+                );
+            }),
         );
 
         return elements;
@@ -318,6 +352,9 @@ const Canvas = () => {
                 dispatch(addNewClass(newClass.newClass));
                 break;
             case RibbonOperationEnum.ADD_NEW_DATA_TYPE:
+                const { newDataType, newDataTypeEntry } = createNewDataTypeHelper(coordinates);
+                dispatch(addNewDataTypeEntry(newDataTypeEntry));
+                dispatch(addNewDataType(newDataType));
                 break;
             case RibbonOperationEnum.ADD_NEW_EMPTY_CLASS:
                 break;
@@ -344,18 +381,15 @@ const Canvas = () => {
                 break;
         }
     };
-    const width = `${1500*(canvasZoom/100)}px`;
-    const height = `${1000*(canvasZoom/100)}px`;
+
     return (
         <div id='canvas' onClick={(ev) => canvasMouseClick(ev)} onMouseMove={(ev) => canvasMouseMove(ev)} onDragOver={(ev) => CanvasOnDragOver(ev)} onDrop={(ev) => CanvasOnDrop(ev)}>
-                <div style={{width, height}}>
-                <svg viewBox='0 0 1500 1000' transform={`scale(${canvasZoom/100})`}  id='svg-canvas' width='100%' height='100%'>
-                    <g>
-                        {...createElements(classDiagram, updateCanvasOperation, setCurrentlyDrawingRelation)}
-                    </g>    
-                    <line stroke='black' x1={currentlyDrawingRelation.x1} x2={currentlyDrawingRelation.x2} y1={currentlyDrawingRelation.y1} y2={currentlyDrawingRelation.y2}/>
-                </svg>
-                </div>
+            <svg viewBox='0 0 1500 1000' transform={`scale(${canvasZoom/100})`}  id='svg-canvas' width='100%' height='100%'>
+                <g>
+                    {...createElements(classDiagram, updateCanvasOperation, setCurrentlyDrawingRelation)}
+                </g>    
+                <line stroke='black' x1={currentlyDrawingRelation.x1} x2={currentlyDrawingRelation.x2} y1={currentlyDrawingRelation.y1} y2={currentlyDrawingRelation.y2}/>
+            </svg>
         </div>
     );
 };

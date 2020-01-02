@@ -7,7 +7,8 @@ enum ClassDiagramElementsEnum {
     INHERITANCE = 'INHERITANCE',
     INTERFACE = 'INTERFACE',
     UTILITY = 'UTILITY',
-    ENUMERATION = 'ENUMERATION'
+    ENUMERATION = 'ENUMERATION',
+    DATA_TYPE = 'DATA_TYPE'
 }
 
 export default ClassDiagramElementsEnum;
