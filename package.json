@@ -10,6 +10,7 @@
     "build-dev": "webpack-dev-server --port 3000"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.12.0",
     "@svgr/cli": "^4.3.2",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
@@ -36,10 +37,14 @@
     "write-file-webpack-plugin": "^4.5.0"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.26",
+    "@fortawesome/free-solid-svg-icons": "^5.12.0",
+    "@fortawesome/react-fontawesome": "^0.1.8",
     "@svgr/webpack": "^4.3.2",
     "@types/lodash-es": "^4.17.3",
     "@types/react-redux": "^7.1.1",
     "@types/uuid": "^3.4.5",
+    "bulma": "^0.8.0",
     "lodash-es": "^4.17.15",
     "loglevel": "^1.6.6",
     "loglevel-plugin-prefix": "^0.8.4",

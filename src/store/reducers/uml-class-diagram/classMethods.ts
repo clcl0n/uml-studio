@@ -1,15 +1,15 @@
 import IReduxEntity from '@interfaces/IReduxEntity';
 import IReducerPayload from '@interfaces/IReducerPayload';
-import IClassMethodData from '@interfaces/class-diagram/class/IClassMethodData';
+import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import ClassDiagramActionEnum from '@enums/classDiagramActionEnum';
 
-const classMethodsState: IReduxEntity<IClassMethodData> = {
+const classMethodsState: IReduxEntity<IClassMethod> = {
     byId: {},
     allIds: []
 };
 
-const classMethodsReducer = (state = classMethodsState, payload: IReducerPayload<ClassDiagramActionEnum, IClassMethodData>) => {
-    let newState: IReduxEntity<IClassMethodData>;
+const classMethodsReducer = (state = classMethodsState, payload: IReducerPayload<ClassDiagramActionEnum, IClassMethod>) => {
+    let newState: IReduxEntity<IClassMethod>;
     switch(payload.type) {
         case ClassDiagramActionEnum.ADD_NEW_CLASS_METHOD:
             newState = {
@@ -29,7 +29,7 @@ const classMethodsReducer = (state = classMethodsState, payload: IReducerPayload
         case ClassDiagramActionEnum.REMOVE_CLASS_METHOD:
             newState = {...state};
             newState.allIds.splice(newState.allIds.indexOf(payload.data.id), 1);
-            newState.byId[payload.data.id] = undefined;
+            delete newState.byId[payload.data.id];
 
             return newState;
         default:

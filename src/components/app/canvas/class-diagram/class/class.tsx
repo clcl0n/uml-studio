@@ -1,130 +1,140 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './class.scss';
-import IClass from '@interfaces/class-diagram/class/IClass';
-import IClassPropertyData from '@interfaces/class-diagram/class/IClassPropertyData';
-import IClassMethodData from '@interfaces/class-diagram/class/IClassMethodData';
-import IClassRowProps from '@interfaces/class-diagram/class/IClassRowProps';
-import ClassRow from './classRow';
 import { selectNewElement } from '@store/actions/canvas';
 import { useDispatch } from 'react-redux';
 import IClassProps from '@interfaces/class-diagram/class/IClassProps';
-import ICoordinates from '@interfaces/ICoordinates';
-import Joint from './joint';
-
-const createJoints = (coordinates: ICoordinates, width: number, height: number, onJointClick: any) => {
-    let joints = new Array<JSX.Element>();
-
-    for (let i = 0; i < 3; i++) {
-        joints.push(
-            <Joint
-                key={i}
-                radius={5}
-                onJointClick={onJointClick}
-                x={coordinates.x + ((width / 2) * i)}
-                y={coordinates.y}
-            />
-        );
-    }
-
-    for (let i = 0; i < 3; i++) {
-        joints.push(
-            <Joint
-                key={i + 3}
-                radius={5}
-                onJointClick={onJointClick}
-                x={coordinates.x + ((width / 2) * i)}
-                y={coordinates.y + height}
-            />
-        );
-    }
-
-    return joints;
-};
+import Frame from '../common/frame';
+import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
+import FrameSegment from '../common/frameSegment';
+import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
+import FrameHead from '../common/frameHead';
+import FrameRow from '../common/frameRow';
+import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
+import ClassAttribute from './classAttribute';
+import IClassAttribute from '@interfaces/class-diagram/class/IClassAttribute';
+import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
+import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
+import Joints from '../common/joints';
+import ClassHead from './classHead';
+import IClassHead from '@interfaces/class-diagram/class/IClassHead';
 
 const Class = (props: IClassProps) => {
     const dispatch = useDispatch();
-    const [joints, setJoints] = React.useState([]);
+    const [joints, setJoints] = React.useState(<g/>);
+    const { frame, sections } = props.class.graphicData;
 
-    const createNewClassRow = (index: number, rowName: string, y: number) => {
-        const classRowProps: IClassRowProps = {
-            index,
-            x: props.class.x,
-            y,
-            xCenter: props.class.xCenter,
-            rowHeight: props.class.rowHeight,
-            width: props.class.width,
-            fontPixelSize: props.class.fontPixelSize,
-            name: rowName
+    const createNewClassRow = (index: number, classAttribute: IClassMethod | IClassProperty, y: number) => {
+        const frameRowProps: IFrameRow = {
+            graphicData: {
+                index,
+                x: frame.x,
+                y,
+                xCenter: frame.xCenter,
+                rowHeight: frame.rowHeight,
+                width: frame.width,
+                fontPixelSize: frame.fontPixelSize,
+            }
+        };
+        const classAttributeProps: IClassAttribute<IClassMethod | IClassProperty> = {
+            data: classAttribute,
+            graphicData: {
+                text: {
+                    x: frame.xCenter,
+                    y: y + (index * frame.rowHeight) + frame.fontPixelSize
+                }
+            }
         };
 
         return (
-            <ClassRow key={index} {...classRowProps} />
+            <FrameRow key={index} frameRow={frameRowProps}>
+                <ClassAttribute classAttribute={classAttributeProps}/>
+            </FrameRow>
         );
     };
 
-    const classProperties = props.properties.map((classProperty, index) => createNewClassRow(index, classProperty.name, props.class.sections.properties.y));
-    const classMethods = props.methods.map((classMethods, index) => createNewClassRow(index, classMethods.name, props.class.sections.methods.y));
-
-    const methodsSeparator = () => {
-        return (
-            <path
-                d={`M ${props.class.x} ${props.class.sections.methods.y} l ${props.class.width} 0`}
-                stroke='black'
-            />
-        );
-    };
+    const classProperties = props.properties.map((classProperty, index) => createNewClassRow(index, classProperty, sections.properties.y));
+    const classMethods = props.methods.map((classMethods, index) => createNewClassRow(index, classMethods, sections.methods.y));
 
     const onClassClick = (ev: React.MouseEvent) => {
         dispatch(selectNewElement(props.class.id));
     };
 
-    return (
-        <g
-            className='umlClass'
-            pointerEvents='all'
-            // onMouseDown={(ev) => props.elementFunctionality.onClassMouseDown(ev, props.elementData.id)}
-            // onMouseUp={(ev) => props.elementFunctionality.onClassMouseUp(ev)}
-            onClick={(ev) => onClassClick(ev)}
-            onMouseOver={() => setJoints(createJoints({ x: props.class.x, y: props.class.y }, props.class.width, props.class.height, props.functionality.onJointClick))}
-            onMouseLeave={() => setJoints([])}
-        >
-            <g>
-                <rect
-                    x={props.class.x}
-                    y={props.class.y}
-                    width={props.class.width}
-                    height={props.class.height}
-                    stroke='black'
-                    fill='none'
-                    strokeWidth='3'
+    const frameFunctionality: IFrameFunctionality = {
+        onFrameClick: onClassClick,
+        onFrameMouseLeave: (event: React.MouseEvent) => {
+            setJoints(<g/>);
+        },
+        onFrameMouseOver: (event: React.MouseEvent) => {
+            setJoints((
+                <Joints
+                    coordinates={{ x: frame.x, y: frame.y }}
+                    width={frame.width}
+                    height={frame.height}
+                    onJointClick={props.functionality.onJointClick}
                 />
+            ));
+        }
+    };
 
-                <path
-                    d={`M ${props.class.x} ${props.class.y + props.class.rowHeight} l ${props.class.width} 0`}
-                    stroke='black'
-                />
-                {props.methods.length > 0 && methodsSeparator()}
-            </g>
-            <g className='classHeader'>
-                <text
-                    className='umlClassName'
-                    x={props.class.xCenter}
-                    y={props.class.y + (props.class.rowHeight / 2)}
-                >
-                    {props.class.className}
-                </text>
-            </g>
-            <g className='classProperties'>
+    const classPropertiesSegment: IFrameSegmentGraphicData = {
+        segmentSeparator: {
+            x: frame.x,
+            y: frame.y + frame.rowHeight,
+            xLength: frame.width,
+            yLength: 0
+        }
+    };
+
+    const classMethodsSegment: IFrameSegmentGraphicData = {
+        segmentSeparator: {
+            x: frame.x,
+            y: sections.methods.y,
+            xLength: frame.width,
+            yLength: 0
+        }
+    };
+
+    const classHeadData: IClassHead = {
+        graphicData: {
+            text: {
+                x: frame.xCenter,
+                y: props.methods.length === 0 && props.properties.length === 0 ? frame.y + frame.rowHeight : frame.y + (frame.rowHeight / 2)
+            }
+        },
+        data: {
+            text: props.class.data.className
+        }
+    };
+
+    const framePropertiesSegment = () => {
+        return props.properties.length === 0 ? <g/> : (
+            <FrameSegment graphicData={classPropertiesSegment}>
                 {...classProperties}
-            </g>
-            <g className='classMethods'>
+            </FrameSegment>
+        );
+    };
+
+    const frameMethodsSegment = () => {
+        return props.methods.length === 0 ? <g/> : (
+            <FrameSegment graphicData={classMethodsSegment}>
                 {...classMethods}
-            </g>
-            <g>
-                {...joints}
-            </g>
-        </g>
+            </FrameSegment>
+        );
+    };
+
+    return (
+        <Frame
+            graphicData={frame}
+            functionality={frameFunctionality}
+        >
+            <FrameHead>
+                <ClassHead classHead={classHeadData}/>
+            </FrameHead>
+            {framePropertiesSegment()}
+            {frameMethodsSegment()}
+            {joints}
+        </Frame>
     );
 };
 

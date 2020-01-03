@@ -6,26 +6,33 @@
     grid-template-rows: 25px auto;
     #controlls {
         display: grid;
-        height: 160px;
-        grid-template-columns: 40vw auto;
+        height: 125px;
+        grid-template-columns: 30vw auto;
         background-color: $base-color;
+        border-bottom: 1px solid #323232;
     }
 }
 
 #elements {
-    display: flex;
-    flex-direction: row;
-    overflow-x: scroll;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background-color: $base-light-color;
     .element {
-        display: flex;
-        flex-direction: column;
+        display: inline-block;
         margin-right: 20px;
-        height: 140px;
         .element-svg {
             height: 110px;
         }
         .element-label {
             text-align: center;
+            width: 110px;
+        }
+        &:last-child {
+            padding-right: 20px;
+        }
+        &:first-child {
+            padding-left: 20px;
         }
     }
 }
