@@ -8,7 +8,7 @@ import IUtility from '@interfaces/class-diagram/utility/IUtility';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 
 const createNewUtilityHelper = (coordinates: ICoordinates) => {
-    const frame = createFrameHelper(coordinates);
+    const frame = createFrameHelper(coordinates, 3);
 
     const utilityPropertyId = v4();
     const newUtilityProperty: IClassProperty = {

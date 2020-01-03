@@ -10,6 +10,7 @@ import { v4 } from 'uuid';
 import EntryEdit from '../common/entryEdit';
 import FrameEdit from '../common/frameEdit';
 import EntryTableEdit from '../common/entryTableEdit';
+import updateEnumerationGraphicDataHelper from 'utils/classDiagramHelper/updateEnumerationGraphicDataHelper';
 
 const EnumerationEdit = (props: { enumeration: IEnumeration }) => {
     const dispatch = useDispatch();
@@ -17,13 +18,7 @@ const EnumerationEdit = (props: { enumeration: IEnumeration }) => {
     const selectedEntry= useSelector((state: IStoreState) => data.enumerationEntryIds.map((id) => {
         return state.umlClassDiagram.enumerationEntries.byId[id];
     }));
-    const updateGraphic = (element: IEnumeration): IEnumeration => {
-        element.graphicData.frame.height = (
-            data.enumerationEntryIds.length + 1
-        ) * element.graphicData.frame.rowHeight;
-        
-        return element;
-    };
+    const updateGraphic = (element: IEnumeration): IEnumeration => updateEnumerationGraphicDataHelper(element);
     const removeEntry= (classProperty: IEnumerationEntry) => {
         const updated = {...props.enumeration};
         updated.data.enumerationEntryIds.splice(updated.data.enumerationEntryIds.indexOf(classProperty.id), 1);

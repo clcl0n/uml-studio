@@ -7,10 +7,10 @@ const InterfaceHead = (props: IInterfaceHead) => {
     const { graphicData, data } = props;
     return (
         <g>
-            <text className='interface' x={graphicData.title.x} y={graphicData.title.y}>
+            <text className='svg-text svg-text-center' x={graphicData.title.x} y={graphicData.title.y}>
                 {'<<interface>>'}
             </text>
-            <text className='interface-name' x={graphicData.text.x} y={graphicData.text.y}>
+            <text className='svg-text svg-text-center' x={graphicData.text.x} y={graphicData.text.y}>
                 {data.text}
             </text>
         </g>

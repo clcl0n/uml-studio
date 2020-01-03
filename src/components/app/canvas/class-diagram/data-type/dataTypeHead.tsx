@@ -7,10 +7,10 @@ const DataTypeHead = (props: IDataTypeHead) => {
     const { graphicData, data } = props;
     return (
         <g>
-            <text className='data-type' x={graphicData.title.x} y={graphicData.title.y}>
+            <text className='svg-text svg-text-center' x={graphicData.title.x} y={graphicData.title.y}>
                 {'<<dataType>>'}
             </text>
-            <text className='data-type-name' x={graphicData.text.x} y={graphicData.text.y}>
+            <text className='svg-text svg-text-center' x={graphicData.text.x} y={graphicData.text.y}>
                 {data.text}
             </text>
         </g>

@@ -20,7 +20,7 @@ const ClassAttribute = (props: { classAttribute: IClassAttribute<IClassMethod | 
     };
 
     return (
-        <text className='umlClassName' x={graphicData.text.x} y={graphicData.text.y}>
+        <text className='svg-text svg-text-center' x={graphicData.text.x} y={graphicData.text.y}>
             {classAttributeToString()}
         </text>
     );

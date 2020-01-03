@@ -7,7 +7,7 @@ import IEnumeration from '@interfaces/class-diagram/enumeration/IEnumeration';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 
 const createNewEnumerationHelper = (coordinates: ICoordinates) => {
-    const frame = createFrameHelper(coordinates);
+    const frame = createFrameHelper(coordinates, 2);
 
     const enumerationEntryId = v4();
     const newEntry: IEnumerationEntry = {

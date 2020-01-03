@@ -8,7 +8,7 @@ import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 
 const createNewInterfaceHelper = (coordinates: ICoordinates) => {
-    const frame = createFrameHelper(coordinates);
+    const frame = createFrameHelper(coordinates, 3);
 
     const interfacePropertyId = v4();
     const newInterfaceProperty: IClassProperty = {

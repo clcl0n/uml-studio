@@ -76,7 +76,6 @@ const Ribbon = () => {
                     src={elementData.src}
                     alt={elementData.alt}
                 />
-                <label className='element-label'>{elementData.label}</label>
             </div>
         );
     });

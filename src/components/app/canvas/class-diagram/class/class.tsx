@@ -99,12 +99,28 @@ const Class = (props: IClassProps) => {
         graphicData: {
             text: {
                 x: frame.xCenter,
-                y: frame.y + (frame.rowHeight / 2)
+                y: props.methods.length === 0 && props.properties.length === 0 ? frame.y + frame.rowHeight : frame.y + (frame.rowHeight / 2)
             }
         },
         data: {
             text: props.class.data.className
         }
+    };
+
+    const framePropertiesSegment = () => {
+        return props.properties.length === 0 ? <g/> : (
+            <FrameSegment graphicData={classPropertiesSegment}>
+                {...classProperties}
+            </FrameSegment>
+        );
+    };
+
+    const frameMethodsSegment = () => {
+        return props.methods.length === 0 ? <g/> : (
+            <FrameSegment graphicData={classMethodsSegment}>
+                {...classMethods}
+            </FrameSegment>
+        );
     };
 
     return (
@@ -115,12 +131,8 @@ const Class = (props: IClassProps) => {
             <FrameHead>
                 <ClassHead classHead={classHeadData}/>
             </FrameHead>
-            <FrameSegment graphicData={classPropertiesSegment}>
-                {...classProperties}
-            </FrameSegment>
-            <FrameSegment graphicData={classMethodsSegment}>
-                {...classMethods}
-            </FrameSegment>
+            {framePropertiesSegment()}
+            {frameMethodsSegment()}
             {joints}
         </Frame>
     );

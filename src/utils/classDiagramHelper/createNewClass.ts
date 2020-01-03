@@ -3,12 +3,11 @@ import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import { v4 } from 'uuid';
 import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import IClass from '@interfaces/class-diagram/class/IClass';
-import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import AccessModifierEnum from '@enums/accessModifierEnum';
-import createFrameHelper from './createFrameHelper';
+import createNewBaseClassHelper from './createNewBaseClassHelper';
 
 const createNewClass = (coordinates: ICoordinates) => {
-    const frame = createFrameHelper(coordinates);
+    const { newBaseClass } = createNewBaseClassHelper(coordinates, 3);
 
     const classPropertyId = v4();
     const newClassProperty: IClassProperty = {
@@ -25,26 +24,11 @@ const createNewClass = (coordinates: ICoordinates) => {
     };
 
     const newClass: IClass = {
-        id: v4(),
-        type: ClassDiagramElementsEnum.CLASS,
+        ...newBaseClass,
         data: {
-            className: 'class Name',
             classMethodIds: [classMethodId],
             classPropertyIds: [classPropertyId],
-        },
-        graphicData: {
-            frame,
-            sections: {
-                head: {
-                    y: frame.y
-                },
-                properties: {
-                    y: frame.y + frame.rowHeight
-                },
-                methods: {
-                    y: frame.y + (2 * frame.rowHeight)
-                }
-            }
+            className: 'class name'
         }
     };
 

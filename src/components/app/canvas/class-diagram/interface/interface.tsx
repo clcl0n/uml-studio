@@ -110,17 +110,29 @@ const Interface = (props: IInterfaceProps) => {
         }
     };
 
+    const framePropertiesSegment = () => {
+        return props.properties.length === 0 ? <g/> : (
+            <FrameSegment graphicData={interfacePropertiesSegment}>
+                {...interfaceProperties}
+             </FrameSegment>
+        );
+    };
+
+    const frameMethodsSegment = () => {
+        return props.methods.length === 0 ? <g/> : (
+            <FrameSegment graphicData={interfaceMethodsSegment}>
+                {...interfaceMethods}
+             </FrameSegment>
+        );  
+    };
+
     return (
         <Frame graphicData={frame} functionality={frameFunctionality}>
              <FrameHead>
                  <InterfaceHead {...interfaceHeadData}/>
              </FrameHead>
-             <FrameSegment graphicData={interfacePropertiesSegment}>
-                {...interfaceProperties}
-             </FrameSegment>
-             <FrameSegment graphicData={interfaceMethodsSegment}>
-                {...interfaceMethods}
-             </FrameSegment>
+             {framePropertiesSegment()}
+             {frameMethodsSegment()}
              {joints}
         </Frame>
     );

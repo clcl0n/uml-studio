@@ -14,6 +14,7 @@ import IEnumeration from './enumeration/IEnumeration';
 import IEnumerationEntry from './enumeration/IEnumerationEntry';
 import IDataType from './data-type/IDataType';
 import IDataTypeEntry from './data-type/IDataTypeEntry';
+import IPrimitive from './primitive/IPrimitive';
 
 export default interface IClassDiagramState {
     selectedElementId: string;
@@ -32,4 +33,5 @@ export default interface IClassDiagramState {
     enumerationEntries: IReduxEntity<IEnumerationEntry>;
     dataTypes: IReduxEntity<IDataType>;
     dataTypeEntries: IReduxEntity<IDataTypeEntry>;
+    primitives: IReduxEntity<IPrimitive>;
 }

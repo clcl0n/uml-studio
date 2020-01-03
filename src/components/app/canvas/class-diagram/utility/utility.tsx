@@ -74,8 +74,8 @@ const Utility = (props: IUtilityProps) => {
     };
 
 
-    const interfaceProperties = props.properties.map((classProperty, index) => createNewUtilityRow(index, classProperty, sections.properties.y));
-    const interfaceMethods = props.methods.map((classMethods, index) => createNewUtilityRow(index, classMethods, sections.methods.y));
+    const utilityProperties = props.properties.map((classProperty, index) => createNewUtilityRow(index, classProperty, sections.properties.y));
+    const utilityMethods = props.methods.map((classMethods, index) => createNewUtilityRow(index, classMethods, sections.methods.y));
 
     const frameFunctionality: IFrameFunctionality = {
         onFrameClick: onUtilityClick,
@@ -110,17 +110,29 @@ const Utility = (props: IUtilityProps) => {
         }
     };
 
+    const framePropertiesSegment = () => {
+        return props.properties.length === 0 ? <g/> : (
+            <FrameSegment graphicData={utilityPropertiesSegment}>
+                {...utilityProperties}
+             </FrameSegment>
+        );
+    };
+
+    const frameMethodsSegment = () => {
+        return props.methods.length === 0 ? <g/> : (
+            <FrameSegment graphicData={utilityMethodsSegment}>
+                {...utilityMethods}
+             </FrameSegment>
+        );  
+    };
+
     return (
         <Frame graphicData={frame} functionality={frameFunctionality}>
                 <FrameHead>
                     <UtilityHead {...interfaceHeadData}/>
                 </FrameHead>
-                <FrameSegment graphicData={utilityPropertiesSegment}>
-                {...interfaceProperties}
-                </FrameSegment>
-                <FrameSegment graphicData={utilityMethodsSegment}>
-                {...interfaceMethods}
-                </FrameSegment>
+                {framePropertiesSegment()}
+                {frameMethodsSegment()}
                 {joints}
         </Frame>
     );

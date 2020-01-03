@@ -29,7 +29,7 @@ const Enumeration = (props: IEnumerationProps) => {
             graphicData: {
                 index,
                 x: frame.x,
-                y: frame.y + frame.rowHeight,
+                y: frame.y + frame.rowHeight + (frame.rowHeight/2),
                 xCenter: frame.xCenter,
                 rowHeight: frame.rowHeight,
                 width: frame.width,
@@ -41,7 +41,7 @@ const Enumeration = (props: IEnumerationProps) => {
             graphicData: {
                 text: {
                     x: frame.xCenter,
-                    y: frame.y + ((index + 1) * frame.rowHeight) + frame.fontPixelSize
+                    y: frame.y + ((index + 1) * frame.rowHeight) + frame.fontPixelSize + (frame.rowHeight/2)
                 }
             },
             entry
@@ -94,10 +94,18 @@ const Enumeration = (props: IEnumerationProps) => {
     const enumerationEntriesSegment: IFrameSegmentGraphicData = {
         segmentSeparator: {
             x: frame.x,
-            y: frame.y + frame.rowHeight,
+            y: frame.y + frame.rowHeight + (frame.rowHeight / 2),
             xLength: frame.width,
             yLength: 0
         }
+    };
+
+    const frameEntriesSegment = () => {
+        return props.entries.length === 0 ? <g/> : (
+            <FrameSegment graphicData={enumerationEntriesSegment}>
+                {...enumerationEntries}
+            </FrameSegment>
+        );
     };
 
     return (
@@ -105,9 +113,7 @@ const Enumeration = (props: IEnumerationProps) => {
             <FrameHead>
                 <EnumerationHead {...enumerationHeadData}/>
             </FrameHead>
-            <FrameSegment graphicData={enumerationEntriesSegment}>
-                {...enumerationEntries}
-            </FrameSegment>
+            {frameEntriesSegment()}
             {joints}
         </Frame>
     );

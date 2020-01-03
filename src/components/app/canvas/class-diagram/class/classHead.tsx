@@ -7,7 +7,7 @@ const ClassHead = (props: { classHead: IClassHead }) => {
     const { graphicData, data } = props.classHead;
     
     return (
-        <text className='class-name' x={graphicData.text.x} y={graphicData.text.y}>
+        <text className='svg-text svg-text-center' x={graphicData.text.x} y={graphicData.text.y}>
             {data.text}
         </text>
     );

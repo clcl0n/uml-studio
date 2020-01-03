@@ -13,6 +13,7 @@ import { v4 } from 'uuid';
 import FrameEdit from '../common/frameEdit';
 import ClassMethodEdit from '../class/classMethodEdit';
 import ClassProperyEdit from '../class/classPropertyEdit';
+import updateUtilityGraphicDataHelper from 'utils/classDiagramHelper/updateUtilityGraphicDataHelper';
 
 const UtilityEdit = (props: { utility: IUtility }) => {
     const dispatch = useDispatch();
@@ -23,17 +24,7 @@ const UtilityEdit = (props: { utility: IUtility }) => {
     const selectedProperties = useSelector((state: IStoreState) => data.utilityPropertyIds.map((id) => {
         return state.umlClassDiagram.utilityProperties.byId[id];
     }));
-    const updateGraphic = (interfaceElement: IUtility): IUtility => {
-        interfaceElement.graphicData.sections.methods.y = interfaceElement.graphicData.frame.y + (
-            (data.utilityPropertyIds.length + 1) * interfaceElement.graphicData.frame.rowHeight
-        );
-
-        interfaceElement.graphicData.frame.height = (
-            data.utilityPropertyIds.length + data.utilityMethodIds.length + 1
-        ) * interfaceElement.graphicData.frame.rowHeight;
-        
-        return interfaceElement;
-    };
+    const updateGraphic = (utilityElement: IUtility): IUtility => updateUtilityGraphicDataHelper(utilityElement);
     const removeProperty = (classProperty: IUtilityProperty) => {
         const updatedInterface = {...props.utility};
         updatedInterface.data.utilityPropertyIds.splice(updatedInterface.data.utilityPropertyIds.indexOf(classProperty.id), 1);

@@ -7,10 +7,10 @@ const EnumerationHead = (props: IEnumerationHead) => {
     const { graphicData, data } = props;
     return (
         <g>
-            <text className='enumeration' x={graphicData.title.x} y={graphicData.title.y}>
+            <text className='svg-text svg-text-center' x={graphicData.title.x} y={graphicData.title.y}>
                 {'<<enumeration>>'}
             </text>
-            <text className='enumeration-name' x={graphicData.text.x} y={graphicData.text.y}>
+            <text className='svg-text svg-text-center' x={graphicData.text.x} y={graphicData.text.y}>
                 {data.text}
             </text>
         </g>

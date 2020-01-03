@@ -1,10 +1,10 @@
 import ICoordinates from '@interfaces/ICoordinates';
 import IFrame from '@interfaces/class-diagram/common/IFrame';
 
-const createFrameHelper = (coordinates: ICoordinates): IFrame => {
+const createFrameHelper = (coordinates: ICoordinates, numerOfRows: number): IFrame => {
     const width: number = 100;
     const rowHeight: number = 25;
-    const height: number = 3 * rowHeight;
+    const height: number = numerOfRows * rowHeight;
     const xElementCenter: number = coordinates.x;
     const yElementCenter: number = coordinates.y;
     const x: number = xElementCenter - (width / 2);

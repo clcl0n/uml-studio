@@ -29,7 +29,7 @@ const DataType = (props: IDataTypeProps) => {
             graphicData: {
                 index,
                 x: frame.x,
-                y: frame.y,
+                y: frame.y + frame.rowHeight + (frame.rowHeight/2), 
                 xCenter: frame.xCenter,
                 rowHeight: frame.rowHeight,
                 width: frame.width,
@@ -41,7 +41,7 @@ const DataType = (props: IDataTypeProps) => {
             graphicData: {
                 text: {
                     x: frame.xCenter,
-                    y: frame.y + (index + 1 * frame.rowHeight) + frame.fontPixelSize
+                    y: frame.y + (index + 1 * frame.rowHeight) + frame.fontPixelSize + (frame.rowHeight/2)
                 }
             },
             entry
@@ -92,7 +92,7 @@ const DataType = (props: IDataTypeProps) => {
     const enumerationEntriesSegment: IFrameSegmentGraphicData = {
         segmentSeparator: {
             x: frame.x,
-            y: frame.y + frame.rowHeight,
+            y: frame.y + frame.rowHeight + (frame.rowHeight / 2),
             xLength: frame.width,
             yLength: 0
         }

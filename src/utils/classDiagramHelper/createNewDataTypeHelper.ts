@@ -6,7 +6,7 @@ import IDataType from '@interfaces/class-diagram/data-type/IDataType';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 
 const createNewDataTypeHelper = (coordinates: ICoordinates) => {
-    const frame = createFrameHelper(coordinates);
+    const frame = createFrameHelper(coordinates, 2);
 
     const dataTypeEntryId = v4();
     const newDataTypeEntry: IDataTypeEntry = {
