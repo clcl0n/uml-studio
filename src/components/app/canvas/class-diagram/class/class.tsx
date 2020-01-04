@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './class.scss';
-import { selectNewElement } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
 import { useDispatch } from 'react-redux';
 import IClassProps from '@interfaces/class-diagram/class/IClassProps';
 import Frame from '../common/frame';
@@ -18,6 +18,8 @@ import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import Joints from '../common/joints';
 import ClassHead from './classHead';
 import IClassHead from '@interfaces/class-diagram/class/IClassHead';
+import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import Direction from '@enums/direction';
 
 const Class = (props: IClassProps) => {
     const dispatch = useDispatch();
@@ -61,6 +63,14 @@ const Class = (props: IClassProps) => {
     };
 
     const frameFunctionality: IFrameFunctionality = {
+        onFrameResize: (event: React.MouseEvent, direction: Direction) => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
+                elementId: props.class.id
+            }));
+        },
+        onFrameSetDefaultWidth: () => {},
         onFrameClick: onClassClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
             setJoints(<g/>);

@@ -78,6 +78,8 @@ const Utility = (props: IUtilityProps) => {
     const utilityMethods = props.methods.map((classMethods, index) => createNewUtilityRow(index, classMethods, sections.methods.y));
 
     const frameFunctionality: IFrameFunctionality = {
+        onFrameResize: () => {},
+        onFrameSetDefaultWidth: () => {},
         onFrameClick: onUtilityClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
             setJoints(<g/>);

@@ -60,6 +60,8 @@ const Enumeration = (props: IEnumerationProps) => {
 
     const enumerationEntries = props.entries.map((entry, index) => createNewEnumerationEntry(index, entry));
     const frameFunctionality: IFrameFunctionality = {
+        onFrameResize: () => {},
+        onFrameSetDefaultWidth: () => {},
         onFrameClick: onEnumerationClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
             setJoints(<g/>);

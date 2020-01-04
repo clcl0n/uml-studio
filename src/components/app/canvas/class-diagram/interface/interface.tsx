@@ -78,6 +78,8 @@ const Interface = (props: IInterfaceProps) => {
     const interfaceMethods = props.methods.map((classMethods, index) => createNewInterfaceRow(index, classMethods, sections.methods.y));
 
     const frameFunctionality: IFrameFunctionality = {
+        onFrameResize: () => {},
+        onFrameSetDefaultWidth: () => {},
         onFrameClick: onInterfaceClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
             setJoints(<g/>);

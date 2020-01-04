@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
 import createNewClass from 'utils/classDiagramHelper/createNewClass';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
-import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType, addNewPrimitive } from '@store/actions/classDiagram';
+import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType, addNewPrimitive, updateClass } from '@store/actions/classDiagram';
 import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
 import Class from './class-diagram/class/class';
 import IClassProps from '@interfaces/class-diagram/class/IClassProps';
@@ -34,11 +34,15 @@ import createNewPrimitiveType from 'utils/classDiagramHelper/createNewPrimitiveT
 import IPrimitiveProps from '@interfaces/class-diagram/primitive/IPrimitiveProps';
 import Primitive from './class-diagram/primitive/primitive';
 import createNewBaseClassHelper from 'utils/classDiagramHelper/createNewBaseClassHelper';
+import { isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import resizeClassHelper from 'utils/classDiagramHelper/resizeClassHelper';
+import IClass from '@interfaces/class-diagram/class/IClass';
+import Direction from '@enums/direction';
 
 const createElements = (
         classDiagram: IClassDiagramState,
         updateCanvasOperation: React.Dispatch<React.SetStateAction<{type: CanvasOperationEnum, data: any}>>,
-        setCurrentlyDrawingRelation: React.Dispatch<React.SetStateAction<{ x1: number, y1: number, x2: number, y2: number}>>
+        setCurrentlyDrawingRelation: React.Dispatch<React.SetStateAction<{ x1: number, y1: number, x2: number, y2: number}>>,
     ) => {
         let elements: Array<JSX.Element> = [];
 
@@ -265,6 +269,19 @@ const Canvas = () => {
     const dispatch = useDispatch();
     const classDiagram = useSelector((state: IStoreState) => state.umlClassDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
+    const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
+    const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
+    const selectedElement = useSelector((state: IStoreState) => {
+        if (state.umlClassDiagram.classes.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.classes.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.interfaces.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.interfaces.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.utilities.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.utilities.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.enumerations.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.enumerations.byId[canvasOperationState.elementId];
+        }
+    });
     const [canvasOperation, updateCanvasOperation] = React.useState({type: '', data: {}});
     const [currentlyDrawingRelation, setCurrentlyDrawingRelation] = React.useState({
         x1: 0,
@@ -337,6 +354,18 @@ const Canvas = () => {
         event.persist();
         let coordinates: ICoordinates = { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY };
         // coordinates = gridRoundCoordinates(coordinates);
+        //new******************
+        switch(canvasOperationState.type) {
+            case CanvasOperationEnum.RESIZE_ELEMENT_LEFT:
+                dispatch(updateClass(resizeClassHelper(selectedElement as IClass, coordinates, Direction.LEFT)));
+                break;
+            case CanvasOperationEnum.RESIZE_ELEMENT_RIGHT:
+                dispatch(updateClass(resizeClassHelper(selectedElement as IClass, coordinates, Direction.RIGHT)));
+                break;
+        }
+
+
+        //old to-do refactor
         switch(canvasOperation.type) {
             case CanvasOperationEnum.DRAWING_NEW_RELATION:
                 updateDrawingRelation(coordinates);
@@ -419,8 +448,16 @@ const Canvas = () => {
         }
     };
 
+    const resetCanvasOperation = () => {
+        dispatch(isMouseDown(false));
+        dispatch(newCanvasOperation({
+            type: CanvasOperationEnum.NONE,
+            elementId: ''
+        }));
+    };
+
     return (
-        <div id='canvas' onClick={(ev) => canvasMouseClick(ev)} onMouseMove={(ev) => canvasMouseMove(ev)} onDragOver={(ev) => CanvasOnDragOver(ev)} onDrop={(ev) => CanvasOnDrop(ev)}>
+        <div id='canvas' onMouseUp={() => resetCanvasOperation()} onClick={(ev) => canvasMouseClick(ev)} onMouseMove={(ev) => canvasMouseMove(ev)} onDragOver={(ev) => CanvasOnDragOver(ev)} onDrop={(ev) => CanvasOnDrop(ev)}>
             <svg viewBox='0 0 1500 1000' transform={`scale(${canvasZoom/100})`}  id='svg-canvas' width='100%' height='100%'>
                 <g>
                     {...createElements(classDiagram, updateCanvasOperation, setCurrentlyDrawingRelation)}
