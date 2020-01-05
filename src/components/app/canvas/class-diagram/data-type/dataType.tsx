@@ -59,6 +59,9 @@ const DataType = (props: IDataTypeProps) => {
     };
     const dataTypeEntries = props.entries.map((entry, index) => createNewDataTypeEntry(index, entry));
     const frameFunctionality: IFrameFunctionality = {
+        onFrameMove: (event: React.MouseEvent) => {
+
+        },
         onFrameResize: () => {},
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onDataTypeClick,

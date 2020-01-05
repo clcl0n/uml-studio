@@ -20,6 +20,9 @@ const Primitive = (props: IPrimitiveProps) => {
         dispatch(selectNewElement(props.primitive.id));
     };
     const frameFunctionality: IFrameFunctionality = {
+        onFrameMove: (event: React.MouseEvent) => {
+
+        },
         onFrameResize: () => {},
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onPrimitiveClick,

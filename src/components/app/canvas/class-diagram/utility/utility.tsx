@@ -78,6 +78,9 @@ const Utility = (props: IUtilityProps) => {
     const utilityMethods = props.methods.map((classMethods, index) => createNewUtilityRow(index, classMethods, sections.methods.y));
 
     const frameFunctionality: IFrameFunctionality = {
+        onFrameMove: (event: React.MouseEvent) => {
+
+        },
         onFrameResize: () => {},
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onUtilityClick,

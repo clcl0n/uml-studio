@@ -7,12 +7,13 @@ import Direction from '@enums/direction';
 const Frame = (props: {graphicData: IFrame, functionality: IFrameFunctionality, children: React.ReactNode}) => {
     const { graphicData, functionality } = props;
 
+    const onFrameMouseDown = (event: React.MouseEvent) => {
+    };
+
     return (
         <g
             className='umlClass'
             pointerEvents='all'
-            // onMouseDown={(ev) => props.elementFunctionality.onClassMouseDown(ev, props.elementData.id)}
-            // onMouseUp={(ev) => props.elementFunctionality.onClassMouseUp(ev)}
             onClick={(ev) => functionality.onFrameClick(ev)}
             onMouseOver={(ev) => functionality.onFrameMouseOver(ev)}
             onMouseLeave={(ev) => functionality.onFrameMouseLeave(ev)}
@@ -57,7 +58,11 @@ const Frame = (props: {graphicData: IFrame, functionality: IFrameFunctionality, 
                     strokeWidth='1'
                 />
             </g>
-            {props.children}
+            <g
+                onMouseDown={(ev) => functionality.onFrameMove(ev)}
+            >
+                {props.children}
+            </g>
         </g>
     );
 };

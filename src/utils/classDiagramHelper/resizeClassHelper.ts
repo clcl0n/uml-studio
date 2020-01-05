@@ -6,8 +6,6 @@ const minWidth = 100;
 
 const resizeClassHelper = (classElement: IClass, coordinates: ICoordinates, direction: Direction) => {
     const { graphicData } = classElement;
-    // coordinates.x -= 4;
-    // coordinates.y -= 4;
     // let fixX = -0.5;
     // let fixY = 0.5;
     // if (currentlyDrawingRelation.y1 > coordinates.y) {
