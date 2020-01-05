@@ -1,5 +1,5 @@
 import ICoordinates from '@interfaces/ICoordinates';
-import createFrameHelper from './createFrameHelper';
+import createFrameHelper from '../createFrameHelper';
 import IClass from '@interfaces/class-diagram/class/IClass';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import { v4 } from 'uuid';

@@ -1,15 +1,15 @@
 import IReduxEntity from '@interfaces/IReduxEntity';
-import IPrimitive from '@interfaces/class-diagram/primitive/IPrimitive';
+import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
 import IReducerPayload from '@interfaces/IReducerPayload';
 import ClassDiagramActionEnum from '@enums/classDiagramActionEnum';
 
-const primitivesState: IReduxEntity<IPrimitive> = {
+const primitiveTypesState: IReduxEntity<IPrimitiveType> = {
     byId: {},
     allIds: []
 };
 
-const primitivesReducer = (state = primitivesState, payload: IReducerPayload<ClassDiagramActionEnum, IPrimitive>) => {
-    let newState: IReduxEntity<IPrimitive> = {
+const primitiveTypessReducer = (state = primitiveTypesState, payload: IReducerPayload<ClassDiagramActionEnum, IPrimitiveType>) => {
+    let newState: IReduxEntity<IPrimitiveType> = {
         byId: {},
         allIds: []
     };
@@ -30,4 +30,4 @@ const primitivesReducer = (state = primitivesState, payload: IReducerPayload<Cla
     }
 };
 
-export default primitivesReducer;
+export default primitiveTypessReducer;

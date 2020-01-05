@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import IPrimitiveHead from '@interfaces/class-diagram/primitive/IPrimitiveHead';
+import IPrimitiveTypeHead from '@interfaces/class-diagram/primitive-type/IPrimitiveTypeHead';
 
-const PrimitiveHead = (props: IPrimitiveHead) => {
+const PrimitiveTypeHead = (props: IPrimitiveTypeHead) => {
     const { graphicData, data } = props;
     return (
         <g>
@@ -16,4 +16,4 @@ const PrimitiveHead = (props: IPrimitiveHead) => {
     );
 };
 
-export default PrimitiveHead;
+export default PrimitiveTypeHead;

@@ -8,13 +8,13 @@ import IInterfaceProps from '@interfaces/class-diagram/interface/IInterfaceProps
 import IUtilityProps from '@interfaces/class-diagram/utility/IUtilityProps';
 import IEnumerationProps from '@interfaces/class-diagram/enumeration/IEnumerationProps';
 import IDataTypeProps from '@interfaces/class-diagram/data-type/IDataTypeProps';
-import IPrimitiveProps from '@interfaces/class-diagram/primitive/IPrimitiveProps';
+import IPrimitiveTypeProps from '@interfaces/class-diagram/primitive-type/IPrimitiveTypeProps';
 import Association from './relationships/association/association';
 import Interface from './interface/interface';
 import Utility from './utility/utility';
 import Enumeration from './enumeration/enumeration';
 import DataType from './data-type/dataType';
-import Primitive from './primitive/primitive';
+import PrimitiveType from './primitive-type/primitiveType';
 import Class from './class/class';
 
 const ClassDiagram = (props: {
@@ -210,10 +210,10 @@ const ClassDiagram = (props: {
                 <DataType key={id} {...props}/>
             );
         }),
-        ...classDiagram.primitives.allIds.map((id) => {
-            const primitiveTypeElement = classDiagram.primitives.byId[id];
+        ...classDiagram.primitiveTypes.allIds.map((id) => {
+            const primitiveTypeElement = classDiagram.primitiveTypes.byId[id];
             
-            const props: IPrimitiveProps = {
+            const props: IPrimitiveTypeProps = {
                 primitive: primitiveTypeElement,
                 functionality: {
                     onJointClick: (event: React.MouseEvent) => {
@@ -236,7 +236,7 @@ const ClassDiagram = (props: {
             };
 
             return (
-                <Primitive key={id} {...props}/>
+                <PrimitiveType key={id} {...props}/>
             );
         })
     );

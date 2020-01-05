@@ -1,5 +1,5 @@
 import ICoordinates from '@interfaces/ICoordinates';
-import createFrameHelper from './createFrameHelper';
+import createFrameHelper from '../createFrameHelper';
 import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import { v4 } from 'uuid';
 import AccessModifierEnum from '@enums/accessModifierEnum';

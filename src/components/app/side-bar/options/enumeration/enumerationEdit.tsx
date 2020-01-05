@@ -10,7 +10,7 @@ import { v4 } from 'uuid';
 import EntryEdit from '../common/entryEdit';
 import FrameEdit from '../common/frameEdit';
 import EntryTableEdit from '../common/entryTableEdit';
-import updateEnumerationGraphicDataHelper from 'utils/classDiagramHelper/updateEnumerationGraphicDataHelper';
+import updateEnumerationGraphicDataHelper from 'utils/classDiagramHelper/enumeration/updateEnumerationGraphicDataHelper';
 
 const EnumerationEdit = (props: { enumeration: IEnumeration }) => {
     const dispatch = useDispatch();

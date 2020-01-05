@@ -2,15 +2,17 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Frame from '../common/frame';
 import FrameHead from '../common/frameHead';
-import PrimitiveHead from './primitiveHead';
-import IPrimitiveProps from '@interfaces/class-diagram/primitive/IPrimitiveProps';
+import PrimitiveHead from './primitiveTypeHead';
+import IPrimitiveTypeProps from '@interfaces/class-diagram/primitive-type/IPrimitiveTypeProps';
 import { useDispatch } from 'react-redux';
-import { selectNewElement } from '@store/actions/canvas';
+import { selectNewElement, newCanvasOperation, isMouseDown } from '@store/actions/canvas';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
-import IPrimitiveHead from '@interfaces/class-diagram/primitive/IPrimitiveHead';
+import IPrimitiveHead from '@interfaces/class-diagram/primitive-type/IPrimitiveTypeHead';
+import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import Direction from '@enums/direction';
 
-const Primitive = (props: IPrimitiveProps) => {
+const PrimitiveType = (props: IPrimitiveTypeProps) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
     const { frame } = props.primitive.graphicData;
@@ -20,10 +22,20 @@ const Primitive = (props: IPrimitiveProps) => {
         dispatch(selectNewElement(props.primitive.id));
     };
     const frameFunctionality: IFrameFunctionality = {
-        onFrameMove: (event: React.MouseEvent) => {
-
+        onFrameMove: () => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: CanvasOperationEnum.MOVE_ELEMENT,
+                elementId: props.primitive.id
+            }));
         },
-        onFrameResize: () => {},
+        onFrameResize: (direction: Direction) => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
+                elementId: props.primitive.id
+            }));
+        },
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onPrimitiveClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
@@ -66,4 +78,4 @@ const Primitive = (props: IPrimitiveProps) => {
     );
 };
 
-export default Primitive;
+export default PrimitiveType;

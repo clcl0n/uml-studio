@@ -1,6 +1,5 @@
 import IReducerPayload from '@interfaces/IReducerPayload';
 import ClassDiagramActionEnum from '@enums/classDiagramActionEnum';
-import ICoordinates from '@interfaces/ICoordinates';
 import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import IClass from '@interfaces/class-diagram/class/IClass';
@@ -16,7 +15,7 @@ import IEnumeration from '@interfaces/class-diagram/enumeration/IEnumeration';
 import IEnumerationEntry from '@interfaces/class-diagram/enumeration/IEnumerationEntry';
 import IDataType from '@interfaces/class-diagram/data-type/IDataType';
 import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
-import IPrimitive from '@interfaces/class-diagram/primitive/IPrimitive';
+import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
 
 export const updateClass = (data: IClass): IReducerPayload<ClassDiagramActionEnum, IClass> => {
     return {
@@ -284,14 +283,14 @@ export const updateDataType = (data: IDataType): IReducerPayload<ClassDiagramAct
     };
 };
 
-export const addNewPrimitive = (data: IPrimitive): IReducerPayload<ClassDiagramActionEnum, IPrimitive> => {
+export const addNewPrimitive = (data: IPrimitiveType): IReducerPayload<ClassDiagramActionEnum, IPrimitiveType> => {
     return {
         type: ClassDiagramActionEnum.ADD_NEW_PRIMITIVE,
         data
     };
 };
 
-export const updatePrimitive = (data: IPrimitive): IReducerPayload<ClassDiagramActionEnum, IPrimitive> => {
+export const updatePrimitiveType = (data: IPrimitiveType): IReducerPayload<ClassDiagramActionEnum, IPrimitiveType> => {
     return {
         type: ClassDiagramActionEnum.UPDATE_PRIMITIVE,
         data

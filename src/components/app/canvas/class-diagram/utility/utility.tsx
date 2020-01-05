@@ -8,7 +8,7 @@ import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty
 import IClassAttribute from '@interfaces/class-diagram/class/IClassAttribute';
 import FrameRow from '../common/frameRow';
 import ClassAttribute from '../class/classAttribute';
-import { selectNewElement } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
 import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
@@ -17,6 +17,8 @@ import Frame from '../common/frame';
 import FrameHead from '../common/frameHead';
 import UtilityHead from './utilityHead';
 import FrameSegment from '../common/frameSegment';
+import Direction from '@enums/direction';
+import CanvasOperationEnum from '@enums/canvasOperationEnum';
 
 const Utility = (props: IUtilityProps) => {
     const dispatch = useDispatch();
@@ -78,10 +80,20 @@ const Utility = (props: IUtilityProps) => {
     const utilityMethods = props.methods.map((classMethods, index) => createNewUtilityRow(index, classMethods, sections.methods.y));
 
     const frameFunctionality: IFrameFunctionality = {
-        onFrameMove: (event: React.MouseEvent) => {
-
+        onFrameMove: () => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: CanvasOperationEnum.MOVE_ELEMENT,
+                elementId: props.utility.id
+            }));
         },
-        onFrameResize: () => {},
+        onFrameResize: (direction: Direction) => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
+                elementId: props.utility.id
+            }));
+        },
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onUtilityClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {

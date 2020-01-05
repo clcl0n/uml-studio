@@ -1,5 +1,5 @@
 import ICoordinates from '@interfaces/ICoordinates';
-import createFrameHelper from './createFrameHelper';
+import createFrameHelper from '../createFrameHelper';
 import { v4 } from 'uuid';
 import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
 import IDataType from '@interfaces/class-diagram/data-type/IDataType';
@@ -24,7 +24,8 @@ const createNewDataTypeHelper = (coordinates: ICoordinates) => {
             dataTypeEntryIds: [dataTypeEntryId]
         },
         graphicData: {
-            frame
+            frame,
+            sections: {}
         }
     };
 

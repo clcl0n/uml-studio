@@ -14,7 +14,7 @@ import FrameEdit from '../common/frameEdit';
 import ClassMethodEdit from './classMethodEdit';
 import ClassProperyEdit from './classPropertyEdit';
 import ClassAttributeRow from './classAttributeRow';
-import updateClassGraphicDataHelper from 'utils/classDiagramHelper/updateClassGraphicDataHelper';
+import updateClassGraphicDataHelper from 'utils/classDiagramHelper/class/updateClassGraphicDataHelper';
 
 const ClassEditOptions = (props: { class: IClass }) => {
     const dispatch = useDispatch();

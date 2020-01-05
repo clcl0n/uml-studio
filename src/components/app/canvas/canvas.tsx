@@ -3,25 +3,41 @@ import * as ReactDOM from 'react-dom';
 import './canvas.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
-import createNewClass from 'utils/classDiagramHelper/createNewClass';
+import createNewClass from 'utils/classDiagramHelper/class/createNewClass';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
-import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType, addNewPrimitive, updateClass } from '@store/actions/classDiagram';
+import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType, addNewPrimitive, updateClass, updateUtility, updatePrimitiveType, updateInterface, updateEnumeration, updateDataType } from '@store/actions/classDiagram';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import ICoordinates from '@interfaces/ICoordinates';
 import createNewRelationship from 'utils/classDiagramHelper/createNewRelationship';
 import updateRelationshipHelper from 'utils/classDiagramHelper/updateRelationshipHelper';
-import createNewInterfaceHelper from 'utils/classDiagramHelper/createNewInterfaceHelper';
-import createNewUtilityHelper from 'utils/classDiagramHelper/createNewUtilityHelper';
-import createNewEnumerationHelper from 'utils/classDiagramHelper/createNewEnumerationHelper';
-import createNewDataTypeHelper from 'utils/classDiagramHelper/createNewDataTypeHelper';
-import createNewPrimitiveType from 'utils/classDiagramHelper/createNewPrimitiveTypeHelper';
-import createNewBaseClassHelper from 'utils/classDiagramHelper/createNewBaseClassHelper';
+import createNewInterfaceHelper from 'utils/classDiagramHelper/interface/createNewInterfaceHelper';
+import createNewUtilityHelper from 'utils/classDiagramHelper/utility/createNewUtilityHelper';
+import createNewEnumerationHelper from 'utils/classDiagramHelper/enumeration/createNewEnumerationHelper';
+import createNewDataTypeHelper from 'utils/classDiagramHelper/dataType/createNewDataTypeHelper';
+import createNewPrimitiveType from 'utils/classDiagramHelper/primitive-type/createNewPrimitiveTypeHelper';
+import createNewBaseClassHelper from 'utils/classDiagramHelper/class/createNewBaseClassHelper';
 import { isMouseDown, newCanvasOperation } from '@store/actions/canvas';
-import resizeClassHelper from 'utils/classDiagramHelper/resizeClassHelper';
+import resizeClassHelper from 'utils/classDiagramHelper/class/resizeClassHelper';
 import IClass from '@interfaces/class-diagram/class/IClass';
 import Direction from '@enums/direction';
-import moveClassHelper from 'utils/classDiagramHelper/moveClassHelper';
+import moveClassHelper from 'utils/classDiagramHelper/class/moveClassHelper';
 import ClassDiagram from './class-diagram/classDiagram';
+import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import IUtility from '@interfaces/class-diagram/utility/IUtility';
+import resizeUtilityHelper from 'utils/classDiagramHelper/utility/resizeUtilityHelper';
+import moveUtilityHelper from 'utils/classDiagramHelper/utility/moveUtilityHelper';
+import resizePrimitiveTypeHelper from 'utils/classDiagramHelper/primitive-type/resizePrimitiveTypeHelper';
+import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
+import movePrimitiveTypeHelper from 'utils/classDiagramHelper/primitive-type/movePrimitiveTypeHelper';
+import IInterface from '@interfaces/class-diagram/interface/IInterface';
+import resizeInterfaceHelper from 'utils/classDiagramHelper/interface/resizeInterfaceHelper';
+import resizeEnumerationHelper from 'utils/classDiagramHelper/enumeration/resizeEnumerationHelper';
+import IEnumeration from '@interfaces/class-diagram/enumeration/IEnumeration';
+import resizeDataTypeHelper from 'utils/classDiagramHelper/dataType/resizeDataTypeHelper';
+import IDataType from '@interfaces/class-diagram/data-type/IDataType';
+import moveInterfaceHelper from 'utils/classDiagramHelper/interface/moveInterfaceHelper';
+import moveEnumerationHelper from 'utils/classDiagramHelper/enumeration/moveEnumerationHelper';
+import moveDataTypeHelper from 'utils/classDiagramHelper/dataType/moveDataTypeHelper';
 
 const Canvas = () => {
     const dispatch = useDispatch();
@@ -38,6 +54,10 @@ const Canvas = () => {
             return state.umlClassDiagram.utilities.byId[canvasOperationState.elementId];
         } else if (state.umlClassDiagram.enumerations.byId[canvasOperationState.elementId]) {
             return state.umlClassDiagram.enumerations.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.primitiveTypes.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.primitiveTypes.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.dataTypes.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.dataTypes.byId[canvasOperationState.elementId];
         }
     });
     const [oldCursorPosition, updateOldCursorPosition] = React.useState({ x: 0, y: 0 });
@@ -117,13 +137,70 @@ const Canvas = () => {
         if (isMouseDown) {
             switch(canvasOperationState.type) {
                 case CanvasOperationEnum.RESIZE_ELEMENT_LEFT:
-                    dispatch(updateClass(resizeClassHelper(selectedElement as IClass, coordinates, Direction.LEFT)));
+                    switch(selectedElement.type) {
+                        case ClassDiagramElementsEnum.CLASS:
+                            dispatch(updateClass(resizeClassHelper(selectedElement as IClass, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.UTILITY:
+                            dispatch(updateUtility(resizeUtilityHelper(selectedElement as IUtility, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
+                            dispatch(updatePrimitiveType(resizePrimitiveTypeHelper(selectedElement as IPrimitiveType, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.INTERFACE:
+                            dispatch(updateInterface(resizeInterfaceHelper(selectedElement as IInterface, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.ENUMERATION:
+                            dispatch(updateEnumeration(resizeEnumerationHelper(selectedElement as IEnumeration, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.DATA_TYPE:
+                            dispatch(updateDataType(resizeDataTypeHelper(selectedElement as IDataType, coordinates, Direction.LEFT)));
+                            break;
+                    }
                     break;
                 case CanvasOperationEnum.RESIZE_ELEMENT_RIGHT:
-                    dispatch(updateClass(resizeClassHelper(selectedElement as IClass, coordinates, Direction.RIGHT)));
+                    switch(selectedElement.type) {
+                        case ClassDiagramElementsEnum.CLASS:
+                            dispatch(updateClass(resizeClassHelper(selectedElement as IClass, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.UTILITY:
+                            dispatch(updateUtility(resizeUtilityHelper(selectedElement as IUtility, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
+                            dispatch(updatePrimitiveType(resizePrimitiveTypeHelper(selectedElement as IPrimitiveType, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.INTERFACE:
+                            dispatch(updateInterface(resizeInterfaceHelper(selectedElement as IInterface, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.ENUMERATION:
+                            dispatch(updateEnumeration(resizeEnumerationHelper(selectedElement as IEnumeration, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.DATA_TYPE:
+                            dispatch(updateDataType(resizeDataTypeHelper(selectedElement as IDataType, coordinates, Direction.RIGHT)));
+                            break;
+                    }
                     break;
                 case CanvasOperationEnum.MOVE_ELEMENT:
-                    dispatch(updateClass(moveClassHelper(selectedElement as IClass, coordinates, oldCursorPosition)));
+                    switch(selectedElement.type) {
+                        case ClassDiagramElementsEnum.CLASS:
+                            dispatch(updateClass(moveClassHelper(selectedElement as IClass, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.UTILITY:
+                            dispatch(updateUtility(moveUtilityHelper(selectedElement as IUtility, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
+                            dispatch(updatePrimitiveType(movePrimitiveTypeHelper(selectedElement as IPrimitiveType, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.INTERFACE:
+                            dispatch(updateInterface(moveInterfaceHelper(selectedElement as IInterface, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.ENUMERATION:
+                            dispatch(updateEnumeration(moveEnumerationHelper(selectedElement as IEnumeration, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.DATA_TYPE:
+                            dispatch(updateDataType(moveDataTypeHelper(selectedElement as IDataType, coordinates, oldCursorPosition)));
+                            break;
+                    }
                     break;
             }
         };

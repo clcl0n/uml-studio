@@ -35,7 +35,7 @@ const Frame = (props: {graphicData: IFrame, functionality: IFrameFunctionality, 
                     strokeWidth='6'
                     stroke='transparent'
                     cursor='ew-resize'
-                    onMouseDown={(ev) => functionality.onFrameResize(ev, Direction.LEFT)}
+                    onMouseDown={() => functionality.onFrameResize(Direction.LEFT)}
                     onDoubleClick={() => functionality.onFrameSetDefaultWidth()}
                 />
                 <path
@@ -49,7 +49,7 @@ const Frame = (props: {graphicData: IFrame, functionality: IFrameFunctionality, 
                     stroke='transparent'
                     strokeWidth='6'
                     cursor='ew-resize'
-                    onMouseDown={(ev) => functionality.onFrameResize(ev, Direction.RIGHT)}
+                    onMouseDown={() => functionality.onFrameResize(Direction.RIGHT)}
                     onDoubleClick={() => functionality.onFrameSetDefaultWidth()}
                 />
                 <path
@@ -59,7 +59,7 @@ const Frame = (props: {graphicData: IFrame, functionality: IFrameFunctionality, 
                 />
             </g>
             <g
-                onMouseDown={(ev) => functionality.onFrameMove(ev)}
+                onMouseDown={() => functionality.onFrameMove()}
             >
                 {props.children}
             </g>

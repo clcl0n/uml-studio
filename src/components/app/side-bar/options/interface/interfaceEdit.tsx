@@ -13,7 +13,7 @@ import { v4 } from 'uuid';
 import FrameEdit from '../common/frameEdit';
 import ClassMethodEdit from '../class/classMethodEdit';
 import ClassProperyEdit from '../class/classPropertyEdit';
-import updateInterfaceGraphicDataHelper from 'utils/classDiagramHelper/updateInterfaceGraphicDataHelper';
+import updateInterfaceGraphicDataHelper from 'utils/classDiagramHelper/interface/updateInterfaceGraphicDataHelper';
 
 const InterfaceEdit = (props: { interface: IInterface }) => {
     const dispatch = useDispatch();

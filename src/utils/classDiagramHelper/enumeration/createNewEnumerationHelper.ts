@@ -1,5 +1,5 @@
 import ICoordinates from '@interfaces/ICoordinates';
-import createFrameHelper from './createFrameHelper';
+import createFrameHelper from '../createFrameHelper';
 import { v4 } from 'uuid';
 import IEnumerationEntry from '@interfaces/class-diagram/enumeration/IEnumerationEntry';
 import enumerationEntriesReducer from '@store/reducers/uml-class-diagram/enumerationEntries';
@@ -25,7 +25,8 @@ const createNewEnumerationHelper = (coordinates: ICoordinates) => {
             enumerationEntryIds: [enumerationEntryId]
         },
         graphicData: {
-            frame
+            frame,
+            sections: {}
         }
     };
 

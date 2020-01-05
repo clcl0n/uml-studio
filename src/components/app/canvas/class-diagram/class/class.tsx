@@ -65,14 +65,14 @@ const Class = (props: IClassProps) => {
     };
 
     const frameFunctionality: IFrameFunctionality = {
-        onFrameMove: (event: React.MouseEvent) => {
+        onFrameMove: () => {
             dispatch(isMouseDown(true));
             dispatch(newCanvasOperation({
                 type: CanvasOperationEnum.MOVE_ELEMENT,
                 elementId: props.class.id
             }));
         },
-        onFrameResize: (event: React.MouseEvent, direction: Direction) => {
+        onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));
             dispatch(newCanvasOperation({
                 type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,

@@ -8,7 +8,7 @@ import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
 import IDataTypeEntryProps from '@interfaces/class-diagram/data-type/IDataTypeEntryProps';
 import DataTypeEntry from './dataTypeEntry';
 import FrameRow from '../common/frameRow';
-import { selectNewElement } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
 import IDataTypeHead from '@interfaces/class-diagram/data-type/IDataTypeHead';
@@ -17,6 +17,8 @@ import Frame from '../common/frame';
 import FrameHead from '../common/frameHead';
 import DataTypeHead from './dataTypeHead';
 import FrameSegment from '../common/frameSegment';
+import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import Direction from '@enums/direction';
 
 const DataType = (props: IDataTypeProps) => {
     const dispatch = useDispatch();
@@ -59,10 +61,20 @@ const DataType = (props: IDataTypeProps) => {
     };
     const dataTypeEntries = props.entries.map((entry, index) => createNewDataTypeEntry(index, entry));
     const frameFunctionality: IFrameFunctionality = {
-        onFrameMove: (event: React.MouseEvent) => {
-
+        onFrameMove: () => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: CanvasOperationEnum.MOVE_ELEMENT,
+                elementId: props.dataType.id
+            }));
         },
-        onFrameResize: () => {},
+        onFrameResize: (direction: Direction) => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
+                elementId: props.dataType.id
+            }));
+        },
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onDataTypeClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
