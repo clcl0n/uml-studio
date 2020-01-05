@@ -12,6 +12,8 @@ import UtilityEdit from './options/utility/utilityEdit';
 import IUtility from '@interfaces/class-diagram/utility/IUtility';
 import EnumerationEdit from './options/enumeration/enumerationEdit';
 import IEnumeration from '@interfaces/class-diagram/enumeration/IEnumeration';
+import DataTypeEdit from './options/data-type/dataTypeEdit';
+import IDataType from '@interfaces/class-diagram/data-type/IDataType';
 
 const SideBar = () => {
     const selectedElementId = useSelector((state: IStoreState) => state.canvas.selectedElementId);
@@ -24,6 +26,8 @@ const SideBar = () => {
             return state.umlClassDiagram.utilities.byId[selectedElementId];
         } else if (state.umlClassDiagram.enumerations.byId[selectedElementId]) {
             return state.umlClassDiagram.enumerations.byId[selectedElementId];
+        } else if (state.umlClassDiagram.dataTypes.byId[selectedElementId]) {
+            return state.umlClassDiagram.dataTypes.byId[selectedElementId];
         }
     });
     
@@ -41,6 +45,9 @@ const SideBar = () => {
                 break;
             case ClassDiagramElementsEnum.ENUMERATION:
                 editOptions = <EnumerationEdit {...{ enumeration: selectedElement as IEnumeration }}/>;
+                break;
+            case ClassDiagramElementsEnum.DATA_TYPE:
+                editOptions = <DataTypeEdit {...{ dataType: selectedElement as IDataType }}/>
                 break;
         }
     }
