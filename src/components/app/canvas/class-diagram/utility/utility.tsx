@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IUtilityProps from '@interfaces/class-diagram/utility/IUtilityProps';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import IUtilityMethod from '@interfaces/class-diagram/utility/IUtilityMethod';
@@ -19,10 +19,12 @@ import UtilityHead from './utilityHead';
 import FrameSegment from '../common/frameSegment';
 import Direction from '@enums/direction';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import IStoreState from '@interfaces/IStoreState';
 
 const Utility = (props: IUtilityProps) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
+    const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const { frame, sections } = props.utility.graphicData;
 
     const createNewUtilityRow = (index: number, classAttribute: IUtilityMethod | IUtilityProperty, y: number) => {
@@ -86,6 +88,7 @@ const Utility = (props: IUtilityProps) => {
                 type: CanvasOperationEnum.MOVE_ELEMENT,
                 elementId: props.utility.id
             }));
+            setJoints(<g/>);
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));
@@ -93,6 +96,7 @@ const Utility = (props: IUtilityProps) => {
                 type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
                 elementId: props.utility.id
             }));
+            setJoints(<g/>);
         },
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onUtilityClick,
@@ -100,14 +104,18 @@ const Utility = (props: IUtilityProps) => {
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            setJoints((
-                <Joints
-                    coordinates={{ x: frame.x, y: frame.y }}
-                    width={frame.width}
-                    height={frame.height}
-                    onJointClick={props.functionality.onJointClick}
-                />
-            ));
+            if (isMouseDownState) {
+                setJoints(<g/>);
+            } else {
+                setJoints((
+                    <Joints
+                        coordinates={{ x: frame.x, y: frame.y }}
+                        width={frame.width}
+                        height={frame.height}
+                        onJointClick={props.functionality.onJointClick}
+                    />
+                ));
+            }   
         }
     };
 

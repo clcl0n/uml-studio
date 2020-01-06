@@ -25,6 +25,7 @@ import IStoreState from '@interfaces/IStoreState';
 const Class = (props: IClassProps) => {
     const dispatch = useDispatch();
     const canvasOperation = useSelector((state: IStoreState) => state.canvas.canvasOperation.type);
+    const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const [joints, setJoints] = React.useState(<g/>);
     const { frame, sections } = props.class.graphicData;
 
@@ -71,6 +72,7 @@ const Class = (props: IClassProps) => {
                 type: CanvasOperationEnum.MOVE_ELEMENT,
                 elementId: props.class.id
             }));
+            setJoints(<g/>);
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));
@@ -78,6 +80,7 @@ const Class = (props: IClassProps) => {
                 type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
                 elementId: props.class.id
             }));
+            setJoints(<g/>);
         },
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onClassClick,
@@ -85,7 +88,7 @@ const Class = (props: IClassProps) => {
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            if (canvasOperation === CanvasOperationEnum.RESIZE_ELEMENT_LEFT || canvasOperation === CanvasOperationEnum.RESIZE_ELEMENT_RIGHT) {
+            if (isMouseDownState) {
                 setJoints(<g/>);
             } else {
                 setJoints((

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './data-type.scss';
 import IDataTypeProps from '@interfaces/class-diagram/data-type/IDataTypeProps';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
 import IDataTypeEntryProps from '@interfaces/class-diagram/data-type/IDataTypeEntryProps';
@@ -19,10 +19,12 @@ import DataTypeHead from './dataTypeHead';
 import FrameSegment from '../common/frameSegment';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import Direction from '@enums/direction';
+import IStoreState from '@interfaces/IStoreState';
 
 const DataType = (props: IDataTypeProps) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
+    const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const { frame } = props.dataType.graphicData;
     const { data } = props.dataType;
 
@@ -67,6 +69,7 @@ const DataType = (props: IDataTypeProps) => {
                 type: CanvasOperationEnum.MOVE_ELEMENT,
                 elementId: props.dataType.id
             }));
+            setJoints(<g/>);
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));
@@ -74,6 +77,7 @@ const DataType = (props: IDataTypeProps) => {
                 type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
                 elementId: props.dataType.id
             }));
+            setJoints(<g/>);
         },
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onDataTypeClick,
@@ -81,14 +85,18 @@ const DataType = (props: IDataTypeProps) => {
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            setJoints((
-                <Joints
-                    coordinates={{ x: frame.x, y: frame.y }}
-                    width={frame.width}
-                    height={frame.height}
-                    onJointClick={props.functionality.onJointClick}
-                />
-            ));
+            if (isMouseDownState) {
+                setJoints(<g/>);
+            } else {
+                setJoints((
+                    <Joints
+                        coordinates={{ x: frame.x, y: frame.y }}
+                        width={frame.width}
+                        height={frame.height}
+                        onJointClick={props.functionality.onJointClick}
+                    />
+                ));
+            }
         }
     };
     const dataTypeHeadData: IDataTypeHead = {
