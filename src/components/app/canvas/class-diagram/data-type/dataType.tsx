@@ -43,7 +43,7 @@ const DataType = (props: IDataTypeProps) => {
             graphicData: {
                 text: {
                     x: frame.xCenter,
-                    y: frame.y + (index + 1 * frame.rowHeight) + frame.fontPixelSize + (frame.rowHeight/2)
+                    y: frame.y + ((index + 1) * frame.rowHeight) + frame.fontPixelSize + (frame.rowHeight/2)
                 }
             },
             entry
@@ -115,14 +115,20 @@ const DataType = (props: IDataTypeProps) => {
         }
     };
 
+    const frameEntriesSegment = () => {
+        return data.dataTypeEntryIds.length === 0 ? <g/> : (
+            <FrameSegment graphicData={dataTypeEntriesSegment}>
+                {...dataTypeEntries}
+            </FrameSegment>
+        );
+    };
+
     return (
         <Frame graphicData={frame} functionality={frameFunctionality}>
             <FrameHead>
                 <DataTypeHead {...dataTypeHeadData}/>
             </FrameHead>
-            <FrameSegment graphicData={dataTypeEntriesSegment}>
-                {...dataTypeEntries}
-            </FrameSegment>
+            {frameEntriesSegment()}
             {joints}
         </Frame>
     );

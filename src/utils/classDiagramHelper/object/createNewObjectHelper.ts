@@ -17,7 +17,7 @@ const createNewObjectHelper = (coordinates: ICoordinates) => {
     const newObject: IObject = {
         id: v4(),
         data: {
-            objectName: 'Object Name',
+            objectName: 'Object:Class',
             slotIds: [slotId]
         },
         type: ClassDiagramElementsEnum.OBJECT,

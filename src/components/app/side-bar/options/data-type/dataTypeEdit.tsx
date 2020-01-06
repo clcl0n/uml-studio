@@ -63,7 +63,9 @@ const DataTypeEdit = (props: { dataType: IDataType }) => {
     
     return (
         <FrameEdit inputLabel='DataType Name' frameName={data.dataTypeName} onNameChange={(ev) => onNameChange(ev)}>
-            <EntryTableEdit addNewEntry={addNewEntry} editEntries={editEntries}/>
+            <EntryTableEdit addNewEntry={addNewEntry}>
+                {editEntries()}
+            </EntryTableEdit>
         </FrameEdit>
     );
 };

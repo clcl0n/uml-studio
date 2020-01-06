@@ -9,9 +9,9 @@ const updateDataTypeGraphicDataHelper = (dataType: IDataType) => {
         graphicData.frame.height = (
             data.dataTypeEntryIds.length + 1
         ) * graphicData.frame.rowHeight;
+        graphicData.frame.height += (graphicData.frame.rowHeight / 2);
     }
 
-    graphicData.frame.height += (graphicData.frame.rowHeight / 2);
 
     return {
         ...dataType,

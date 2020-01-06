@@ -15,7 +15,7 @@ import updateEnumerationGraphicDataHelper from 'utils/classDiagramHelper/enumera
 const EnumerationEdit = (props: { enumeration: IEnumeration }) => {
     const dispatch = useDispatch();
     const { data } = props.enumeration;
-    const selectedEntry= useSelector((state: IStoreState) => data.enumerationEntryIds.map((id) => {
+    const selectedEntry = useSelector((state: IStoreState) => data.enumerationEntryIds.map((id) => {
         return state.umlClassDiagram.enumerationEntries.byId[id];
     }));
     const updateGraphic = (element: IEnumeration): IEnumeration => updateEnumerationGraphicDataHelper(element);
@@ -63,7 +63,9 @@ const EnumerationEdit = (props: { enumeration: IEnumeration }) => {
 
     return (
         <FrameEdit inputLabel='Enumeration Name' frameName={data.enumerationName} onNameChange={(ev) => onNameChange(ev)}>
-            <EntryTableEdit addNewEntry={addNewEntry} editEntries={editEntries}/>
+            <EntryTableEdit addNewEntry={addNewEntry}>
+                {editEntries()}
+            </EntryTableEdit>
         </FrameEdit>
     );
 };

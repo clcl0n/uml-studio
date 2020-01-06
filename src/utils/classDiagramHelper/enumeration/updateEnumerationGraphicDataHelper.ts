@@ -9,9 +9,9 @@ const updateEnumerationGraphicDataHelper = (enumeration: IEnumeration) => {
         graphicData.frame.height = (
             data.enumerationEntryIds.length + 1
         ) * graphicData.frame.rowHeight;
+        graphicData.frame.height += (graphicData.frame.rowHeight / 2);
     }
 
-    graphicData.frame.height += (graphicData.frame.rowHeight / 2);
     
     return {
         ...enumeration,

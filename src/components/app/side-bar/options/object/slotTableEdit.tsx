@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const EntryTableEdit = (props: {
+const SlotTableEdit = (props: {
     addNewEntry: () => void;
     children: React.ReactNode | Array<React.ReactNode>
 }) => {
@@ -10,11 +10,12 @@ const EntryTableEdit = (props: {
 
     return (
         <div className='field'>
-            <label className='label'>Properties</label>
+            <label className='label'>Slots</label>
             <table className='table is-fullwidth'>
                 <thead className='has-background-grey-light is-size-6'>
                     <tr>
-                        <th>Property</th>
+                        <th>Feature</th>
+                        <th>Value</th>
                         <th>
                             <FontAwesomeIcon onClick={(ev) => addNewEntry()} icon='plus'/>
                         </th>
@@ -28,4 +29,4 @@ const EntryTableEdit = (props: {
     );
 };
 
-export default EntryTableEdit;
+export default SlotTableEdit;

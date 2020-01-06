@@ -42,7 +42,7 @@ const ObjectElement = (props: IObjectProps) => {
             graphicData: {
                 text: {
                     x: frame.xCenter,
-                    y: frame.y + (index + 1 * frame.rowHeight) + frame.fontPixelSize
+                    y: frame.y + ((index + 1) * frame.rowHeight) + frame.fontPixelSize
                 }
             },
             slot
@@ -109,14 +109,20 @@ const ObjectElement = (props: IObjectProps) => {
         }
     };
 
+    const frameSlotsSegment = () => {
+        return props.slots.length === 0 ? <g/> : (
+            <FrameSegment graphicData={objectSlotsSegment}>
+                {...objectSlots}
+            </FrameSegment>
+        );
+    };  
+
     return (
         <Frame graphicData={frame} functionality={frameFunctionality}>
             <FrameHead>
                 <ObjectHead objectHead={objectHeadData}/>
             </FrameHead>
-            <FrameSegment graphicData={objectSlotsSegment}>
-                {...objectSlots}
-            </FrameSegment>
+            {frameSlotsSegment()}
             {joints}
         </Frame>
     );
