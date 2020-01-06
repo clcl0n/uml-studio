@@ -2,32 +2,67 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import IFrame from '@interfaces/class-diagram/common/IFrame';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
+import Direction from '@enums/direction';
 
 const Frame = (props: {graphicData: IFrame, functionality: IFrameFunctionality, children: React.ReactNode}) => {
     const { graphicData, functionality } = props;
+
+    const onFrameMouseDown = (event: React.MouseEvent) => {
+    };
 
     return (
         <g
             className='umlClass'
             pointerEvents='all'
-            // onMouseDown={(ev) => props.elementFunctionality.onClassMouseDown(ev, props.elementData.id)}
-            // onMouseUp={(ev) => props.elementFunctionality.onClassMouseUp(ev)}
             onClick={(ev) => functionality.onFrameClick(ev)}
             onMouseOver={(ev) => functionality.onFrameMouseOver(ev)}
             onMouseLeave={(ev) => functionality.onFrameMouseLeave(ev)}
         >
-            <g>
-                <rect
-                    x={graphicData.x}
-                    y={graphicData.y}
-                    width={graphicData.width}
-                    height={graphicData.height}
+            <g pointerEvents='stroke'>
+                <path
+                    d={`M ${graphicData.x} ${graphicData.y} l ${graphicData.width} 0`}
                     stroke='black'
-                    fill='none'
-                    strokeWidth='3'
+                    strokeWidth='1'
+                />
+                <path
+                    d={`M ${graphicData.x} ${graphicData.y} l 0 ${graphicData.height}`}
+                    stroke='black'
+                    strokeWidth='1'
+                    cursor='ew-resize'
+                />
+                <path
+                    d={`M ${graphicData.x} ${graphicData.y} l 0 ${graphicData.height}`}
+                    strokeWidth='6'
+                    stroke='transparent'
+                    cursor='ew-resize'
+                    onMouseDown={() => functionality.onFrameResize(Direction.LEFT)}
+                    onDoubleClick={() => functionality.onFrameSetDefaultWidth()}
+                />
+                <path
+                    d={`M ${graphicData.x + graphicData.width} ${graphicData.y} l 0 ${graphicData.height}`}
+                    stroke='black'
+                    strokeWidth='1'
+                    cursor='ew-resize'
+                />
+                <path
+                    d={`M ${graphicData.x + graphicData.width} ${graphicData.y} l 0 ${graphicData.height}`}
+                    stroke='transparent'
+                    strokeWidth='6'
+                    cursor='ew-resize'
+                    onMouseDown={() => functionality.onFrameResize(Direction.RIGHT)}
+                    onDoubleClick={() => functionality.onFrameSetDefaultWidth()}
+                />
+                <path
+                    d={`M ${graphicData.x} ${graphicData.y + graphicData.height} l ${graphicData.width} 0`}
+                    stroke='black'
+                    strokeWidth='1'
                 />
             </g>
-            {props.children}
+            <g
+                onMouseDown={() => functionality.onFrameMove()}
+            >
+                {props.children}
+            </g>
         </g>
     );
 };

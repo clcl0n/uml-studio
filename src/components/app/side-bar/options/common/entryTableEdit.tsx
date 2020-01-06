@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const EntryTableEdit = (props: {
     addNewEntry: () => void;
-    editEntries: () => Array<JSX.Element>;
+    children: React.ReactNode | Array<React.ReactNode>
 }) => {
-    const { addNewEntry, editEntries } = props;
+    const { addNewEntry } = props;
 
     return (
         <div className='field'>
@@ -21,7 +21,7 @@ const EntryTableEdit = (props: {
                     </tr>
                 </thead>
                 <tbody>
-                    {editEntries()}
+                    {props.children}
                 </tbody>
             </table>
         </div>

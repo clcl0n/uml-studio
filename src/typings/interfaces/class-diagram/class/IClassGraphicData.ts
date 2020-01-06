@@ -1,7 +1,4 @@
-import IFrameGraphicData from '../common/IFrameGraphicData';
+import IBaseElementGraphicData from '../common/IBaseElementGraphicData';
 import IClassFrameSections from './IClassFrameSections';
 
-export default interface IClassGraphicData {
-    frame: IFrameGraphicData;
-    sections: IClassFrameSections;
-}
+export default interface IClassGraphicData extends IBaseElementGraphicData<IClassFrameSections> {}

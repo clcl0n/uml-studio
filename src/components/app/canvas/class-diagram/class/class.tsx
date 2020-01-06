@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './class.scss';
-import { selectNewElement } from '@store/actions/canvas';
-import { useDispatch } from 'react-redux';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import { useDispatch, useSelector } from 'react-redux';
 import IClassProps from '@interfaces/class-diagram/class/IClassProps';
 import Frame from '../common/frame';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
@@ -18,9 +18,13 @@ import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import Joints from '../common/joints';
 import ClassHead from './classHead';
 import IClassHead from '@interfaces/class-diagram/class/IClassHead';
+import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import Direction from '@enums/direction';
+import IStoreState from '@interfaces/IStoreState';
 
 const Class = (props: IClassProps) => {
     const dispatch = useDispatch();
+    const canvasOperation = useSelector((state: IStoreState) => state.canvas.canvasOperation.type);
     const [joints, setJoints] = React.useState(<g/>);
     const { frame, sections } = props.class.graphicData;
 
@@ -61,19 +65,38 @@ const Class = (props: IClassProps) => {
     };
 
     const frameFunctionality: IFrameFunctionality = {
+        onFrameMove: () => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: CanvasOperationEnum.MOVE_ELEMENT,
+                elementId: props.class.id
+            }));
+        },
+        onFrameResize: (direction: Direction) => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
+                elementId: props.class.id
+            }));
+        },
+        onFrameSetDefaultWidth: () => {},
         onFrameClick: onClassClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            setJoints((
-                <Joints
-                    coordinates={{ x: frame.x, y: frame.y }}
-                    width={frame.width}
-                    height={frame.height}
-                    onJointClick={props.functionality.onJointClick}
-                />
-            ));
+            if (canvasOperation === CanvasOperationEnum.RESIZE_ELEMENT_LEFT || canvasOperation === CanvasOperationEnum.RESIZE_ELEMENT_RIGHT) {
+                setJoints(<g/>);
+            } else {
+                setJoints((
+                    <Joints
+                        coordinates={{ x: frame.x, y: frame.y }}
+                        width={frame.width}
+                        height={frame.height}
+                        onJointClick={props.functionality.onJointClick}
+                    />
+                ));
+            }
         }
     };
 
@@ -122,7 +145,7 @@ const Class = (props: IClassProps) => {
             </FrameSegment>
         );
     };
-
+    
     return (
         <Frame
             graphicData={frame}

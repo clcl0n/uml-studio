@@ -14,7 +14,9 @@ import enumerationsReducer from './enumerations';
 import enumerationEntriesReducer from './enumerationEntries';
 import dataTypesReducer from './dataTypes';
 import dataTypeEntriesReducer from './dataTypeEntries';
-import primitivesReducer from './primitives';
+import primitiveTypesReducer from './primitiveTypes';
+import objectsReducer from './objects';
+import objectSlotsReducer from './objectSlots';
 
 const umlClassDiagramReducer = combineReducers({
     classes: classesReducer,
@@ -32,7 +34,9 @@ const umlClassDiagramReducer = combineReducers({
     enumerationEntries: enumerationEntriesReducer,
     dataTypes: dataTypesReducer,
     dataTypeEntries: dataTypeEntriesReducer,
-    primitives: primitivesReducer
+    primitiveTypes: primitiveTypesReducer,
+    objects: objectsReducer,
+    objectSlots: objectSlotsReducer
 });
 
 export default umlClassDiagramReducer; 

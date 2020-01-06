@@ -4,7 +4,7 @@ import IInterfaceProps from '@interfaces/class-diagram/interface/IInterfaceProps
 import { useDispatch } from 'react-redux';
 import Frame from '../common/frame';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
-import { selectNewElement } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
 import Joints from '../common/joints';
 import FrameHead from '../common/frameHead';
 import InterfaceHead from './interfaceHead';
@@ -17,6 +17,8 @@ import IClassAttribute from '@interfaces/class-diagram/class/IClassAttribute';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import FrameSegment from '../common/frameSegment';
 import IInterfaceHead from '@interfaces/class-diagram/interface/IInterfaceHead';
+import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import Direction from '@enums/direction';
 
 const Interface = (props: IInterfaceProps) => {
     const dispatch = useDispatch();
@@ -78,6 +80,21 @@ const Interface = (props: IInterfaceProps) => {
     const interfaceMethods = props.methods.map((classMethods, index) => createNewInterfaceRow(index, classMethods, sections.methods.y));
 
     const frameFunctionality: IFrameFunctionality = {
+        onFrameMove: () => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: CanvasOperationEnum.MOVE_ELEMENT,
+                elementId: props.interface.id
+            }));
+        },
+        onFrameResize: (direction: Direction) => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
+                elementId: props.interface.id
+            }));
+        },
+        onFrameSetDefaultWidth: () => {},
         onFrameClick: onInterfaceClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
             setJoints(<g/>);

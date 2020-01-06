@@ -3,268 +3,64 @@ import * as ReactDOM from 'react-dom';
 import './canvas.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
-import createNewClass from 'utils/classDiagramHelper/createNewClass';
+import createNewClass from 'utils/classDiagramHelper/class/createNewClass';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
-import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType, addNewPrimitive } from '@store/actions/classDiagram';
-import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
-import Class from './class-diagram/class/class';
-import IClassProps from '@interfaces/class-diagram/class/IClassProps';
+import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType, addNewPrimitive, updateClass, updateUtility, updatePrimitiveType, updateInterface, updateEnumeration, updateDataType, addNewObjectSlot, addNewObject, updateObject } from '@store/actions/classDiagram';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import ICoordinates from '@interfaces/ICoordinates';
 import createNewRelationship from 'utils/classDiagramHelper/createNewRelationship';
-import Association from './class-diagram/relationships/association/association';
-import SegmentDirection from '@enums/segmentDirection';
-import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
 import updateRelationshipHelper from 'utils/classDiagramHelper/updateRelationshipHelper';
-import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
-import createNewInterfaceHelper from 'utils/classDiagramHelper/createNewInterfaceHelper';
-import Interface from './class-diagram/interface/interface';
-import IInterfaceProps from '@interfaces/class-diagram/interface/IInterfaceProps';
+import createNewInterfaceHelper from 'utils/classDiagramHelper/interface/createNewInterfaceHelper';
+import createNewUtilityHelper from 'utils/classDiagramHelper/utility/createNewUtilityHelper';
+import createNewEnumerationHelper from 'utils/classDiagramHelper/enumeration/createNewEnumerationHelper';
+import createNewDataTypeHelper from 'utils/classDiagramHelper/dataType/createNewDataTypeHelper';
+import createNewPrimitiveType from 'utils/classDiagramHelper/primitive-type/createNewPrimitiveTypeHelper';
+import createNewBaseClassHelper from 'utils/classDiagramHelper/class/createNewBaseClassHelper';
+import { isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import IClass from '@interfaces/class-diagram/class/IClass';
+import Direction from '@enums/direction';
+import moveClassHelper from 'utils/classDiagramHelper/class/moveClassHelper';
+import ClassDiagram from './class-diagram/classDiagram';
+import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import IUtility from '@interfaces/class-diagram/utility/IUtility';
-import createNewUtilityHelper from 'utils/classDiagramHelper/createNewUtilityHelper';
-import IUtilityProps from '@interfaces/class-diagram/utility/IUtilityProps';
-import Utility from './class-diagram/utility/utility';
-import createNewEnumerationHelper from 'utils/classDiagramHelper/createNewEnumerationHelper';
-import IEnumerationProps from '@interfaces/class-diagram/enumeration/IEnumerationProps';
-import Enumeration from './class-diagram/enumeration/enumeration';
-import createNewDataTypeHelper from 'utils/classDiagramHelper/createNewDataTypeHelper';
-import IDataTypeProps from '@interfaces/class-diagram/data-type/IDataTypeProps';
-import DataType from './class-diagram/data-type/dataType';
-import createNewPrimitiveType from 'utils/classDiagramHelper/createNewPrimitiveTypeHelper';
-import IPrimitiveProps from '@interfaces/class-diagram/primitive/IPrimitiveProps';
-import Primitive from './class-diagram/primitive/primitive';
-import createNewBaseClassHelper from 'utils/classDiagramHelper/createNewBaseClassHelper';
-
-const createElements = (
-        classDiagram: IClassDiagramState,
-        updateCanvasOperation: React.Dispatch<React.SetStateAction<{type: CanvasOperationEnum, data: any}>>,
-        setCurrentlyDrawingRelation: React.Dispatch<React.SetStateAction<{ x1: number, y1: number, x2: number, y2: number}>>
-    ) => {
-        let elements: Array<JSX.Element> = [];
-
-        elements.push(
-            ...classDiagram.classes.allIds.map((id) => {
-                const classElement = classDiagram.classes.byId[id];
-                const classProperties = classElement.data.classPropertyIds.map((id) => classDiagram.classProperties.byId[id]);
-                const classMethods = classElement.data.classMethodIds.map((id) => classDiagram.classMethods.byId[id]);
-                
-                const props: IClassProps = {
-                    class: classElement,
-                    properties: classProperties,
-                    methods: classMethods,
-                    functionality: {
-                        onJointClick: (event: React.MouseEvent) => {
-                            event.persist();
-                            let circleElement = event.target as SVGCircleElement;
-                            const cx = parseInt(circleElement.getAttribute('cx'));
-                            const cy = parseInt(circleElement.getAttribute('cy'));
-                            updateCanvasOperation({
-                                type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                                data: {}
-                            });
-                            setCurrentlyDrawingRelation({
-                                x1: cx,
-                                y1: cy,
-                                x2: cx,
-                                y2: cy
-                            });
-                        }
-                    }
-                };
-        
-                return (
-                    <Class key={id} {...props}/>
-                );
-            }),
-            ...classDiagram.relationships.allIds.map((id) => {
-                const relationship = classDiagram.relationships.byId[id];
-                const relationshipSegments = relationship.segmentIds.map((segmentId) => classDiagram.relationshipSegments.byId[segmentId]);
-                const onSegmentMove = (event: React.MouseEvent, segmentId: string, segmentDirection: SegmentDirection) => {
-                    updateCanvasOperation({
-                        type: CanvasOperationEnum.UPDATE_RELATION,
-                        data: {
-                            relationship,
-                            relationshipSegments,
-                            segmentId,
-                            segmentDirection
-                        }
-                    });
-                };
-                return (
-                    <Association
-                        key={id}
-                        relationship={relationship}
-                        relationshipSegments={relationshipSegments}
-                        functionality={{onSegmentMove}}
-                    />
-                );
-            }),
-            ...classDiagram.interfaces.allIds.map((id) => {
-                const interfaceElement = classDiagram.interfaces.byId[id];
-                const interfaceProperties = interfaceElement.data.interfacePropertyIds.map((id) => classDiagram.interfaceProperties.byId[id]);
-                const interfaceMethods = interfaceElement.data.interfaceMethodIds.map((id) => classDiagram.interfaceMethods.byId[id]);
-                
-                const props: IInterfaceProps = {
-                    interface: interfaceElement,
-                    properties: interfaceProperties,
-                    methods: interfaceMethods,
-                    functionality: {
-                        onJointClick: (event: React.MouseEvent) => {
-                            event.persist();
-                            let circleElement = event.target as SVGCircleElement;
-                            const cx = parseInt(circleElement.getAttribute('cx'));
-                            const cy = parseInt(circleElement.getAttribute('cy'));
-                            updateCanvasOperation({
-                                type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                                data: {}
-                            });
-                            setCurrentlyDrawingRelation({
-                                x1: cx,
-                                y1: cy,
-                                x2: cx,
-                                y2: cy
-                            });
-                        }
-                    }
-                };
-
-                return (
-                    <Interface key={id} {...props}/>
-                );
-            }),
-            ...classDiagram.utilities.allIds.map((id) => {
-                const utilityElement = classDiagram.utilities.byId[id];
-                const utilityProperties = utilityElement.data.utilityPropertyIds.map((id) => classDiagram.utilityProperties.byId[id]);
-                const utilityMethods = utilityElement.data.utilityMethodIds.map((id) => classDiagram.utilityMethods.byId[id]);
-                
-                const props: IUtilityProps = {
-                    utility: utilityElement,
-                    properties: utilityProperties,
-                    methods: utilityMethods,
-                    functionality: {
-                        onJointClick: (event: React.MouseEvent) => {
-                            event.persist();
-                            let circleElement = event.target as SVGCircleElement;
-                            const cx = parseInt(circleElement.getAttribute('cx'));
-                            const cy = parseInt(circleElement.getAttribute('cy'));
-                            updateCanvasOperation({
-                                type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                                data: {}
-                            });
-                            setCurrentlyDrawingRelation({
-                                x1: cx,
-                                y1: cy,
-                                x2: cx,
-                                y2: cy
-                            });
-                        }
-                    }
-                };
-
-                return (
-                    <Utility key={id} {...props}/>
-                );
-            }),
-            ...classDiagram.enumerations.allIds.map((id) => {
-                const enumerationElement = classDiagram.enumerations.byId[id];
-                const enumerationEntries = enumerationElement.data.enumerationEntryIds.map((id) => classDiagram.enumerationEntries.byId[id]);
-                
-                const props: IEnumerationProps = {
-                    enumeration: enumerationElement,
-                    entries: enumerationEntries,
-                    functionality: {
-                        onJointClick: (event: React.MouseEvent) => {
-                            event.persist();
-                            let circleElement = event.target as SVGCircleElement;
-                            const cx = parseInt(circleElement.getAttribute('cx'));
-                            const cy = parseInt(circleElement.getAttribute('cy'));
-                            updateCanvasOperation({
-                                type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                                data: {}
-                            });
-                            setCurrentlyDrawingRelation({
-                                x1: cx,
-                                y1: cy,
-                                x2: cx,
-                                y2: cy
-                            });
-                        }
-                    }
-                };
-
-                return (
-                    <Enumeration key={id} {...props}/>
-                );
-            }),
-            ...classDiagram.dataTypes.allIds.map((id) => {
-                const dataTypeElement = classDiagram.dataTypes.byId[id];
-                const dataTypeEntries = dataTypeElement.data.dataTypeEntryIds.map((id) => classDiagram.dataTypeEntries.byId[id]);
-                
-                const props: IDataTypeProps = {
-                    dataType: dataTypeElement,
-                    entries: dataTypeEntries,
-                    functionality: {
-                        onJointClick: (event: React.MouseEvent) => {
-                            event.persist();
-                            let circleElement = event.target as SVGCircleElement;
-                            const cx = parseInt(circleElement.getAttribute('cx'));
-                            const cy = parseInt(circleElement.getAttribute('cy'));
-                            updateCanvasOperation({
-                                type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                                data: {}
-                            });
-                            setCurrentlyDrawingRelation({
-                                x1: cx,
-                                y1: cy,
-                                x2: cx,
-                                y2: cy
-                            });
-                        }
-                    }
-                };
-
-                return (
-                    <DataType key={id} {...props}/>
-                );
-            }),
-            ...classDiagram.primitives.allIds.map((id) => {
-                const primitiveTypeElement = classDiagram.primitives.byId[id];
-                
-                const props: IPrimitiveProps = {
-                    primitive: primitiveTypeElement,
-                    functionality: {
-                        onJointClick: (event: React.MouseEvent) => {
-                            event.persist();
-                            let circleElement = event.target as SVGCircleElement;
-                            const cx = parseInt(circleElement.getAttribute('cx'));
-                            const cy = parseInt(circleElement.getAttribute('cy'));
-                            updateCanvasOperation({
-                                type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                                data: {}
-                            });
-                            setCurrentlyDrawingRelation({
-                                x1: cx,
-                                y1: cy,
-                                x2: cx,
-                                y2: cy
-                            });
-                        }
-                    }
-                };
-
-                return (
-                    <Primitive key={id} {...props}/>
-                );
-            })
-        );
-
-        return elements;
-};
+import moveUtilityHelper from 'utils/classDiagramHelper/utility/moveUtilityHelper';
+import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
+import movePrimitiveTypeHelper from 'utils/classDiagramHelper/primitive-type/movePrimitiveTypeHelper';
+import IInterface from '@interfaces/class-diagram/interface/IInterface';
+import IEnumeration from '@interfaces/class-diagram/enumeration/IEnumeration';
+import IDataType from '@interfaces/class-diagram/data-type/IDataType';
+import moveInterfaceHelper from 'utils/classDiagramHelper/interface/moveInterfaceHelper';
+import moveEnumerationHelper from 'utils/classDiagramHelper/enumeration/moveEnumerationHelper';
+import moveDataTypeHelper from 'utils/classDiagramHelper/dataType/moveDataTypeHelper';
+import createNewObjectHelper from 'utils/classDiagramHelper/object/createNewObjectHelper';
+import IObject from '@interfaces/class-diagram/object/IObject';
+import resizeElementHelper from 'utils/classDiagramHelper/resizeElementHelper';
+import moveObjectHelper from 'utils/classDiagramHelper/object/moveObjectHelper';
 
 const Canvas = () => {
     const dispatch = useDispatch();
     const classDiagram = useSelector((state: IStoreState) => state.umlClassDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
+    const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
+    const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
+    const selectedElement = useSelector((state: IStoreState) => {
+        if (state.umlClassDiagram.classes.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.classes.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.interfaces.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.interfaces.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.utilities.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.utilities.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.enumerations.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.enumerations.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.primitiveTypes.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.primitiveTypes.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.dataTypes.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.dataTypes.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.objects.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.objects.byId[canvasOperationState.elementId];
+        }
+    });
+    const [oldCursorPosition, updateOldCursorPosition] = React.useState({ x: 0, y: 0 });
     const [canvasOperation, updateCanvasOperation] = React.useState({type: '', data: {}});
     const [currentlyDrawingRelation, setCurrentlyDrawingRelation] = React.useState({
         x1: 0,
@@ -337,6 +133,89 @@ const Canvas = () => {
         event.persist();
         let coordinates: ICoordinates = { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY };
         // coordinates = gridRoundCoordinates(coordinates);
+        //new******************
+        if (isMouseDown && selectedElement) {
+            switch(canvasOperationState.type) {
+                case CanvasOperationEnum.RESIZE_ELEMENT_LEFT:
+                    switch(selectedElement.type) {
+                        case ClassDiagramElementsEnum.CLASS:
+                            dispatch(updateClass(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.UTILITY:
+                            dispatch(updateUtility(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
+                            dispatch(updatePrimitiveType(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.INTERFACE:
+                            dispatch(updateInterface(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.ENUMERATION:
+                            dispatch(updateEnumeration(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.DATA_TYPE:
+                            dispatch(updateDataType(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            break;
+                        case ClassDiagramElementsEnum.OBJECT:
+                            dispatch(updateObject(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            break;
+                    }
+                    break;
+                case CanvasOperationEnum.RESIZE_ELEMENT_RIGHT:
+                    switch(selectedElement.type) {
+                        case ClassDiagramElementsEnum.CLASS:
+                            dispatch(updateClass(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.UTILITY:
+                            dispatch(updateUtility(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
+                            dispatch(updatePrimitiveType(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.INTERFACE:
+                            dispatch(updateInterface(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.ENUMERATION:
+                            dispatch(updateEnumeration(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.DATA_TYPE:
+                            dispatch(updateDataType(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            break;
+                        case ClassDiagramElementsEnum.OBJECT:
+                            dispatch(updateObject(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            break;
+                    }
+                    break;
+                case CanvasOperationEnum.MOVE_ELEMENT:
+                    switch(selectedElement.type) {
+                        case ClassDiagramElementsEnum.CLASS:
+                            dispatch(updateClass(moveClassHelper(selectedElement as IClass, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.UTILITY:
+                            dispatch(updateUtility(moveUtilityHelper(selectedElement as IUtility, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
+                            dispatch(updatePrimitiveType(movePrimitiveTypeHelper(selectedElement as IPrimitiveType, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.INTERFACE:
+                            dispatch(updateInterface(moveInterfaceHelper(selectedElement as IInterface, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.ENUMERATION:
+                            dispatch(updateEnumeration(moveEnumerationHelper(selectedElement as IEnumeration, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.DATA_TYPE:
+                            dispatch(updateDataType(moveDataTypeHelper(selectedElement as IDataType, coordinates, oldCursorPosition)));
+                            break;
+                        case ClassDiagramElementsEnum.OBJECT:
+                            dispatch(updateObject(moveObjectHelper(selectedElement as IObject, coordinates, oldCursorPosition)));
+                            break;
+                    }
+                    break;
+            }
+        };
+        updateOldCursorPosition(coordinates);
+
+        //old to-do refactor
         switch(canvasOperation.type) {
             case CanvasOperationEnum.DRAWING_NEW_RELATION:
                 updateDrawingRelation(coordinates);
@@ -358,11 +237,6 @@ const Canvas = () => {
                     }
                 });
                 dispatch(updateRelationship(relationship));
-                break;
-            case CanvasOperationEnum.MOVE_CLASS:
-                // const selectedClass = useSelector((state: IStoreState) => state.canvas.elements.find((element) => element.elementData.id === (canvasOperation.data as any).classId));
-                // selectedClass.elementGraphicData.
-                // dispatch(updateElement(selectedClass));
                 break;
             default:
                 break;
@@ -405,6 +279,9 @@ const Canvas = () => {
                 dispatch(addNewInterface(newInterface));
                 break;
             case RibbonOperationEnum.ADD_NEW_OBJECT:
+                const { newObjectSlot, newObject } = createNewObjectHelper(coordinates);
+                dispatch(addNewObjectSlot(newObjectSlot));
+                dispatch(addNewObject(newObject));
                 break;
             case RibbonOperationEnum.ADD_NEW_PRIMITIVE_TYPE:
                 const { newPrimitiveType } = createNewPrimitiveType(coordinates);
@@ -419,12 +296,22 @@ const Canvas = () => {
         }
     };
 
+    const resetCanvasOperation = () => {
+        dispatch(isMouseDown(false));
+        dispatch(newCanvasOperation({
+            type: CanvasOperationEnum.NONE,
+            elementId: ''
+        }));
+    };
+
     return (
-        <div id='canvas' onClick={(ev) => canvasMouseClick(ev)} onMouseMove={(ev) => canvasMouseMove(ev)} onDragOver={(ev) => CanvasOnDragOver(ev)} onDrop={(ev) => CanvasOnDrop(ev)}>
+        <div id='canvas' onMouseUp={() => resetCanvasOperation()} onClick={(ev) => canvasMouseClick(ev)} onMouseMove={(ev) => canvasMouseMove(ev)} onDragOver={(ev) => CanvasOnDragOver(ev)} onDrop={(ev) => CanvasOnDrop(ev)}>
             <svg viewBox='0 0 1500 1000' transform={`scale(${canvasZoom/100})`}  id='svg-canvas' width='100%' height='100%'>
-                <g>
-                    {...createElements(classDiagram, updateCanvasOperation, setCurrentlyDrawingRelation)}
-                </g>    
+                <ClassDiagram
+                    classDiagram={classDiagram}
+                    updateCanvasOperation={updateCanvasOperation}
+                    setCurrentlyDrawingRelation={setCurrentlyDrawingRelation}
+                />
                 <line stroke='black' x1={currentlyDrawingRelation.x1} x2={currentlyDrawingRelation.x2} y1={currentlyDrawingRelation.y1} y2={currentlyDrawingRelation.y2}/>
             </svg>
         </div>

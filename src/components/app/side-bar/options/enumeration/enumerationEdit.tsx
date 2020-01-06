@@ -10,20 +10,20 @@ import { v4 } from 'uuid';
 import EntryEdit from '../common/entryEdit';
 import FrameEdit from '../common/frameEdit';
 import EntryTableEdit from '../common/entryTableEdit';
-import updateEnumerationGraphicDataHelper from 'utils/classDiagramHelper/updateEnumerationGraphicDataHelper';
+import updateEnumerationGraphicDataHelper from 'utils/classDiagramHelper/enumeration/updateEnumerationGraphicDataHelper';
 
 const EnumerationEdit = (props: { enumeration: IEnumeration }) => {
     const dispatch = useDispatch();
     const { data } = props.enumeration;
-    const selectedEntry= useSelector((state: IStoreState) => data.enumerationEntryIds.map((id) => {
+    const selectedEntry = useSelector((state: IStoreState) => data.enumerationEntryIds.map((id) => {
         return state.umlClassDiagram.enumerationEntries.byId[id];
     }));
     const updateGraphic = (element: IEnumeration): IEnumeration => updateEnumerationGraphicDataHelper(element);
-    const removeEntry= (classProperty: IEnumerationEntry) => {
+    const removeEntry = (entry: IEnumerationEntry) => {
         const updated = {...props.enumeration};
-        updated.data.enumerationEntryIds.splice(updated.data.enumerationEntryIds.indexOf(classProperty.id), 1);
+        updated.data.enumerationEntryIds.splice(updated.data.enumerationEntryIds.indexOf(entry.id), 1);
         dispatch(updateEnumeration(updateGraphic(updated)));
-        dispatch(removeEnumerationEntry(classProperty));
+        dispatch(removeEnumerationEntry(entry));
     };
     const updateEntry= (newMethodName: string, classMethod: IEnumerationEntry) => {
         dispatch(updateEnumerationEntry({
@@ -45,7 +45,7 @@ const EnumerationEdit = (props: { enumeration: IEnumeration }) => {
         });        
     };
     const addNewEntry = () => {
-        log.debug(`Added new Enumeration Entry. Class Id: ${props.enumeration.id}`);
+        log.debug(`Added new Enumeration Entry. Enumeration Id: ${props.enumeration.id}`);
         const newPropertyId = v4();
         dispatch(addNewEnumerationEntry({
             id: newPropertyId,
@@ -62,8 +62,10 @@ const EnumerationEdit = (props: { enumeration: IEnumeration }) => {
     };
 
     return (
-        <FrameEdit inputLabel='Utility Name' frameName={data.enumerationName} onNameChange={(ev) => onNameChange(ev)}>
-            <EntryTableEdit addNewEntry={addNewEntry} editEntries={editEntries}/>
+        <FrameEdit inputLabel='Enumeration Name' frameName={data.enumerationName} onNameChange={(ev) => onNameChange(ev)}>
+            <EntryTableEdit addNewEntry={addNewEntry}>
+                {editEntries()}
+            </EntryTableEdit>
         </FrameEdit>
     );
 };

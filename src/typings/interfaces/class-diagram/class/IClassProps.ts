@@ -1,6 +1,7 @@
 import IClass from './IClass';
 import IClassProperty from './IClassProperty';
 import IClassMethod from './IClassMethod';
+import ICoordinates from '@interfaces/ICoordinates';
 
 export default interface IClassProps {
     class: IClass;

@@ -5,7 +5,7 @@ import IEnumerationProps from '@interfaces/class-diagram/enumeration/IEnumeratio
 import { useDispatch } from 'react-redux';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import FrameRow from '../common/frameRow';
-import { selectNewElement } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
 import IEnumerationHead from '@interfaces/class-diagram/enumeration/IEnumerationHead';
@@ -17,6 +17,8 @@ import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSeg
 import IEnumerationEntry from '@interfaces/class-diagram/enumeration/IEnumerationEntry';
 import EnumerationEntry from './enumerationEntry';
 import IEnumerationEntryProps from '@interfaces/class-diagram/enumeration/IEnumerationEntryProps';
+import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import Direction from '@enums/direction';
 
 const Enumeration = (props: IEnumerationProps) => {
     const dispatch = useDispatch();
@@ -60,6 +62,21 @@ const Enumeration = (props: IEnumerationProps) => {
 
     const enumerationEntries = props.entries.map((entry, index) => createNewEnumerationEntry(index, entry));
     const frameFunctionality: IFrameFunctionality = {
+        onFrameMove: () => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: CanvasOperationEnum.MOVE_ELEMENT,
+                elementId: props.enumeration.id
+            }));
+        },
+        onFrameResize: (direction: Direction) => {
+            dispatch(isMouseDown(true));
+            dispatch(newCanvasOperation({
+                type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
+                elementId: props.enumeration.id
+            }));
+        },
+        onFrameSetDefaultWidth: () => {},
         onFrameClick: onEnumerationClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
             setJoints(<g/>);

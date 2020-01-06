@@ -13,7 +13,7 @@ import { v4 } from 'uuid';
 import FrameEdit from '../common/frameEdit';
 import ClassMethodEdit from '../class/classMethodEdit';
 import ClassProperyEdit from '../class/classPropertyEdit';
-import updateUtilityGraphicDataHelper from 'utils/classDiagramHelper/updateUtilityGraphicDataHelper';
+import updateUtilityGraphicDataHelper from 'utils/classDiagramHelper/utility/updateUtilityGraphicDataHelper';
 
 const UtilityEdit = (props: { utility: IUtility }) => {
     const dispatch = useDispatch();
