@@ -16,6 +16,8 @@ import IEnumerationEntry from '@interfaces/class-diagram/enumeration/IEnumeratio
 import IDataType from '@interfaces/class-diagram/data-type/IDataType';
 import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
 import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
+import IObject from '@interfaces/class-diagram/object/IObject';
+import IObjectSlot from '@interfaces/class-diagram/object/IObjectSlot';
 
 export const updateClass = (data: IClass): IReducerPayload<ClassDiagramActionEnum, IClass> => {
     return {
@@ -293,6 +295,41 @@ export const addNewPrimitive = (data: IPrimitiveType): IReducerPayload<ClassDiag
 export const updatePrimitiveType = (data: IPrimitiveType): IReducerPayload<ClassDiagramActionEnum, IPrimitiveType> => {
     return {
         type: ClassDiagramActionEnum.UPDATE_PRIMITIVE,
+        data
+    };
+};
+
+export const addNewObject = (data: IObject): IReducerPayload<ClassDiagramActionEnum, IObject> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_OBJECT,
+        data
+    };
+};
+
+export const updateObject = (data: IObject): IReducerPayload<ClassDiagramActionEnum, IObject> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_OBJECT,
+        data
+    };
+};
+
+export const addNewObjectSlot = (data: IObjectSlot): IReducerPayload<ClassDiagramActionEnum, IObjectSlot> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_OBJECT_SLOT,
+        data
+    };
+};
+
+export const updateObjectSlot = (data: IObjectSlot): IReducerPayload<ClassDiagramActionEnum, IObjectSlot> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_OBJECT_SLOT,
+        data
+    };
+};
+
+export const removeObjectSlot = (data: IObjectSlot): IReducerPayload<ClassDiagramActionEnum, IObjectSlot> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_OBJECT_SLOT,
         data
     };
 };

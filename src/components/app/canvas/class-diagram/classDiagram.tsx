@@ -16,6 +16,8 @@ import Enumeration from './enumeration/enumeration';
 import DataType from './data-type/dataType';
 import PrimitiveType from './primitive-type/primitiveType';
 import Class from './class/class';
+import IObjectProps from '@interfaces/class-diagram/object/IObjectProps';
+import ObjectElement from './object/objectElement';
 
 const ClassDiagram = (props: {
     classDiagram: IClassDiagramState,
@@ -238,7 +240,38 @@ const ClassDiagram = (props: {
             return (
                 <PrimitiveType key={id} {...props}/>
             );
-        })
+        }),
+        ...classDiagram.objects.allIds.map((id) => {
+            const objectElement = classDiagram.objects.byId[id];
+            const objectSlots = objectElement.data.slotIds.map((id) => classDiagram.objectSlots.byId[id]);
+            
+            const objectProps: IObjectProps = {
+                object: objectElement,
+                slots: objectSlots,
+                functionality: {
+                    onJointClick: (event: React.MouseEvent) => {
+                        event.persist();
+                        let circleElement = event.target as SVGCircleElement;
+                        const cx = parseInt(circleElement.getAttribute('cx'));
+                        const cy = parseInt(circleElement.getAttribute('cy'));
+                        updateCanvasOperation({
+                            type: CanvasOperationEnum.DRAWING_NEW_RELATION,
+                            data: {}
+                        });
+                        setCurrentlyDrawingRelation({
+                            x1: cx,
+                            y1: cy,
+                            x2: cx,
+                            y2: cy
+                        });
+                    }
+                }
+            };
+
+            return (
+                <ObjectElement key={id} {...objectProps}/>
+            );
+        }),
     );
 
     return (

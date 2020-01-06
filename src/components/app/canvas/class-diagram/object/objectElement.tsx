@@ -1,37 +1,36 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import './data-type.scss';
-import IDataTypeProps from '@interfaces/class-diagram/data-type/IDataTypeProps';
-import { useDispatch } from 'react-redux';
-import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
-import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
-import IDataTypeEntryProps from '@interfaces/class-diagram/data-type/IDataTypeEntryProps';
-import DataTypeEntry from './dataTypeEntry';
-import FrameRow from '../common/frameRow';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
-import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
-import Joints from '../common/joints';
-import IDataTypeHead from '@interfaces/class-diagram/data-type/IDataTypeHead';
-import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
-import Frame from '../common/frame';
 import FrameHead from '../common/frameHead';
-import DataTypeHead from './dataTypeHead';
-import FrameSegment from '../common/frameSegment';
+import IObjectProps from '@interfaces/class-diagram/object/IObjectProps';
+import { useDispatch } from 'react-redux';
+import IObjectSlot from '@interfaces/class-diagram/object/IObjectSlot';
+import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
+import FrameRow from '../common/frameRow';
+import IObjectSlotProps from '@interfaces/class-diagram/object/IObjectSlotProps';
+import ObjectSlot from './objectSlot';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Direction from '@enums/direction';
+import Joints from '../common/joints';
+import IObjectHead from '@interfaces/class-diagram/object/IObjectHead';
+import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
+import ObjectHead from './objectHead';
+import Frame from '../common/frame';
+import FrameSegment from '../common/frameSegment';
 
-const DataType = (props: IDataTypeProps) => {
+const ObjectElement = (props: IObjectProps) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
-    const { frame } = props.dataType.graphicData;
-    const { data } = props.dataType;
+    const { frame } = props.object.graphicData;
+    const { data } = props.object;
 
-    const createNewDataTypeEntry = (index: number, entry: IDataTypeEntry) => {
+    const createNewObjectSlot = (index: number, slot: IObjectSlot) => {
         const frameRowProps: IFrameRow = {
             graphicData: {
                 index,
                 x: frame.x,
-                y: frame.y + frame.rowHeight + (frame.rowHeight/2), 
+                y: frame.y + frame.rowHeight, 
                 xCenter: frame.xCenter,
                 rowHeight: frame.rowHeight,
                 width: frame.width,
@@ -39,44 +38,43 @@ const DataType = (props: IDataTypeProps) => {
             }
         };
 
-        const enumerationEntryProps: IDataTypeEntryProps = {
+        const objectSlotProps: IObjectSlotProps = {
             graphicData: {
                 text: {
                     x: frame.xCenter,
-                    y: frame.y + (index + 1 * frame.rowHeight) + frame.fontPixelSize + (frame.rowHeight/2)
+                    y: frame.y + (index + 1 * frame.rowHeight) + frame.fontPixelSize
                 }
             },
-            entry
+            slot
         };
 
         return (
             <FrameRow key={index} frameRow={frameRowProps}>
-                <DataTypeEntry {...enumerationEntryProps}/>
+                <ObjectSlot {...objectSlotProps}/>
             </FrameRow>
         );
     };
-
-    const onDataTypeClick = (ev: React.MouseEvent) => {
-        dispatch(selectNewElement(props.dataType.id));
+    const onObjectClick = () => {
+        dispatch(selectNewElement(props.object.id));
     };
-    const dataTypeEntries = props.entries.map((entry, index) => createNewDataTypeEntry(index, entry));
+    const objectSlots = props.slots.map((slot, index) => createNewObjectSlot(index, slot));
     const frameFunctionality: IFrameFunctionality = {
         onFrameMove: () => {
             dispatch(isMouseDown(true));
             dispatch(newCanvasOperation({
                 type: CanvasOperationEnum.MOVE_ELEMENT,
-                elementId: props.dataType.id
+                elementId: props.object.id
             }));
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));
             dispatch(newCanvasOperation({
                 type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
-                elementId: props.dataType.id
+                elementId: props.object.id
             }));
         },
         onFrameSetDefaultWidth: () => {},
-        onFrameClick: onDataTypeClick,
+        onFrameClick: onObjectClick,
         onFrameMouseLeave: (event: React.MouseEvent) => {
             setJoints(<g/>);
         },
@@ -91,25 +89,21 @@ const DataType = (props: IDataTypeProps) => {
             ));
         }
     };
-    const dataTypeHeadData: IDataTypeHead = {
+    const objectHeadData: IObjectHead = {
         graphicData: {
             text: {
                 x: frame.xCenter,
-                y: frame.y + frame.rowHeight
-            },
-            title: {
-                x: frame.xCenter,
-                y: frame.y + (frame.rowHeight / 2)
+                y: props.slots.length === 0 && props.slots.length === 0 ? frame.y + frame.rowHeight : frame.y + (frame.rowHeight / 2)
             }
         },
         data: {
-            text: data.dataTypeName
+            text: data.objectName
         }
     };
-    const dataTypeEntriesSegment: IFrameSegmentGraphicData = {
+    const objectSlotsSegment: IFrameSegmentGraphicData = {
         segmentSeparator: {
             x: frame.x,
-            y: frame.y + frame.rowHeight + (frame.rowHeight / 2),
+            y: frame.y + frame.rowHeight,
             xLength: frame.width,
             yLength: 0
         }
@@ -118,14 +112,14 @@ const DataType = (props: IDataTypeProps) => {
     return (
         <Frame graphicData={frame} functionality={frameFunctionality}>
             <FrameHead>
-                <DataTypeHead {...dataTypeHeadData}/>
+                <ObjectHead objectHead={objectHeadData}/>
             </FrameHead>
-            <FrameSegment graphicData={dataTypeEntriesSegment}>
-                {...dataTypeEntries}
+            <FrameSegment graphicData={objectSlotsSegment}>
+                {...objectSlots}
             </FrameSegment>
             {joints}
         </Frame>
     );
 };
 
-export default DataType;
+export default ObjectElement;

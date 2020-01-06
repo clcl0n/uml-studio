@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
 import createNewClass from 'utils/classDiagramHelper/class/createNewClass';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
-import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType, addNewPrimitive, updateClass, updateUtility, updatePrimitiveType, updateInterface, updateEnumeration, updateDataType } from '@store/actions/classDiagram';
+import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType, addNewPrimitive, updateClass, updateUtility, updatePrimitiveType, updateInterface, updateEnumeration, updateDataType, addNewObjectSlot, addNewObject } from '@store/actions/classDiagram';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import ICoordinates from '@interfaces/ICoordinates';
 import createNewRelationship from 'utils/classDiagramHelper/createNewRelationship';
@@ -38,6 +38,7 @@ import IDataType from '@interfaces/class-diagram/data-type/IDataType';
 import moveInterfaceHelper from 'utils/classDiagramHelper/interface/moveInterfaceHelper';
 import moveEnumerationHelper from 'utils/classDiagramHelper/enumeration/moveEnumerationHelper';
 import moveDataTypeHelper from 'utils/classDiagramHelper/dataType/moveDataTypeHelper';
+import createNewObjectHelper from 'utils/classDiagramHelper/object/createNewObjectHelper';
 
 const Canvas = () => {
     const dispatch = useDispatch();
@@ -58,6 +59,8 @@ const Canvas = () => {
             return state.umlClassDiagram.primitiveTypes.byId[canvasOperationState.elementId];
         } else if (state.umlClassDiagram.dataTypes.byId[canvasOperationState.elementId]) {
             return state.umlClassDiagram.dataTypes.byId[canvasOperationState.elementId];
+        } else if (state.umlClassDiagram.objects.byId[canvasOperationState.elementId]) {
+            return state.umlClassDiagram.objects.byId[canvasOperationState.elementId];
         }
     });
     const [oldCursorPosition, updateOldCursorPosition] = React.useState({ x: 0, y: 0 });
@@ -134,7 +137,7 @@ const Canvas = () => {
         let coordinates: ICoordinates = { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY };
         // coordinates = gridRoundCoordinates(coordinates);
         //new******************
-        if (isMouseDown) {
+        if (isMouseDown && selectedElement) {
             switch(canvasOperationState.type) {
                 case CanvasOperationEnum.RESIZE_ELEMENT_LEFT:
                     switch(selectedElement.type) {
@@ -270,6 +273,9 @@ const Canvas = () => {
                 dispatch(addNewInterface(newInterface));
                 break;
             case RibbonOperationEnum.ADD_NEW_OBJECT:
+                const { newObjectSlot, newObject } = createNewObjectHelper(coordinates);
+                dispatch(addNewObjectSlot(newObjectSlot));
+                dispatch(addNewObject(newObject));
                 break;
             case RibbonOperationEnum.ADD_NEW_PRIMITIVE_TYPE:
                 const { newPrimitiveType } = createNewPrimitiveType(coordinates);

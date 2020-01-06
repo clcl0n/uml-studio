@@ -9,7 +9,8 @@ enum ClassDiagramElementsEnum {
     UTILITY = 'UTILITY',
     ENUMERATION = 'ENUMERATION',
     DATA_TYPE = 'DATA_TYPE',
-    PRIMITIVE_TYPE = 'PRIMITIVE_TYPE'
+    PRIMITIVE_TYPE = 'PRIMITIVE_TYPE',
+    OBJECT = 'OBJECT'
 }
 
 export default ClassDiagramElementsEnum;
