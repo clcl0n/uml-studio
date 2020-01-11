@@ -35,6 +35,7 @@ import createNewObjectHelper from 'utils/classDiagramHelper/object/createNewObje
 import IObject from '@interfaces/class-diagram/object/IObject';
 import resizeElementHelper from 'utils/classDiagramHelper/resizeElementHelper';
 import moveObjectHelper from 'utils/classDiagramHelper/object/moveObjectHelper';
+import updateRelationshipHelper from 'utils/classDiagramHelper/updateRelationshipHelper';
 
 const Canvas = () => {
     const dispatch = useDispatch();
@@ -59,31 +60,29 @@ const Canvas = () => {
             return state.umlClassDiagram.objects.byId[canvasOperationState.elementId];
         }
     });
+    const movingRelationshipSegment = useSelector((state: IStoreState) => {
+        if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_SEGMENT) {
+            return state.umlClassDiagram.relationshipSegments.byId[canvasOperationState.elementId];
+        }
+    });
+    const movingRelationship = useSelector((state: IStoreState) => {
+        if (movingRelationshipSegment) {
+            const relationship = state.umlClassDiagram.relationships.byId[movingRelationshipSegment.relationshipId];
+            const relationshipSegments = relationship.segmentIds.map((segmentId) => {
+                return state.umlClassDiagram.relationshipSegments.byId[segmentId];
+            });
+            return {
+                relationship,
+                relationshipSegments
+            };
+        }
+    });
+
     const [oldCursorPosition, updateOldCursorPosition] = React.useState({ x: 0, y: 0 });
-
-
-    // const updateDrawingRelation = (coordinates: ICoordinates) => {
-    //     let fixX = -0.5;
-    //     let fixY = 0.5;
-    //     if (currentlyDrawingRelation.y1 > coordinates.y) {
-    //         fixY = -0.5;
-    //     }
-    //     if (currentlyDrawingRelation.x1 > coordinates.x) {
-    //         let fixX = 0.5;
-    //     }
-
-    //     setCurrentlyDrawingRelation({
-    //         x1: currentlyDrawingRelation.x1,
-    //         y1: currentlyDrawingRelation.y1,
-    //         x2: coordinates.x - fixX,
-    //         y2: coordinates.y - fixY
-    //     });
-    // };
 
     const canvasMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.persist();
         let coordinates: ICoordinates = { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY };
-        // coordinates = gridRoundCoordinates(coordinates);
         if (isMouseDown && selectedElement) {
             switch(canvasOperationState.type) {
                 case CanvasOperationEnum.RESIZE_ELEMENT_LEFT:
@@ -162,10 +161,37 @@ const Canvas = () => {
                     }
                     break;
             }
-        } else if (isMouseDown && canvasOperationState.type === CanvasOperationEnum.DRAWING_NEW_RELATION) {
-            const { relationship } = newRelationship;
-            let fixX = relationship.tail.x > coordinates.x ? -0.5 : 0.5;
-            dispatch(updateNewRelationship(createNewRelationship({ x1: relationship.tail.x, y1: relationship.tail.y, x2: coordinates.x - fixX, y2: coordinates.y})));
+        } else if (isMouseDown) {
+            switch (canvasOperationState.type) {
+                case CanvasOperationEnum.DRAWING_NEW_RELATION:
+                    let fixX = newRelationship.relationship.tail.x > coordinates.x ? -0.5 : 0.5;
+                    dispatch(updateNewRelationship(createNewRelationship({
+                        x1: newRelationship.relationship.tail.x,
+                        y1: newRelationship.relationship.tail.y,
+                        x2: coordinates.x - fixX,
+                        y2: coordinates.y
+                    })));
+                    break;
+                case CanvasOperationEnum.MOVE_RELATIONSHIP_SEGMENT:
+                    if (movingRelationshipSegment) {
+                        const { relationship, relationshipSegments } = updateRelationshipHelper(
+                            movingRelationshipSegment.direction,
+                            movingRelationship.relationship,
+                            movingRelationship.relationshipSegments,
+                            movingRelationshipSegment.id,
+                            coordinates
+                        );
+                        relationshipSegments.forEach((segment) => {
+                            if (classDiagram.relationshipSegments.allIds.includes(segment.id)) {	
+                                dispatch(updateRelationshipSegment(segment));	
+                            } else {	
+                                dispatch(addNewRelationshipSegment(segment));	
+                            }
+                        });
+                        dispatch(updateRelationship(relationship));
+                    }
+                    break;
+            }
         }
         updateOldCursorPosition(coordinates);
     };

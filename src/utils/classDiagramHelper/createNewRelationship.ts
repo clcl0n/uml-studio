@@ -22,6 +22,7 @@ const createNewRelationship = (coordinates: {x1: number, y1: number, x2: number,
     const endSegmentId = v4();
     addSegment({
         id: startSegmentId,
+        relationshipId,
         fromSegmentId: null,
         toSegmentId: middleSegmentId,
         direction: SegmentDirection.HORIZONTAL,
@@ -37,6 +38,7 @@ const createNewRelationship = (coordinates: {x1: number, y1: number, x2: number,
         height = y2 - y1;
         addSegment({
             id: middleSegmentId,
+            relationshipId,
             fromSegmentId: startSegmentId,
             toSegmentId: endSegmentId,
             direction: SegmentDirection.VERTICAL,
@@ -50,6 +52,7 @@ const createNewRelationship = (coordinates: {x1: number, y1: number, x2: number,
 
         addSegment({
             id: endSegmentId,
+            relationshipId,
             fromSegmentId: middleSegmentId,
             toSegmentId: null,
             direction: SegmentDirection.HORIZONTAL,
@@ -64,6 +67,7 @@ const createNewRelationship = (coordinates: {x1: number, y1: number, x2: number,
         height = y1 - y2;
         addSegment({
             id: middleSegmentId,
+            relationshipId,
             fromSegmentId: startSegmentId,
             toSegmentId: endSegmentId,
             direction: SegmentDirection.VERTICAL,
@@ -77,6 +81,7 @@ const createNewRelationship = (coordinates: {x1: number, y1: number, x2: number,
 
         addSegment({
             id: endSegmentId,
+            relationshipId,
             fromSegmentId: middleSegmentId,
             toSegmentId: null,
             direction: SegmentDirection.HORIZONTAL,

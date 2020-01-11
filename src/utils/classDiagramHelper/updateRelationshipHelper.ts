@@ -53,6 +53,7 @@ const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRe
         insertSegment(
             {
                 id: newId,
+                relationshipId: relationship.id,
                 fromSegmentId: null,
                 toSegmentId: movingSegment.id,
                 isEnd: false,
@@ -74,6 +75,7 @@ const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRe
         insertSegment(
             {
                 id: newId,
+                relationshipId: relationship.id,
                 fromSegmentId: movingSegment.id,
                 toSegmentId: null,
                 isEnd: true,

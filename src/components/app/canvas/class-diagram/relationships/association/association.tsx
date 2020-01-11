@@ -6,14 +6,13 @@ import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelat
 import RelationshipSegment from '../relationhips-segment/relationshipSegment';
 import Direction from '@enums/direction';
 import { selectNewElement } from '@store/actions/canvas';
-import IRelationshipSegmentFunctionality from '@interfaces/class-diagram/relationships/IRelationshipSegmentFunctionality';
 
-const Association = (props: { relationship: IRelationship, relationshipSegments: Array<IRelationshipSegment>, functionality: IRelationshipSegmentFunctionality}) => {
+const Association = (props: { relationship: IRelationship, relationshipSegments: Array<IRelationshipSegment> }) => {
     const dispatch = useDispatch();
-    const { relationship, relationshipSegments, functionality } = props;
+    const { relationship, relationshipSegments } = props;
 
     const segments = relationshipSegments.map((relationshipSegment, index) => {
-        return <RelationshipSegment key={index} segment={relationshipSegment} functionality={functionality}/>;
+        return <RelationshipSegment key={index} segment={relationshipSegment} relationId={relationship.id}/>;
     });
 
     //to-do UP DOWN in future
@@ -34,7 +33,7 @@ const Association = (props: { relationship: IRelationship, relationshipSegments:
             <path
                 stroke='black'
                 d={`M ${relationship.head.x} ${relationship.head.y} l ${headDirection} ${5}`}
-                />
+            />
             <path
                 stroke='black'
                 d={`M ${relationship.head.x} ${relationship.head.y} l ${headDirection} ${-5}`}

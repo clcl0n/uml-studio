@@ -60,7 +60,6 @@ const ClassDiagram = (props: {
                     key={id}
                     relationship={relationship}
                     relationshipSegments={relationshipSegments}
-                    functionality={{onSegmentMove}}
                 />
             );
         }),
@@ -152,7 +151,6 @@ const ClassDiagram = (props: {
                 key={elements.length + 1}
                 relationship={classDiagram.newRelationship.relationship}
                 relationshipSegments={classDiagram.newRelationship.relationshipSegments}
-                functionality={{onSegmentMove: () => {}}}
             />
         );
     }
