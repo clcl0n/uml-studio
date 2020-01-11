@@ -9,7 +9,6 @@ import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationship
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import ICoordinates from '@interfaces/ICoordinates';
 import createNewRelationship from 'utils/classDiagramHelper/createNewRelationship';
-import updateRelationshipHelper from 'utils/classDiagramHelper/updateRelationshipHelper';
 import createNewInterfaceHelper from 'utils/classDiagramHelper/interface/createNewInterfaceHelper';
 import createNewUtilityHelper from 'utils/classDiagramHelper/utility/createNewUtilityHelper';
 import createNewEnumerationHelper from 'utils/classDiagramHelper/enumeration/createNewEnumerationHelper';
@@ -42,7 +41,6 @@ const Canvas = () => {
     const classDiagram = useSelector((state: IStoreState) => state.umlClassDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
     const newRelationship = useSelector((state: IStoreState) => state.umlClassDiagram.newRelationship);
-    const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
     const selectedElement = useSelector((state: IStoreState) => {
         if (state.umlClassDiagram.classes.byId[canvasOperationState.elementId]) {
@@ -62,79 +60,30 @@ const Canvas = () => {
         }
     });
     const [oldCursorPosition, updateOldCursorPosition] = React.useState({ x: 0, y: 0 });
-    const [canvasOperation, updateCanvasOperation] = React.useState({type: '', data: {}});
-    const [currentlyDrawingRelation, setCurrentlyDrawingRelation] = React.useState({
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0
-    });
 
-    const updateDrawingRelation = (coordinates: ICoordinates) => {
-        let fixX = -0.5;
-        let fixY = 0.5;
-        if (currentlyDrawingRelation.y1 > coordinates.y) {
-            fixY = -0.5;
-        }
-        if (currentlyDrawingRelation.x1 > coordinates.x) {
-            let fixX = 0.5;
-        }
 
-        setCurrentlyDrawingRelation({
-            x1: currentlyDrawingRelation.x1,
-            y1: currentlyDrawingRelation.y1,
-            x2: coordinates.x - fixX,
-            y2: coordinates.y - fixY
-        });
-    };
+    // const updateDrawingRelation = (coordinates: ICoordinates) => {
+    //     let fixX = -0.5;
+    //     let fixY = 0.5;
+    //     if (currentlyDrawingRelation.y1 > coordinates.y) {
+    //         fixY = -0.5;
+    //     }
+    //     if (currentlyDrawingRelation.x1 > coordinates.x) {
+    //         let fixX = 0.5;
+    //     }
 
-    const stopDrawingRelation = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        event.persist();
-        let circleElement = event.target as SVGCircleElement;
-        if (circleElement.nodeName === 'circle') {
-            updateCanvasOperation({
-                type: CanvasOperationEnum.NONE,
-                data: {}
-            });
-            const { relationship, relationshipSegments } = createNewRelationship({ 
-                x1: currentlyDrawingRelation.x1,
-                y1: currentlyDrawingRelation.y1,
-                x2: parseInt(circleElement.getAttribute('cx')),
-                y2: parseInt(circleElement.getAttribute('cy'))
-            });
-            relationshipSegments.forEach((relationshipSegment) => dispatch(addNewRelationshipSegment(relationshipSegment)));
-            dispatch(addNewRelationship(relationship));
-            setCurrentlyDrawingRelation({
-                x1: 0,
-                y1: 0,
-                x2: 0,
-                y2: 0
-            });
-        }
-    }
-
-    const canvasMouseClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        switch(canvasOperation.type) {
-            case CanvasOperationEnum.DRAWING_NEW_RELATION:
-                stopDrawingRelation(event);
-                break;
-            case CanvasOperationEnum.UPDATE_RELATION:
-                //stop
-                updateCanvasOperation({
-                    type: CanvasOperationEnum.NONE,
-                    data: {}
-                });
-                break;
-            default:
-                break;
-        }
-    };
+    //     setCurrentlyDrawingRelation({
+    //         x1: currentlyDrawingRelation.x1,
+    //         y1: currentlyDrawingRelation.y1,
+    //         x2: coordinates.x - fixX,
+    //         y2: coordinates.y - fixY
+    //     });
+    // };
 
     const canvasMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.persist();
         let coordinates: ICoordinates = { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY };
         // coordinates = gridRoundCoordinates(coordinates);
-        //new******************
         if (isMouseDown && selectedElement) {
             switch(canvasOperationState.type) {
                 case CanvasOperationEnum.RESIZE_ELEMENT_LEFT:
@@ -215,36 +164,10 @@ const Canvas = () => {
             }
         } else if (isMouseDown && canvasOperationState.type === CanvasOperationEnum.DRAWING_NEW_RELATION) {
             const { relationship } = newRelationship;
-            dispatch(updateNewRelationship(createNewRelationship({ x1: relationship.tail.x, y1: relationship.tail.y, x2: coordinates.x, y2: coordinates.y})));
+            let fixX = relationship.tail.x > coordinates.x ? -0.5 : 0.5;
+            dispatch(updateNewRelationship(createNewRelationship({ x1: relationship.tail.x, y1: relationship.tail.y, x2: coordinates.x - fixX, y2: coordinates.y})));
         }
         updateOldCursorPosition(coordinates);
-
-        //old to-do refactor
-        switch(canvasOperation.type) {
-            case CanvasOperationEnum.DRAWING_NEW_RELATION:
-                updateDrawingRelation(coordinates);
-                break;
-            case CanvasOperationEnum.UPDATE_RELATION:
-                const { relationship, relationshipSegments } = updateRelationshipHelper(
-                    (canvasOperation.data as any).segmentDirection,
-                    (canvasOperation.data as any).relationship,
-                    (canvasOperation.data as any).relationshipSegments,
-                    (canvasOperation.data as any).segmentId,
-                    coordinates
-                );
-                
-                relationshipSegments.forEach((relationshipSegment) => {
-                    if (classDiagram.relationshipSegments.allIds.includes(relationshipSegment.id)) {
-                        dispatch(updateRelationshipSegment(relationshipSegment));
-                    } else {
-                        dispatch(addNewRelationshipSegment(relationshipSegment));
-                    }
-                });
-                dispatch(updateRelationship(relationship));
-                break;
-            default:
-                break;
-        }
     };
 
     const CanvasOnDragOver = (event: React.DragEvent<HTMLDivElement>) => {
@@ -318,14 +241,9 @@ const Canvas = () => {
     };
 
     return (
-        <div id='canvas' onMouseUp={() => resetCanvasOperation()} onClick={(ev) => canvasMouseClick(ev)} onMouseMove={(ev) => canvasMouseMove(ev)} onDragOver={(ev) => CanvasOnDragOver(ev)} onDrop={(ev) => CanvasOnDrop(ev)}>
+        <div id='canvas' onMouseUp={() => resetCanvasOperation()} onMouseMove={(ev) => canvasMouseMove(ev)} onDragOver={(ev) => CanvasOnDragOver(ev)} onDrop={(ev) => CanvasOnDrop(ev)}>
             <svg viewBox='0 0 1500 1000' transform={`scale(${canvasZoom/100})`}  id='svg-canvas' width='100%' height='100%'>
-                <ClassDiagram
-                    classDiagram={classDiagram}
-                    updateCanvasOperation={updateCanvasOperation}
-                    setCurrentlyDrawingRelation={setCurrentlyDrawingRelation}
-                />
-                <line stroke='black' x1={currentlyDrawingRelation.x1} x2={currentlyDrawingRelation.x2} y1={currentlyDrawingRelation.y1} y2={currentlyDrawingRelation.y2}/>
+                <ClassDiagram classDiagram={classDiagram}/>
             </svg>
         </div>
     );

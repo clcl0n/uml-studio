@@ -7,7 +7,7 @@ import createNewRelationship from 'utils/classDiagramHelper/createNewRelationshi
 import { newCanvasOperation } from '@store/actions/canvas';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 
-const Joint = (props: ICoordinates & { radius: number, onJointClick: any }) => {
+const Joint = (props: ICoordinates & { radius: number }) => {
     const dispatch = useDispatch();
 
     const startDrawingNewRelationship = (event: React.MouseEvent) => {
@@ -26,7 +26,6 @@ const Joint = (props: ICoordinates & { radius: number, onJointClick: any }) => {
             cy={props.y}
             r={props.radius}
             onMouseDown={(ev) => startDrawingNewRelationship(ev)}
-            onClick={(ev) => props.onJointClick(ev)}
         />
     );
 };

@@ -114,7 +114,6 @@ const Interface = (props: IInterfaceProps) => {
                         coordinates={{ x: frame.x, y: frame.y }}
                         width={frame.width}
                         height={frame.height}
-                        onJointClick={props.functionality.onJointClick}
                     />
                 ));
             }

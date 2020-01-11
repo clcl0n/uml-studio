@@ -21,10 +21,8 @@ import ObjectElement from './object/objectElement';
 
 const ClassDiagram = (props: {
     classDiagram: IClassDiagramState,
-    updateCanvasOperation: React.Dispatch<React.SetStateAction<{type: CanvasOperationEnum, data: any}>>,
-    setCurrentlyDrawingRelation: React.Dispatch<React.SetStateAction<{ x1: number, y1: number, x2: number, y2: number}>>,
 }) => {
-    const { classDiagram, updateCanvasOperation, setCurrentlyDrawingRelation } = props;
+    const { classDiagram } = props;
     let elements: Array<JSX.Element> = [];
 
     elements.push(
@@ -37,24 +35,6 @@ const ClassDiagram = (props: {
                 class: classElement,
                 properties: classProperties,
                 methods: classMethods,
-                functionality: {
-                    onJointClick: (event: React.MouseEvent) => {
-                        event.persist();
-                        let circleElement = event.target as SVGCircleElement;
-                        const cx = parseInt(circleElement.getAttribute('cx'));
-                        const cy = parseInt(circleElement.getAttribute('cy'));
-                        updateCanvasOperation({
-                            type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                            data: {}
-                        });
-                        setCurrentlyDrawingRelation({
-                            x1: cx,
-                            y1: cy,
-                            x2: cx,
-                            y2: cy
-                        });
-                    }
-                }
             };
     
             return (
@@ -65,15 +45,15 @@ const ClassDiagram = (props: {
             const relationship = classDiagram.relationships.byId[id];
             const relationshipSegments = relationship.segmentIds.map((segmentId) => classDiagram.relationshipSegments.byId[segmentId]);
             const onSegmentMove = (event: React.MouseEvent, segmentId: string, segmentDirection: SegmentDirection) => {
-                updateCanvasOperation({
-                    type: CanvasOperationEnum.UPDATE_RELATION,
-                    data: {
-                        relationship,
-                        relationshipSegments,
-                        segmentId,
-                        segmentDirection
-                    }
-                });
+                // updateCanvasOperation({
+                //     type: CanvasOperationEnum.UPDATE_RELATION,
+                //     data: {
+                //         relationship,
+                //         relationshipSegments,
+                //         segmentId,
+                //         segmentDirection
+                //     }
+                // });
             };
             return (
                 <Association
@@ -92,25 +72,7 @@ const ClassDiagram = (props: {
             const props: IInterfaceProps = {
                 interface: interfaceElement,
                 properties: interfaceProperties,
-                methods: interfaceMethods,
-                functionality: {
-                    onJointClick: (event: React.MouseEvent) => {
-                        event.persist();
-                        let circleElement = event.target as SVGCircleElement;
-                        const cx = parseInt(circleElement.getAttribute('cx'));
-                        const cy = parseInt(circleElement.getAttribute('cy'));
-                        updateCanvasOperation({
-                            type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                            data: {}
-                        });
-                        setCurrentlyDrawingRelation({
-                            x1: cx,
-                            y1: cy,
-                            x2: cx,
-                            y2: cy
-                        });
-                    }
-                }
+                methods: interfaceMethods
             };
 
             return (
@@ -125,25 +87,7 @@ const ClassDiagram = (props: {
             const props: IUtilityProps = {
                 utility: utilityElement,
                 properties: utilityProperties,
-                methods: utilityMethods,
-                functionality: {
-                    onJointClick: (event: React.MouseEvent) => {
-                        event.persist();
-                        let circleElement = event.target as SVGCircleElement;
-                        const cx = parseInt(circleElement.getAttribute('cx'));
-                        const cy = parseInt(circleElement.getAttribute('cy'));
-                        updateCanvasOperation({
-                            type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                            data: {}
-                        });
-                        setCurrentlyDrawingRelation({
-                            x1: cx,
-                            y1: cy,
-                            x2: cx,
-                            y2: cy
-                        });
-                    }
-                }
+                methods: utilityMethods
             };
 
             return (
@@ -156,25 +100,7 @@ const ClassDiagram = (props: {
             
             const props: IEnumerationProps = {
                 enumeration: enumerationElement,
-                entries: enumerationEntries,
-                functionality: {
-                    onJointClick: (event: React.MouseEvent) => {
-                        event.persist();
-                        let circleElement = event.target as SVGCircleElement;
-                        const cx = parseInt(circleElement.getAttribute('cx'));
-                        const cy = parseInt(circleElement.getAttribute('cy'));
-                        updateCanvasOperation({
-                            type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                            data: {}
-                        });
-                        setCurrentlyDrawingRelation({
-                            x1: cx,
-                            y1: cy,
-                            x2: cx,
-                            y2: cy
-                        });
-                    }
-                }
+                entries: enumerationEntries
             };
 
             return (
@@ -187,25 +113,7 @@ const ClassDiagram = (props: {
             
             const props: IDataTypeProps = {
                 dataType: dataTypeElement,
-                entries: dataTypeEntries,
-                functionality: {
-                    onJointClick: (event: React.MouseEvent) => {
-                        event.persist();
-                        let circleElement = event.target as SVGCircleElement;
-                        const cx = parseInt(circleElement.getAttribute('cx'));
-                        const cy = parseInt(circleElement.getAttribute('cy'));
-                        updateCanvasOperation({
-                            type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                            data: {}
-                        });
-                        setCurrentlyDrawingRelation({
-                            x1: cx,
-                            y1: cy,
-                            x2: cx,
-                            y2: cy
-                        });
-                    }
-                }
+                entries: dataTypeEntries
             };
 
             return (
@@ -216,25 +124,7 @@ const ClassDiagram = (props: {
             const primitiveTypeElement = classDiagram.primitiveTypes.byId[id];
             
             const props: IPrimitiveTypeProps = {
-                primitive: primitiveTypeElement,
-                functionality: {
-                    onJointClick: (event: React.MouseEvent) => {
-                        event.persist();
-                        let circleElement = event.target as SVGCircleElement;
-                        const cx = parseInt(circleElement.getAttribute('cx'));
-                        const cy = parseInt(circleElement.getAttribute('cy'));
-                        updateCanvasOperation({
-                            type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                            data: {}
-                        });
-                        setCurrentlyDrawingRelation({
-                            x1: cx,
-                            y1: cy,
-                            x2: cx,
-                            y2: cy
-                        });
-                    }
-                }
+                primitive: primitiveTypeElement
             };
 
             return (
@@ -247,25 +137,7 @@ const ClassDiagram = (props: {
             
             const objectProps: IObjectProps = {
                 object: objectElement,
-                slots: objectSlots,
-                functionality: {
-                    onJointClick: (event: React.MouseEvent) => {
-                        event.persist();
-                        let circleElement = event.target as SVGCircleElement;
-                        const cx = parseInt(circleElement.getAttribute('cx'));
-                        const cy = parseInt(circleElement.getAttribute('cy'));
-                        updateCanvasOperation({
-                            type: CanvasOperationEnum.DRAWING_NEW_RELATION,
-                            data: {}
-                        });
-                        setCurrentlyDrawingRelation({
-                            x1: cx,
-                            y1: cy,
-                            x2: cx,
-                            y2: cy
-                        });
-                    }
-                }
+                slots: objectSlots
             };
 
             return (
@@ -273,6 +145,17 @@ const ClassDiagram = (props: {
             );
         }),
     );
+
+    if (classDiagram.newRelationship.relationship !== null) {
+        elements.push(
+            <Association
+                key={elements.length + 1}
+                relationship={classDiagram.newRelationship.relationship}
+                relationshipSegments={classDiagram.newRelationship.relationshipSegments}
+                functionality={{onSegmentMove: () => {}}}
+            />
+        );
+    }
 
     return (
         <g>

@@ -6,7 +6,4 @@ export default interface IUtilityProps {
     utility: IUtility;
     properties: Array<IUtilityProperty>;
     methods: Array<IUtilityMethod>;
-    functionality: {
-        onJointClick: (event: React.MouseEvent) => void;
-    };
 }
