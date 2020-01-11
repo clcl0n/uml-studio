@@ -65,12 +65,14 @@ const Enumeration = (props: IEnumerationProps) => {
     const enumerationEntries = props.entries.map((entry, index) => createNewEnumerationEntry(index, entry));
     const frameFunctionality: IFrameFunctionality = {
         onFrameMove: () => {
-            dispatch(isMouseDown(true));
-            dispatch(newCanvasOperation({
-                type: CanvasOperationEnum.MOVE_ELEMENT,
-                elementId: props.enumeration.id
-            }));
-            setJoints(<g/>);
+            if ((event.target as SVGElement).nodeName !== 'circle') {
+                dispatch(isMouseDown(true));
+                dispatch(newCanvasOperation({
+                    type: CanvasOperationEnum.MOVE_ELEMENT,
+                    elementId: props.enumeration.id
+                }));
+                setJoints(<g/>);
+            }
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));

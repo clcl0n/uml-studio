@@ -62,12 +62,14 @@ const ObjectElement = (props: IObjectProps) => {
     const objectSlots = props.slots.map((slot, index) => createNewObjectSlot(index, slot));
     const frameFunctionality: IFrameFunctionality = {
         onFrameMove: () => {
-            dispatch(isMouseDown(true));
-            dispatch(newCanvasOperation({
-                type: CanvasOperationEnum.MOVE_ELEMENT,
-                elementId: props.object.id
-            }));
-            setJoints(<g/>);
+            if ((event.target as SVGElement).nodeName !== 'circle') {
+                dispatch(isMouseDown(true));
+                dispatch(newCanvasOperation({
+                    type: CanvasOperationEnum.MOVE_ELEMENT,
+                    elementId: props.object.id
+                }));
+                setJoints(<g/>);
+            }
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));

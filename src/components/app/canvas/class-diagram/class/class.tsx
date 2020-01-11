@@ -66,13 +66,15 @@ const Class = (props: IClassProps) => {
     };
 
     const frameFunctionality: IFrameFunctionality = {
-        onFrameMove: () => {
-            dispatch(isMouseDown(true));
-            dispatch(newCanvasOperation({
-                type: CanvasOperationEnum.MOVE_ELEMENT,
-                elementId: props.class.id
-            }));
-            setJoints(<g/>);
+        onFrameMove: (event: React.MouseEvent) => {
+            if ((event.target as SVGElement).nodeName !== 'circle') {
+                dispatch(isMouseDown(true));
+                dispatch(newCanvasOperation({
+                    type: CanvasOperationEnum.MOVE_ELEMENT,
+                    elementId: props.class.id
+                }));
+                setJoints(<g/>);
+            }
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));

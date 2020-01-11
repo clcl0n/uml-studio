@@ -64,12 +64,15 @@ const DataType = (props: IDataTypeProps) => {
     const dataTypeEntries = props.entries.map((entry, index) => createNewDataTypeEntry(index, entry));
     const frameFunctionality: IFrameFunctionality = {
         onFrameMove: () => {
-            dispatch(isMouseDown(true));
-            dispatch(newCanvasOperation({
-                type: CanvasOperationEnum.MOVE_ELEMENT,
-                elementId: props.dataType.id
-            }));
-            setJoints(<g/>);
+            if ((event.target as SVGElement).nodeName !== 'circle') {
+                setJoints(<g/>);
+                dispatch(isMouseDown(true));
+                dispatch(newCanvasOperation({
+                    type: CanvasOperationEnum.MOVE_ELEMENT,
+                    elementId: props.dataType.id
+                }));
+                setJoints(<g/>);
+            }
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));

@@ -6,5 +6,5 @@ export default interface IFrameFunctionality {
     onFrameMouseLeave: (event: React.MouseEvent) => void;
     onFrameResize: (direction: Direction) => void;
     onFrameSetDefaultWidth: () => void;
-    onFrameMove: () => void;
+    onFrameMove: (event: React.MouseEvent) => void;
 }

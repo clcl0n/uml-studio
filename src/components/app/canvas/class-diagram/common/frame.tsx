@@ -7,9 +7,6 @@ import Direction from '@enums/direction';
 const Frame = (props: {graphicData: IFrame, functionality: IFrameFunctionality, children: React.ReactNode}) => {
     const { graphicData, functionality } = props;
 
-    const onFrameMouseDown = (event: React.MouseEvent) => {
-    };
-
     return (
         <g
             className='umlClass'
@@ -59,7 +56,7 @@ const Frame = (props: {graphicData: IFrame, functionality: IFrameFunctionality, 
                 />
             </g>
             <g
-                onMouseDown={() => functionality.onFrameMove()}
+                onMouseDown={(ev) => functionality.onFrameMove(ev)}
             >
                 {props.children}
             </g>
