@@ -17,6 +17,7 @@ import IDataTypeEntry from './data-type/IDataTypeEntry';
 import IPrimitiveType from './primitive-type/IPrimitiveType';
 import IObject from './object/IObject';
 import IObjectSlot from './object/IObjectSlot';
+import INewRelationship from './INewRelationship';
 
 export default interface IClassDiagramState {
     selectedElementId: string;
@@ -38,4 +39,5 @@ export default interface IClassDiagramState {
     primitiveTypes: IReduxEntity<IPrimitiveType>;
     objects: IReduxEntity<IObject>;
     objectSlots: IReduxEntity<IObjectSlot>;
+    newRelationship: INewRelationship;
 }

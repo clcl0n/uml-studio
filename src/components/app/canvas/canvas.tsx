@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
 import createNewClass from 'utils/classDiagramHelper/class/createNewClass';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
-import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType, addNewPrimitive, updateClass, updateUtility, updatePrimitiveType, updateInterface, updateEnumeration, updateDataType, addNewObjectSlot, addNewObject, updateObject } from '@store/actions/classDiagram';
+import { addNewClassMethod, addNewClassProperty, addNewClass, addNewRelationshipSegment, addNewRelationship, updateRelationship, updateRelationshipSegment, addNewInterface, addNewInterfaceMethod, addNewInterfaceProperty, addNewUtilityMethod, addNewUtility, addNewUtilityProperty, addNewEnumeration, addNewEnumerationEntry, addNewDataTypeEntry, addNewDataType, addNewPrimitive, updateClass, updateUtility, updatePrimitiveType, updateInterface, updateEnumeration, updateDataType, addNewObjectSlot, addNewObject, updateObject, clearNewRelationship, updateNewRelationship } from '@store/actions/classDiagram';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import ICoordinates from '@interfaces/ICoordinates';
 import createNewRelationship from 'utils/classDiagramHelper/createNewRelationship';
@@ -41,6 +41,7 @@ const Canvas = () => {
     const dispatch = useDispatch();
     const classDiagram = useSelector((state: IStoreState) => state.umlClassDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
+    const newRelationship = useSelector((state: IStoreState) => state.umlClassDiagram.newRelationship);
     const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
     const selectedElement = useSelector((state: IStoreState) => {
@@ -212,7 +213,10 @@ const Canvas = () => {
                     }
                     break;
             }
-        };
+        } else if (isMouseDown && canvasOperationState.type === CanvasOperationEnum.DRAWING_NEW_RELATION) {
+            const { relationship } = newRelationship;
+            dispatch(updateNewRelationship(createNewRelationship({ x1: relationship.tail.x, y1: relationship.tail.y, x2: coordinates.x, y2: coordinates.y})));
+        }
         updateOldCursorPosition(coordinates);
 
         //old to-do refactor
@@ -297,6 +301,15 @@ const Canvas = () => {
     };
 
     const resetCanvasOperation = () => {
+        switch (canvasOperationState.type) {
+            case CanvasOperationEnum.DRAWING_NEW_RELATION:
+                dispatch(addNewRelationship(newRelationship.relationship));
+                newRelationship.relationshipSegments.forEach((segment) => {
+                    dispatch(addNewRelationshipSegment(segment));
+                });
+                dispatch(clearNewRelationship());
+                break;
+        }
         dispatch(isMouseDown(false));
         dispatch(newCanvasOperation({
             type: CanvasOperationEnum.NONE,

@@ -17,6 +17,7 @@ import dataTypeEntriesReducer from './dataTypeEntries';
 import primitiveTypesReducer from './primitiveTypes';
 import objectsReducer from './objects';
 import objectSlotsReducer from './objectSlots';
+import newRelationshipReducer from './newRelationship';
 
 const umlClassDiagramReducer = combineReducers({
     classes: classesReducer,
@@ -36,7 +37,8 @@ const umlClassDiagramReducer = combineReducers({
     dataTypeEntries: dataTypeEntriesReducer,
     primitiveTypes: primitiveTypesReducer,
     objects: objectsReducer,
-    objectSlots: objectSlotsReducer
+    objectSlots: objectSlotsReducer,
+    newRelationship: newRelationshipReducer
 });
 
 export default umlClassDiagramReducer; 

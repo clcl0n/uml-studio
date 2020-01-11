@@ -18,6 +18,7 @@ import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
 import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
 import IObject from '@interfaces/class-diagram/object/IObject';
 import IObjectSlot from '@interfaces/class-diagram/object/IObjectSlot';
+import INewRelationship from '@interfaces/class-diagram/INewRelationship';
 
 export const updateClass = (data: IClass): IReducerPayload<ClassDiagramActionEnum, IClass> => {
     return {
@@ -331,5 +332,26 @@ export const removeObjectSlot = (data: IObjectSlot): IReducerPayload<ClassDiagra
     return {
         type: ClassDiagramActionEnum.REMOVE_OBJECT_SLOT,
         data
+    };
+};
+
+export const addNewNewRelationship = (data: INewRelationship): IReducerPayload<ClassDiagramActionEnum, INewRelationship> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_NEW_NEW_RELATIONSHIP,
+        data
+    };
+};
+
+export const updateNewRelationship = (data: INewRelationship): IReducerPayload<ClassDiagramActionEnum, INewRelationship> => {
+    return {
+        type: ClassDiagramActionEnum.UPDATE_NEW_RELATIONSHIP,
+        data
+    };
+};
+
+export const clearNewRelationship = (): IReducerPayload<ClassDiagramActionEnum, any> => {
+    return {
+        type: ClassDiagramActionEnum.CLEAR_NEW_RELATIONSHIP,
+        data: null
     };
 };
