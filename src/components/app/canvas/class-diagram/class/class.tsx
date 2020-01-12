@@ -98,6 +98,7 @@ const Class = (props: IClassProps) => {
                         coordinates={{ x: frame.x, y: frame.y }}
                         width={frame.width}
                         height={frame.height}
+                        fromElementId={props.class.id}
                     />
                 ));
             }

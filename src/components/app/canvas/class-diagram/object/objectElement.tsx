@@ -93,6 +93,7 @@ const ObjectElement = (props: IObjectProps) => {
                         coordinates={{ x: frame.x, y: frame.y }}
                         width={frame.width}
                         height={frame.height}
+                        fromElementId={props.object.id}
                     />
                 ));
             }

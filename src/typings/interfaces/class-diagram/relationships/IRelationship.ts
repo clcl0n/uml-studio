@@ -5,8 +5,8 @@ import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 export default interface IRelationship {
     id: string;
     type: ClassDiagramElementsEnum;
-    fromClassId: string;
-    toClassId: string;
+    fromElementId: string;
+    toElementId: string;
     segmentIds: Array<string>;
     head: ICoordinates;
     tail: ICoordinates;

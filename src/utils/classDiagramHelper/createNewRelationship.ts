@@ -5,7 +5,7 @@ import Direction from '@enums/direction';
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
 import SegmentDirection from '@enums/segmentDirection';
 
-const createNewRelationship = (coordinates: {x1: number, y1: number, x2: number, y2: number}) => {
+const createNewRelationship = (coordinates: {x1: number, y1: number, x2: number, y2: number}, fromElementId: string = '', toElementId: string = '') => {
     const {x1, y1, x2, y2} = coordinates;
     const relationshipId = v4();
     const direction = x1 > x2 ? Direction.LEFT : Direction.RIGHT;
@@ -97,8 +97,8 @@ const createNewRelationship = (coordinates: {x1: number, y1: number, x2: number,
     const relationship: IRelationship = {
        id:  relationshipId,
        type: ClassDiagramElementsEnum.ASSOCIATION,
-       fromClassId: '',
-       toClassId: '',
+       fromElementId,
+       toElementId,
        head: {
            x: x2,
            y: y2

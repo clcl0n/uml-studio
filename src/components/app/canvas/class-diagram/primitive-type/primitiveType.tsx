@@ -56,6 +56,7 @@ const PrimitiveType = (props: IPrimitiveTypeProps) => {
                         coordinates={{ x: frame.x, y: frame.y }}
                         width={frame.width}
                         height={frame.height}
+                        fromElementId={props.primitive.id}
                     />
                 ));
             }

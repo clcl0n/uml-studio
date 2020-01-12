@@ -6,7 +6,7 @@ import ICoordinates from '@interfaces/ICoordinates';
 import Direction from '@enums/direction';
 import SegmentDirection from '@enums/segmentDirection';
 
-const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRelationship, relationshipSegments: Array<IRelationshipSegment>, movingSegmentId: string, cooridates: ICoordinates) => {
+const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRelationship, relationshipSegments: Array<IRelationshipSegment>, movingSegmentId: string, cooridates: ICoordinates, isEnding: boolean = false) => {
     const movingSegment = relationshipSegments.find((segment) => segment.id === movingSegmentId);
     const dependentSegments = relationshipSegments.filter((segment) => segment.id === movingSegment.toSegmentId || segment.id === movingSegment.fromSegmentId);
     let movingDirection = Direction.NONE;
@@ -93,7 +93,6 @@ const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRe
                 lineToY
             }
         );
-        console.warn(relationship.head.y - cooridates.y);
         direction === SegmentDirection.HORIZONTAL ? updateVerticalDependentSegments() : updateHorizontalDependentSegments();
         movingSegment.isEnd = false;
         movingSegment.toSegmentId = newId;
@@ -103,13 +102,13 @@ const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRe
         case SegmentDirection.HORIZONTAL:
             movingDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
             const yLength = Math.abs(movingSegment.y - cooridates.y);
-            if (movingSegment.isStart) {
+            if (movingSegment.isStart && !isEnding) {
                 insertStartingSegment(
                     0,
                     movingDirection === Direction.UP ? -1 * yLength : yLength,
                     SegmentDirection.VERTICAL
                 );
-            } else if (movingSegment.isEnd) {
+            } else if (movingSegment.isEnd && !isEnding) {
                 insertEndingSegment(
                     0,
                     movingDirection === Direction.UP ? yLength : -1 * yLength,
@@ -125,13 +124,13 @@ const updateRelationshipHelper = (direction: SegmentDirection, relationship: IRe
         case SegmentDirection.VERTICAL:
             movingDirection = movingSegment.x > cooridates.x ? Direction.LEFT: Direction.RIGHT;
             const lenghtX = Math.abs(movingSegment.x - cooridates.x);
-            if (movingSegment.isStart) {
+            if (movingSegment.isStart && !isEnding) {
                 insertStartingSegment(
                     movingDirection === Direction.LEFT ? -1 * lenghtX : lenghtX,
                     0,
                     SegmentDirection.HORIZONTAL
                 );
-            } else if (movingSegment.isEnd) {
+            } else if (movingSegment.isEnd && !isEnding) {
                 insertEndingSegment(
                     movingDirection === Direction.LEFT ? -1 * lenghtX : lenghtX,
                     0,

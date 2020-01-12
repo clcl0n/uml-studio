@@ -30,14 +30,16 @@ const Association = (props: { relationship: IRelationship, relationshipSegments:
     return (
         <g onClick={(ev) => onSegmentClick()}>
             {segments}
-            <path
-                stroke='black'
-                d={`M ${relationship.head.x} ${relationship.head.y} l ${headDirection} ${5}`}
-            />
-            <path
-                stroke='black'
-                d={`M ${relationship.head.x} ${relationship.head.y} l ${headDirection} ${-5}`}
-            />
+            <g pointerEvents='none'>
+                <path
+                    stroke='black'
+                    d={`M ${relationship.head.x} ${relationship.head.y} l ${headDirection} ${5}`}
+                />
+                <path
+                    stroke='black'
+                    d={`M ${relationship.head.x} ${relationship.head.y} l ${headDirection} ${-5}`}
+                />
+            </g>
         </g>
     );
 };

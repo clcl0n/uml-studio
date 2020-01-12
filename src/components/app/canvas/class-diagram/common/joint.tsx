@@ -7,7 +7,7 @@ import createNewRelationship from 'utils/classDiagramHelper/createNewRelationshi
 import { newCanvasOperation } from '@store/actions/canvas';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 
-const Joint = (props: ICoordinates & { radius: number }) => {
+const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) => {
     const dispatch = useDispatch();
 
     const startDrawingNewRelationship = (event: React.MouseEvent) => {
@@ -15,8 +15,8 @@ const Joint = (props: ICoordinates & { radius: number }) => {
         let circleElement = event.target as SVGCircleElement;
         const cx = parseInt(circleElement.getAttribute('cx'));
         const cy = parseInt(circleElement.getAttribute('cy'));
-        const { relationship, relationshipSegments } = createNewRelationship({ x1: cx, y1: cy, x2: cx, y2: cy });
-        dispatch(newCanvasOperation({ type: CanvasOperationEnum.DRAWING_NEW_RELATION , elementId: '' }));
+        const { relationship, relationshipSegments } = createNewRelationship({ x1: cx, y1: cy, x2: cx, y2: cy }, props.fromElementId);
+        dispatch(newCanvasOperation({ type: CanvasOperationEnum.DRAWING_NEW_RELATION , elementId: relationship.id }));
         dispatch(addNewNewRelationship({ relationship, relationshipSegments }));
     };
 

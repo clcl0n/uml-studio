@@ -35,7 +35,7 @@ import createNewObjectHelper from 'utils/classDiagramHelper/object/createNewObje
 import IObject from '@interfaces/class-diagram/object/IObject';
 import resizeElementHelper from 'utils/classDiagramHelper/resizeElementHelper';
 import moveObjectHelper from 'utils/classDiagramHelper/object/moveObjectHelper';
-import updateRelationshipHelper from 'utils/classDiagramHelper/updateRelationshipHelper';
+import { updateRelationshipHelper, updateRelationshipEndingHelper } from 'utils/classDiagramHelper/relationship';
 
 const Canvas = () => {
     const dispatch = useDispatch();
@@ -61,7 +61,10 @@ const Canvas = () => {
         }
     });
     const movingRelationshipSegment = useSelector((state: IStoreState) => {
-        if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_SEGMENT) {
+        if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_SEGMENT ||
+            canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD ||
+            canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_TAIL
+            ) {
             return state.umlClassDiagram.relationshipSegments.byId[canvasOperationState.elementId];
         }
     });
@@ -165,22 +168,64 @@ const Canvas = () => {
             switch (canvasOperationState.type) {
                 case CanvasOperationEnum.DRAWING_NEW_RELATION:
                     let fixX = newRelationship.relationship.tail.x > coordinates.x ? -0.5 : 0.5;
-                    dispatch(updateNewRelationship(createNewRelationship({
+                    const updatedRelationship = createNewRelationship({
                         x1: newRelationship.relationship.tail.x,
                         y1: newRelationship.relationship.tail.y,
                         x2: coordinates.x - fixX,
                         y2: coordinates.y
-                    })));
+                    });
+                    dispatch(updateNewRelationship({
+                        ...updatedRelationship,
+                        relationship: {
+                            ...updatedRelationship.relationship,
+                            fromElementId: newRelationship.relationship.fromElementId,
+                            toElementId: newRelationship.relationship.toElementId
+                        }
+                    }));
+                    break;
+                case CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD:
+                    const dependentSegments = movingRelationship.relationshipSegments.filter((segment) => {
+                        return segment.id === movingRelationshipSegment.toSegmentId || segment.id === movingRelationshipSegment.fromSegmentId;
+                    });
+                    const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
+                        coordinates,
+                        movingRelationship.relationship,
+                        movingRelationshipSegment,
+                        dependentSegments
+                    );
+                    relationship.fromElementId = movingRelationship.relationship.fromElementId;
+                    relationship.toElementId = movingRelationship.relationship.toElementId;
+                    relationshipSegments.forEach((segment) => {
+                        if (classDiagram.relationshipSegments.allIds.includes(segment.id)) {	
+                            dispatch(updateRelationshipSegment(segment));	
+                        } else {	
+                            dispatch(addNewRelationshipSegment(segment));	
+                        }
+                    });
+                    dispatch(updateRelationship(relationship));
+                    break;
+                case CanvasOperationEnum.MOVE_RELATIONSHIP_TAIL:
                     break;
                 case CanvasOperationEnum.MOVE_RELATIONSHIP_SEGMENT:
                     if (movingRelationshipSegment) {
+                        // const { relationship, relationshipSegments } = updateRelationshipHelper(
+                        //     movingRelationshipSegment.direction,
+                        //     movingRelationship.relationship,
+                        //     movingRelationship.relationshipSegments,
+                        //     movingRelationshipSegment.id,
+                        //     coordinates
+                        // );
+                        const dependentSegments = movingRelationship.relationshipSegments.filter((segment) => {
+                            return segment.id === movingRelationshipSegment.toSegmentId || segment.id === movingRelationshipSegment.fromSegmentId;
+                        });
                         const { relationship, relationshipSegments } = updateRelationshipHelper(
-                            movingRelationshipSegment.direction,
+                            coordinates,
                             movingRelationship.relationship,
-                            movingRelationship.relationshipSegments,
-                            movingRelationshipSegment.id,
-                            coordinates
+                            movingRelationshipSegment,
+                            dependentSegments
                         );
+                        relationship.fromElementId = movingRelationship.relationship.fromElementId;
+                        relationship.toElementId = movingRelationship.relationship.toElementId;
                         relationshipSegments.forEach((segment) => {
                             if (classDiagram.relationshipSegments.allIds.includes(segment.id)) {	
                                 dispatch(updateRelationshipSegment(segment));	

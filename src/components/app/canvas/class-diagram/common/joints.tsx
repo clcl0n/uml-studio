@@ -3,9 +3,9 @@ import * as ReactDOM from 'react-dom';
 import ICoordinates from '@interfaces/ICoordinates';
 import Joint from './joint';
 
-const Joints = (props: { coordinates: ICoordinates; width: number; height: number; }) => {
+const Joints = (props: { coordinates: ICoordinates; width: number; height: number; fromElementId: string; }) => {
     let joints = new Array<JSX.Element>();
-    const { coordinates, width, height } = props;
+    const { coordinates, width, height, fromElementId } = props;
 
     for (let i = 0; i < 3; i++) {
         joints.push(
@@ -14,6 +14,7 @@ const Joints = (props: { coordinates: ICoordinates; width: number; height: numbe
                 radius={5}
                 x={coordinates.x + ((width / 2) * i)}
                 y={coordinates.y}
+                fromElementId={fromElementId}
             />
         );
     }
@@ -25,6 +26,7 @@ const Joints = (props: { coordinates: ICoordinates; width: number; height: numbe
                 radius={5}
                 x={coordinates.x + ((width / 2) * i)}
                 y={coordinates.y + height}
+                fromElementId={fromElementId}
             />
         );
     }
