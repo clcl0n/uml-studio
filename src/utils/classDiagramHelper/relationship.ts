@@ -197,23 +197,44 @@ export const updateRelationshipHelper = (cooridates: ICoordinates, relationship:
 export const updateRelationshipEndingHelper = (cooridates: ICoordinates, relationship: IRelationship, movingSegment: IRelationshipSegment, dependentSegments: Array<IRelationshipSegment>) => {
     const { direction } = movingSegment;
     let movingDirection = Direction.NONE;
-    
+    let yLength = 0;
+    let xLength = 0;
     switch (direction) {
         case SegmentDirection.HORIZONTAL:
             movingDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
-            const yLength = Math.abs(movingSegment.y - cooridates.y);
-            const xLenght = Math.abs(movingSegment.x - cooridates.x);
+            yLength = Math.abs(movingSegment.y - cooridates.y);
+            xLength = Math.abs(movingSegment.x - cooridates.x);
             if (movingSegment.isEnd) {
                 let xDirection = movingSegment.x > cooridates.x ? Direction.LEFT: Direction.RIGHT;
                 let yDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
                 dependentSegments.forEach((segment) => {
-                    segment.lineToY -= cooridates.y - movingSegment.y;
+                    segment.lineToY += yDirection === Direction.UP ? -yLength : yLength;
                 });
-                // updateHorizontalDependentSegments(dependentSegments, cooridates, movingSegment);
-                // updateVerticalDependentSegments(dependentSegments, cooridates, movingSegment);
+                movingSegment.y += yDirection === Direction.UP ? -yLength : yLength;
+                movingSegment.lineToX = xDirection === Direction.RIGHT ? xLength : -xLength;
+                relationship.head = {
+                    x: movingSegment.x + movingSegment.lineToX,
+                    y: movingSegment.y  
+                };
             }
             break;
         case SegmentDirection.VERTICAL:
+            movingDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
+            yLength = Math.abs(movingSegment.y - cooridates.y);
+            xLength = Math.abs(movingSegment.x - cooridates.x);
+            if (movingSegment.isEnd) {
+                let xDirection = movingSegment.x > cooridates.x ? Direction.LEFT: Direction.RIGHT;
+                let yDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
+                dependentSegments.forEach((segment) => {
+                    segment.lineToX += xDirection === Direction.LEFT ? -xLength : xLength;
+                });
+                movingSegment.x += xDirection === Direction.LEFT ? -xLength : xLength;
+                movingSegment.lineToY = yDirection === Direction.DOWN ? yLength : -yLength;
+                relationship.head = {
+                    x: movingSegment.x,
+                    y: movingSegment.y + movingSegment.lineToY 
+                };
+            }
             break;
     }
 
