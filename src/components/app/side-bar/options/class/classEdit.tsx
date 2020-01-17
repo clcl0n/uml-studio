@@ -14,7 +14,7 @@ import FrameEdit from '../common/frameEdit';
 import ClassMethodEdit from './classMethodEdit';
 import ClassProperyEdit from './classPropertyEdit';
 import ClassAttributeRow from './classAttributeRow';
-import updateClassGraphicDataHelper from 'utils/classDiagramHelper/class/updateClassGraphicDataHelper';
+import { updateClassGraphicData } from '@utils/elements/class';
 
 const ClassEditOptions = (props: { class: IClass }) => {
     const dispatch = useDispatch();
@@ -26,7 +26,7 @@ const ClassEditOptions = (props: { class: IClass }) => {
         return state.umlClassDiagram.classProperties.byId[id];
     }));
 
-    const updateGraphic = (classElement: IClass): IClass =>  updateClassGraphicDataHelper(classElement);
+    const updateGraphic = (classElement: IClass): IClass =>  updateClassGraphicData(classElement);
 
     const removeProperty = (classProperty: IClassProperty) => {
         const updatedClass = {...props.class};

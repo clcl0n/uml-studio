@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import IObject from '@interfaces/class-diagram/object/IObject';
 import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
-import updateObjectGraphicDataHelper from 'utils/classDiagramHelper/object/updateObjectGraphicDataHelper';
 import IObjectSlot from '@interfaces/class-diagram/object/IObjectSlot';
 import { updateObject, removeObjectSlot, updateObjectSlot, addNewObjectSlot } from '@store/actions/classDiagram';
 import SlotEdit from './slotEdit';
@@ -11,6 +10,7 @@ import { v4 } from 'uuid';
 import log = require('loglevel');
 import FrameEdit from '../common/frameEdit';
 import SlotTableEdit from './slotTableEdit';
+import { updateObjectGraphicData } from '@utils/elements/object';
 
 const ObjectEdit = (props: { object: IObject }) => {
     const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const ObjectEdit = (props: { object: IObject }) => {
     const selectedSlots = useSelector((state: IStoreState) => data.slotIds.map((id) => {
         return state.umlClassDiagram.objectSlots.byId[id];
     }));
-    const updateGraphic = (element: IObject): IObject => updateObjectGraphicDataHelper(element);
+    const updateGraphic = (element: IObject): IObject => updateObjectGraphicData(element);
     const removeSlot = (slot: IObjectSlot) => {
         const updated = {...props.object};
         updated.data.slotIds.splice(updated.data.slotIds.indexOf(slot.id), 1);

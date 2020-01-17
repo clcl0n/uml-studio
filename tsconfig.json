@@ -10,12 +10,12 @@
         "jsx": "react",
         "baseUrl": "src",
         "paths": {
-            "@utils/svgCanvas/*": ["utils/svgCanvas/*"],
             "@components/*": ["components/*"],
             "@enums/*": ["typings/enums/*"],
             "@interfaces/*": ["typings/interfaces/*"],
             "@actions/*": ["typings/actions/*"],
-            "@store/*": ["store/*"]
+            "@store/*": ["store/*"],
+            "@utils/*": ["utils/*"]
         }
     },
     "include": [

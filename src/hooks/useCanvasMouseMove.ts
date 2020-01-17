@@ -2,16 +2,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import ICoordinates from '@interfaces/ICoordinates';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
-import resizeElementHelper from 'utils/classDiagramHelper/resizeElementHelper';
 import { updateClass, updateUtility, updatePrimitiveType, updateInterface, updateEnumeration, updateDataType, updateObject, updateNewRelationship, updateRelationshipSegment, addNewRelationshipSegment, updateRelationship } from '@store/actions/classDiagram';
 import Direction from '@enums/direction';
-import moveClassHelper from 'utils/classDiagramHelper/class/moveClassHelper';
-import moveUtilityHelper from 'utils/classDiagramHelper/utility/moveUtilityHelper';
-import movePrimitiveTypeHelper from 'utils/classDiagramHelper/primitive-type/movePrimitiveTypeHelper';
-import moveInterfaceHelper from 'utils/classDiagramHelper/interface/moveInterfaceHelper';
-import moveEnumerationHelper from 'utils/classDiagramHelper/enumeration/moveEnumerationHelper';
-import moveDataTypeHelper from 'utils/classDiagramHelper/dataType/moveDataTypeHelper';
-import moveObjectHelper from 'utils/classDiagramHelper/object/moveObjectHelper';
 import IObject from '@interfaces/class-diagram/object/IObject';
 import IClass from '@interfaces/class-diagram/class/IClass';
 import IUtility from '@interfaces/class-diagram/utility/IUtility';
@@ -20,12 +12,19 @@ import IInterface from '@interfaces/class-diagram/interface/IInterface';
 import IEnumeration from '@interfaces/class-diagram/enumeration/IEnumeration';
 import IDataType from '@interfaces/class-diagram/data-type/IDataType';
 import { isMouseDown } from '@store/actions/canvas';
-import createNewRelationship from 'utils/classDiagramHelper/createNewRelationship';
-import { updateRelationshipEndingHelper, updateRelationshipHelper } from 'utils/classDiagramHelper/relationship';
+import { updateRelationshipEndingHelper, updateRelationshipHelper, createNewRelationship } from '@utils/elements/relationship';
 import IStoreState from '@interfaces/IStoreState';
 import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
 import IBaseElement from '@interfaces/class-diagram/common/IBaseElement';
 import ICanvasOperation from '@interfaces/ICanvasOperation';
+import { resizeFrame } from '@utils/elements/frame';
+import { moveClass } from '@utils/elements/class';
+import { moveUtility } from '@utils/elements/utility';
+import { movePrimitiveType } from '@utils/elements/primitiveType';
+import { moveInterface } from '@utils/elements/interface';
+import { moveEnumeration } from '@utils/elements/enumeration';
+import { moveDataType } from '@utils/elements/dataType';
+import { moveObject } from '@utils/elements/object';
 
 const useCanvasMouseMove = (
     classDiagram: IClassDiagramState,
@@ -57,80 +56,83 @@ const useCanvasMouseMove = (
     const newRelationship = useSelector((state: IStoreState) => state.umlClassDiagram.newRelationship);
 
     const onMouseMove = (coordinates: ICoordinates, previousMousePosition: ICoordinates) => {
+        let updatedElement: IBaseElement<any, any>;
         if (selectedElement) {
             switch(canvasOperation.type) {
                 case CanvasOperationEnum.RESIZE_ELEMENT_LEFT:
+                    updatedElement = resizeFrame(selectedElement, coordinates, Direction.LEFT);
                     switch(selectedElement.type) {
                         case ClassDiagramElementsEnum.CLASS:
-                            dispatch(updateClass(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            dispatch(updateClass(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.UTILITY:
-                            dispatch(updateUtility(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            dispatch(updateUtility(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
-                            dispatch(updatePrimitiveType(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            dispatch(updatePrimitiveType(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.INTERFACE:
-                            dispatch(updateInterface(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            dispatch(updateInterface(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.ENUMERATION:
-                            dispatch(updateEnumeration(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            dispatch(updateEnumeration(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.DATA_TYPE:
-                            dispatch(updateDataType(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            dispatch(updateDataType(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.OBJECT:
-                            dispatch(updateObject(resizeElementHelper(selectedElement, coordinates, Direction.LEFT)));
+                            dispatch(updateObject(updatedElement));
                             break;
                     }
                     break;
                 case CanvasOperationEnum.RESIZE_ELEMENT_RIGHT:
+                    updatedElement = resizeFrame(selectedElement, coordinates, Direction.RIGHT);
                     switch(selectedElement.type) {
                         case ClassDiagramElementsEnum.CLASS:
-                            dispatch(updateClass(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            dispatch(updateClass(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.UTILITY:
-                            dispatch(updateUtility(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            dispatch(updateUtility(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
-                            dispatch(updatePrimitiveType(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            dispatch(updatePrimitiveType(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.INTERFACE:
-                            dispatch(updateInterface(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            dispatch(updateInterface(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.ENUMERATION:
-                            dispatch(updateEnumeration(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            dispatch(updateEnumeration(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.DATA_TYPE:
-                            dispatch(updateDataType(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            dispatch(updateDataType(updatedElement));
                             break;
                         case ClassDiagramElementsEnum.OBJECT:
-                            dispatch(updateObject(resizeElementHelper(selectedElement, coordinates, Direction.RIGHT)));
+                            dispatch(updateObject(updatedElement));
                             break;
                     }
                     break;
                 case CanvasOperationEnum.MOVE_ELEMENT:
                     switch(selectedElement.type) {
                         case ClassDiagramElementsEnum.CLASS:
-                            dispatch(updateClass(moveClassHelper(selectedElement as IClass, coordinates, previousMousePosition)));
+                            dispatch(updateClass(moveClass(selectedElement as IClass, coordinates, previousMousePosition)));
                             break;
                         case ClassDiagramElementsEnum.UTILITY:
-                            dispatch(updateUtility(moveUtilityHelper(selectedElement as IUtility, coordinates, previousMousePosition)));
+                            dispatch(updateUtility(moveUtility(selectedElement as IUtility, coordinates, previousMousePosition)));
                             break;
                         case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
-                            dispatch(updatePrimitiveType(movePrimitiveTypeHelper(selectedElement as IPrimitiveType, coordinates, previousMousePosition)));
+                            dispatch(updatePrimitiveType(movePrimitiveType(selectedElement as IPrimitiveType, coordinates, previousMousePosition)));
                             break;
                         case ClassDiagramElementsEnum.INTERFACE:
-                            dispatch(updateInterface(moveInterfaceHelper(selectedElement as IInterface, coordinates, previousMousePosition)));
+                            dispatch(updateInterface(moveInterface(selectedElement as IInterface, coordinates, previousMousePosition)));
                             break;
                         case ClassDiagramElementsEnum.ENUMERATION:
-                            dispatch(updateEnumeration(moveEnumerationHelper(selectedElement as IEnumeration, coordinates, previousMousePosition)));
+                            dispatch(updateEnumeration(moveEnumeration(selectedElement as IEnumeration, coordinates, previousMousePosition)));
                             break;
                         case ClassDiagramElementsEnum.DATA_TYPE:
-                            dispatch(updateDataType(moveDataTypeHelper(selectedElement as IDataType, coordinates, previousMousePosition)));
+                            dispatch(updateDataType(moveDataType(selectedElement as IDataType, coordinates, previousMousePosition)));
                             break;
                         case ClassDiagramElementsEnum.OBJECT:
-                            dispatch(updateObject(moveObjectHelper(selectedElement as IObject, coordinates, previousMousePosition)));
+                            dispatch(updateObject(moveObject(selectedElement as IObject, coordinates, previousMousePosition)));
                             break;
                     }
                     break;

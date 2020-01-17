@@ -13,7 +13,7 @@ import { v4 } from 'uuid';
 import FrameEdit from '../common/frameEdit';
 import ClassMethodEdit from '../class/classMethodEdit';
 import ClassProperyEdit from '../class/classPropertyEdit';
-import updateInterfaceGraphicDataHelper from 'utils/classDiagramHelper/interface/updateInterfaceGraphicDataHelper';
+import { updateInterfaceGraphicData } from '@utils/elements/interface';
 
 const InterfaceEdit = (props: { interface: IInterface }) => {
     const dispatch = useDispatch();
@@ -24,7 +24,7 @@ const InterfaceEdit = (props: { interface: IInterface }) => {
     const selectedInterfaceProperties = useSelector((state: IStoreState) => data.interfacePropertyIds.map((id) => {
         return state.umlClassDiagram.interfaceProperties.byId[id];
     }));
-    const updateGraphic = (interfaceElement: IInterface): IInterface => updateInterfaceGraphicDataHelper(interfaceElement);        
+    const updateGraphic = (interfaceElement: IInterface): IInterface => updateInterfaceGraphicData(interfaceElement);        
         
     const removeProperty = (classProperty: IInterfaceProperty) => {
         const updatedInterface = {...props.interface};

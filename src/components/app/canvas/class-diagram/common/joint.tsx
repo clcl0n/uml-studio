@@ -3,9 +3,9 @@ import * as ReactDOM from 'react-dom';
 import ICoordinates from '@interfaces/ICoordinates';
 import { useDispatch } from 'react-redux';
 import { addNewNewRelationship } from '@store/actions/classDiagram';
-import createNewRelationship from 'utils/classDiagramHelper/createNewRelationship';
 import { newCanvasOperation } from '@store/actions/canvas';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import { createNewRelationship } from '@utils/elements/relationship';
 
 const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) => {
     const dispatch = useDispatch();

@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import IDataType from '@interfaces/class-diagram/data-type/IDataType';
 import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
-import updateDataTypeGraphicDataHelper from 'utils/classDiagramHelper/dataType/updateDataTypeGraphicDataHelper';
 import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
 import { updateDataType, removeDataTypeEntry, updateDataTypeEntry, addNewDataTypeEntry } from '@store/actions/classDiagram';
 import EntryEdit from '../common/entryEdit';
@@ -11,6 +10,7 @@ import { v4 } from 'uuid';
 import FrameEdit from '../common/frameEdit';
 import EntryTableEdit from '../common/entryTableEdit';
 import log = require('loglevel');
+import { updateDataTypeGraphicData } from '@utils/elements/dataType';
 
 const DataTypeEdit = (props: { dataType: IDataType }) => {
     const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const DataTypeEdit = (props: { dataType: IDataType }) => {
     const selectedEntry= useSelector((state: IStoreState) => data.dataTypeEntryIds.map((id) => {
         return state.umlClassDiagram.dataTypeEntries.byId[id];
     }));
-    const updateGraphic = (element: IDataType): IDataType => updateDataTypeGraphicDataHelper(element);
+    const updateGraphic = (element: IDataType): IDataType => updateDataTypeGraphicData(element);
     const removeEntry = (entry: IDataTypeEntry) => {
         const updated = {...props.dataType};
         updated.data.dataTypeEntryIds.splice(updated.data.dataTypeEntryIds.indexOf(entry.id), 1);
