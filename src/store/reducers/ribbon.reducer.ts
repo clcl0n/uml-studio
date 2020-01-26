@@ -10,14 +10,14 @@ export const canvasZoomReducer = (state = canvasZoomState, payload: IReducerPayl
     let newZoom: number = 0;
     switch(payload.type) {
         case RibbonActionEnum.CANVAS_ZOOM_IN:
-            newZoom = state - payload.data;
+            newZoom = state + payload.data;
             if (newZoom < zoomMin) {
                 return zoomMin;
             } else {
                 return newZoom;
             }
         case RibbonActionEnum.CANVAS_ZOOM_OUT:
-            newZoom = state + payload.data;
+            newZoom = state - payload.data;
             if (newZoom > zoomMax) {
                 return zoomMax;
             } else {

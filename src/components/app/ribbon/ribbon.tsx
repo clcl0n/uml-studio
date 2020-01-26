@@ -97,13 +97,13 @@ const Ribbon = () => {
                     <a className='button is-small is-text'>
                         <FontAwesomeIcon icon='redo'/>
                     </a>
-                    <a onClick={(ev) => dispatch(canvasZoomOut(zoomStep))} className='button is-small is-text'>
+                    <a onClick={(ev) => dispatch(canvasZoomIn(zoomStep))} className='button is-small is-text'>
                         <FontAwesomeIcon icon='search-plus'/>
                     </a>
                     <a className='button is-small is-text'>
                         {`${canvasZoom}%`}
                     </a>
-                    <a onClick={(ev) => dispatch(canvasZoomIn(zoomStep))} className='button is-small is-text'>
+                    <a onClick={(ev) => dispatch(canvasZoomOut(zoomStep))} className='button is-small is-text'>
                         <FontAwesomeIcon icon='search-minus'/>
                     </a>
                 </div>
