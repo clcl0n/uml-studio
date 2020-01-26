@@ -107,6 +107,18 @@ const ClassDiagram = (props: { classDiagram: IClassDiagramState }) => {
         }
     });
 
+    classDiagram.relationships.allIds.forEach((relationshipId) => {
+        const relationship = classDiagram.relationships.byId[relationshipId];
+        const relationshipSegments = relationship.segmentIds.map((segmentId) => classDiagram.relationshipSegments.byId[segmentId]);
+        elements.push(
+            <Association
+                key={relationshipId}
+                relationship={relationship}
+                relationshipSegments={relationshipSegments}
+            />
+        );
+    });
+
     if (classDiagram.newRelationship.relationship !== null) {
         elements.push(
             <Association
