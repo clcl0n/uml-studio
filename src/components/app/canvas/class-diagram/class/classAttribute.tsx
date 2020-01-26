@@ -11,11 +11,11 @@ const ClassAttribute = (props: { classAttribute: IClassAttribute<IClassMethod | 
     const classAttributeToString = () => {
         switch (data.accessModifier) {
             case AccessModifierEnum.PUBLIC:
-                return `+ ${data.name}`;
+                return `+ ${data.value}`;
             case AccessModifierEnum.PROTECTED:
-                return `# ${data.name}`;
+                return `# ${data.value}`;
             case AccessModifierEnum.PRIVATE:
-                return `- ${data.name}`;
+                return `- ${data.value}`;
         }
     };
 

@@ -3,24 +3,24 @@ import * as ReactDOM from 'react-dom';
 import './canvas.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
-import { addNewRelationshipSegment, addNewRelationship, clearNewRelationship } from '@store/actions/classDiagram';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
-import { isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import { isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import ClassDiagram from './class-diagram/classDiagram';
 import useCanvasMouseMove from 'hooks/useCanvasMouseMove';
 import useCanvasAddNewElement from 'hooks/useCanvasAddNewElement';
-import useCanvasOperation from 'hooks/useCanvasOperation';
+import useSelectedElement from 'hooks/useSelectedElement';
 import usePreviousMousePosition from 'hooks/usePreviousMousePosition';
+import { addNewRelationship, addNewRelationshipSegment, clearNewRelationship } from '@store/actions/classDiagram.action';
 
 const Canvas = () => {
     const dispatch = useDispatch();
-    const classDiagram = useSelector((state: IStoreState) => state.umlClassDiagram);
+    const classDiagram = useSelector((state: IStoreState) => state.classDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
-    const newRelationship = useSelector((state: IStoreState) => state.umlClassDiagram.newRelationship);
+    const newRelationship = useSelector((state: IStoreState) => state.classDiagram.newRelationship);
     const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
     const { previousMousePosition, setPreviousMousePosition } = usePreviousMousePosition();
-    const { canvasOperation, selectedElement } = useCanvasOperation();
-    const { onMouseMove } = useCanvasMouseMove(classDiagram, selectedElement, canvasOperation);
+    const { canvasOperation } = useSelectedElement();
+    const { onMouseMove } = useCanvasMouseMove(classDiagram, canvasOperation);
     const { addNewElementToCanvas } = useCanvasAddNewElement();
 
     const CanvasOnDragOver = (event: React.DragEvent<HTMLDivElement>) => {

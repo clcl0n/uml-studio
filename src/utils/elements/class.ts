@@ -6,6 +6,7 @@ import IClass from '@interfaces/class-diagram/class/IClass';
 import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import AccessModifierEnum from '@enums/accessModifierEnum';
 import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
+import EntryTypeEnum from '@enums/EntryTypeEnum';
 
 export const createNewBaseClass = (coordinates: ICoordinates, frameRows = 2) => {
     const frame = createFrame(coordinates, frameRows);
@@ -14,9 +15,8 @@ export const createNewBaseClass = (coordinates: ICoordinates, frameRows = 2) => 
         id: v4(),
         type: ClassDiagramElementsEnum.CLASS,
         data: {
-            className: 'base class Name',
-            classMethodIds: [],
-            classPropertyIds: [],
+            elementName: 'base class Name',
+            entryIds: []
         },
         graphicData: {
             frame,
@@ -45,23 +45,24 @@ export const createNewClass = (coordinates: ICoordinates) => {
     const classPropertyId = v4();
     const newClassProperty: IClassProperty = {
         id: classPropertyId,
+        type: EntryTypeEnum.PROPERTY,
         accessModifier: AccessModifierEnum.PUBLIC,
-        name: 'property_1'
+        value: 'property_1'
     };
 
     const classMethodId = v4();
     const newClassMethod: IClassMethod = {
         id: classMethodId,
+        type: EntryTypeEnum.METHOD,
         accessModifier: AccessModifierEnum.PUBLIC,
-        name: 'method_1'
+        value: 'method_1'
     };
 
     const newClass: IClass = {
         ...newBaseClass,
         data: {
-            classMethodIds: [classMethodId],
-            classPropertyIds: [classPropertyId],
-            className: 'class name'
+            elementName: 'class name',
+            entryIds: [classMethodId, classPropertyId]
         }
     };
 
@@ -72,7 +73,7 @@ export const createNewClass = (coordinates: ICoordinates) => {
     };
 };
 
-export const moveClass = (classElement: IClass, coordinates: ICoordinates, oldCursorPosition: ICoordinates): IClass => {
+export const moveClass = (classElement: IClass, coordinates: ICoordinates, oldCursorPosition: ICoordinates, propertyCount: number): IClass => {
     const newFrame = moveFrame(classElement, coordinates, oldCursorPosition);
 
     return {
@@ -87,25 +88,25 @@ export const moveClass = (classElement: IClass, coordinates: ICoordinates, oldCu
                     y: newFrame.y + newFrame.rowHeight
                 },
                 methods: {
-                    y: newFrame.y + ((1 + classElement.data.classPropertyIds.length) * newFrame.rowHeight)
+                    y: newFrame.y + ((1 + propertyCount) * newFrame.rowHeight)
                 }
             }
         }
     };
 };
 
-export const updateClassGraphicData = (classElement: IClass) => {
-    const { graphicData, data } = classElement;
+export const updateClassGraphicData = (classElement: IClass, propertyCount: number, methodCount: number) => {
+    const { graphicData } = classElement;
 
-    if (data.classMethodIds.length === 0 && data.classPropertyIds.length === 0) {
+    if (methodCount === 0 && propertyCount === 0) {
         graphicData.frame.height = 2 * graphicData.frame.rowHeight;
     } else {
         classElement.graphicData.sections.methods.y = classElement.graphicData.frame.y + (
-            (data.classPropertyIds.length + 1) * classElement.graphicData.frame.rowHeight
+            (propertyCount + 1) * classElement.graphicData.frame.rowHeight
         );
 
         classElement.graphicData.frame.height = (
-            data.classPropertyIds.length + data.classMethodIds.length + 1
+            propertyCount + methodCount + 1
         ) * classElement.graphicData.frame.rowHeight;
     }
 

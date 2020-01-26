@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import IUtilityProps from '@interfaces/class-diagram/utility/IUtilityProps';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import IUtilityMethod from '@interfaces/class-diagram/utility/IUtilityMethod';
 import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty';
 import IClassAttribute from '@interfaces/class-diagram/class/IClassAttribute';
 import FrameRow from '../common/frameRow';
 import ClassAttribute from '../class/classAttribute';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
@@ -20,8 +19,9 @@ import FrameSegment from '../common/frameSegment';
 import Direction from '@enums/direction';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import IStoreState from '@interfaces/IStoreState';
+import IUtility from '@interfaces/class-diagram/utility/IUtility';
 
-const Utility = (props: IUtilityProps) => {
+const Utility = (props: { utility: IUtility, properties: Array<IUtilityProperty>, methods: Array<IUtilityMethod> }) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
     const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
@@ -133,7 +133,7 @@ const Utility = (props: IUtilityProps) => {
             }
         },
         data: {
-            text: props.utility.data.utilityName
+            text: props.utility.data.elementName
         }
     };
 

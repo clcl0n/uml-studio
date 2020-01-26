@@ -8,7 +8,7 @@ import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import FrameRow from '../common/frameRow';
 import IObjectSlotProps from '@interfaces/class-diagram/object/IObjectSlotProps';
 import ObjectSlot from './objectSlot';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Direction from '@enums/direction';
@@ -107,7 +107,7 @@ const ObjectElement = (props: IObjectProps) => {
             }
         },
         data: {
-            text: data.objectName
+            text: data.elementName
         }
     };
     const objectSlotsSegment: IFrameSegmentGraphicData = {

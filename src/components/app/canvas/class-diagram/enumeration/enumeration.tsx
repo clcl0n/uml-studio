@@ -5,7 +5,7 @@ import IEnumerationProps from '@interfaces/class-diagram/enumeration/IEnumeratio
 import { useDispatch, useSelector } from 'react-redux';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import FrameRow from '../common/frameRow';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
 import IEnumerationHead from '@interfaces/class-diagram/enumeration/IEnumerationHead';
@@ -114,7 +114,7 @@ const Enumeration = (props: IEnumerationProps) => {
             }
         },
         data: {
-            text: data.enumerationName
+            text: data.elementName
         }
     };
 

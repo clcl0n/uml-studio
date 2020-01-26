@@ -5,5 +5,5 @@ import IRibbonState from './IRibbonState';
 export default interface IStoreState {
     ribbon: IRibbonState;
     canvas: ICanvasState;
-    umlClassDiagram: IClassDiagramState;
+    classDiagram: IClassDiagramState;
 }

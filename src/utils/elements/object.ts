@@ -4,6 +4,7 @@ import IObject from '@interfaces/class-diagram/object/IObject';
 import { v4 } from 'uuid';
 import ICoordinates from '@interfaces/ICoordinates';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import EntryTypeEnum from '@enums/EntryTypeEnum';
 
 export const createNewObject = (coordinates: ICoordinates) => {
     const frame = createFrame(coordinates, 2);
@@ -11,14 +12,15 @@ export const createNewObject = (coordinates: ICoordinates) => {
     const slotId = v4();
     const newObjectSlot: IObjectSlot = {
         id: slotId,
+        type: EntryTypeEnum.SLOT,
         featureName: 'feature',
         value: 'value'
     };
     const newObject: IObject = {
         id: v4(),
         data: {
-            objectName: 'Object:Class',
-            slotIds: [slotId]
+            elementName: 'Object:Class',
+            entryIds: [slotId]
         },
         type: ClassDiagramElementsEnum.OBJECT,
         graphicData: {
@@ -48,11 +50,11 @@ export const moveObject = (element: IObject, coordinates: ICoordinates, oldCurso
 export const updateObjectGraphicData = (object: IObject) => {
     const { data, graphicData } = object;
 
-    if (data.slotIds.length === 0) {
+    if (data.entryIds.length === 0) {
         graphicData.frame.height = 2 * graphicData.frame.rowHeight;
     } else {
         object.graphicData.frame.height = (
-            data.slotIds.length + 1
+            data.entryIds.length + 1
         ) * object.graphicData.frame.rowHeight;
     }
 

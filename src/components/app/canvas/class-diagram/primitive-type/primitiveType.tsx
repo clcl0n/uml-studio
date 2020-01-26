@@ -5,7 +5,7 @@ import FrameHead from '../common/frameHead';
 import PrimitiveHead from './primitiveTypeHead';
 import IPrimitiveTypeProps from '@interfaces/class-diagram/primitive-type/IPrimitiveTypeProps';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectNewElement, newCanvasOperation, isMouseDown } from '@store/actions/canvas';
+import { selectNewElement, newCanvasOperation, isMouseDown } from '@store/actions/canvas.action';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
 import IPrimitiveHead from '@interfaces/class-diagram/primitive-type/IPrimitiveTypeHead';
@@ -74,7 +74,7 @@ const PrimitiveType = (props: IPrimitiveTypeProps) => {
             }
         },
         data: {
-            text: data.primitiveName
+            text: data.elementName
         }
     };
     

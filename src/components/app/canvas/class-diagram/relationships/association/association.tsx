@@ -5,7 +5,7 @@ import IRelationship from '@interfaces/class-diagram/relationships/IRelationship
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
 import RelationshipSegment from '../relationhips-segment/relationshipSegment';
 import Direction from '@enums/direction';
-import { selectNewElement } from '@store/actions/canvas';
+import { selectNewElement } from '@store/actions/canvas.action';
 
 const Association = (props: { relationship: IRelationship, relationshipSegments: Array<IRelationshipSegment> }) => {
     const dispatch = useDispatch();

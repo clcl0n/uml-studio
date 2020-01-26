@@ -4,6 +4,7 @@ import IEnumeration from '@interfaces/class-diagram/enumeration/IEnumeration';
 import { v4 } from 'uuid';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ICoordinates from '@interfaces/ICoordinates';
+import EntryTypeEnum from '@enums/EntryTypeEnum';
 
 export const createNewEnumeration = (coordinates: ICoordinates) => {
     const frame = createFrame(coordinates, 2);
@@ -11,6 +12,7 @@ export const createNewEnumeration = (coordinates: ICoordinates) => {
     const enumerationEntryId = v4();
     const newEntry: IEnumerationEntry = {
         id: enumerationEntryId,
+        type: EntryTypeEnum.BASE,
         value: 'entry_1'
     };
 
@@ -20,8 +22,8 @@ export const createNewEnumeration = (coordinates: ICoordinates) => {
         id: v4(),
         type: ClassDiagramElementsEnum.ENUMERATION,
         data: {
-            enumerationName: 'enum',
-            enumerationEntryIds: [enumerationEntryId]
+            elementName: 'enum',
+            entryIds: [enumerationEntryId]
         },
         graphicData: {
             frame,
@@ -50,11 +52,11 @@ export const moveEnumeration = (element: IEnumeration, coordinates: ICoordinates
 export const updateEnumerationGraphicData = (enumeration: IEnumeration) => {
     const { graphicData, data } = enumeration;
     
-    if (data.enumerationEntryIds.length === 0) {
+    if (data.entryIds.length === 0) {
         graphicData.frame.height = graphicData.frame.rowHeight + (graphicData.frame.rowHeight / 2);
     } else {
         graphicData.frame.height = (
-            data.enumerationEntryIds.length + 1
+            data.entryIds.length + 1
         ) * graphicData.frame.rowHeight;
         graphicData.frame.height += (graphicData.frame.rowHeight / 2);
     }

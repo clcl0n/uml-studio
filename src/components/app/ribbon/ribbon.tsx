@@ -6,7 +6,7 @@ import RibbonOperationEnum from '@enums/ribbonOperationEnum';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
-import { canvasZoomIn, canvasZoomOut } from '@store/actions/ribbon';
+import { canvasZoomIn, canvasZoomOut } from '@store/actions/ribbon.action';
 
 const Ribbon = () => {
     const dispatch = useDispatch();

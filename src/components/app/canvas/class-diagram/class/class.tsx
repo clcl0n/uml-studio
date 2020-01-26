@@ -1,9 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './class.scss';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
 import { useDispatch, useSelector } from 'react-redux';
-import IClassProps from '@interfaces/class-diagram/class/IClassProps';
 import Frame from '../common/frame';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import FrameSegment from '../common/frameSegment';
@@ -21,10 +19,11 @@ import IClassHead from '@interfaces/class-diagram/class/IClassHead';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import Direction from '@enums/direction';
 import IStoreState from '@interfaces/IStoreState';
+import { isMouseDown, newCanvasOperation, selectNewElement } from '@store/actions/canvas.action';
+import IClass from '@interfaces/class-diagram/class/IClass';
 
-const Class = (props: IClassProps) => {
+const Class = (props: { class: IClass, properties: Array<IClassProperty>, methods: Array<IClassMethod> }) => {
     const dispatch = useDispatch();
-    const canvasOperation = useSelector((state: IStoreState) => state.canvas.canvasOperation.type);
     const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const [joints, setJoints] = React.useState(<g/>);
     const { frame, sections } = props.class.graphicData;
@@ -131,7 +130,7 @@ const Class = (props: IClassProps) => {
             }
         },
         data: {
-            text: props.class.data.className
+            text: props.class.data.elementName
         }
     };
 

@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import IDataType from '@interfaces/class-diagram/data-type/IDataType';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ICoordinates from '@interfaces/ICoordinates';
+import EntryTypeEnum from '@enums/EntryTypeEnum';
 
 export const createNewDataType = (coordinates: ICoordinates) => {
     const frame = createFrame(coordinates, 2);
@@ -11,6 +12,7 @@ export const createNewDataType = (coordinates: ICoordinates) => {
     const dataTypeEntryId = v4();
     const newDataTypeEntry: IDataTypeEntry = {
         id: dataTypeEntryId,
+        type: EntryTypeEnum.BASE,
         value: 'entry_1'
     };
 
@@ -20,8 +22,8 @@ export const createNewDataType = (coordinates: ICoordinates) => {
         id: v4(),
         type: ClassDiagramElementsEnum.DATA_TYPE,
         data: {
-            dataTypeName: 'dataType',
-            dataTypeEntryIds: [dataTypeEntryId]
+            elementName: 'dataType',
+            entryIds: [dataTypeEntryId]
         },
         graphicData: {
             frame,
@@ -50,11 +52,11 @@ export const moveDataType = (element: IDataType, coordinates: ICoordinates, oldC
 export const updateDataTypeGraphicData = (dataType: IDataType) => {
     const { graphicData, data } = dataType;
 
-    if (data.dataTypeEntryIds.length === 0) {
+    if (data.entryIds.length === 0) {
         graphicData.frame.height = graphicData.frame.rowHeight + (graphicData.frame.rowHeight / 2);
     } else {
         graphicData.frame.height = (
-            data.dataTypeEntryIds.length + 1
+            data.entryIds.length + 1
         ) * graphicData.frame.rowHeight;
         graphicData.frame.height += (graphicData.frame.rowHeight / 2);
     }

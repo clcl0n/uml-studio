@@ -31,7 +31,7 @@ export const createFrame = (coordinates: ICoordinates, numerOfRows: number): IFr
 };
 
 export const moveFrame = (
-    element: IBaseElement<IBaseElementGraphicData<any>, any>,
+    element: IBaseElement<IBaseElementGraphicData<any>>,
     coordinates: ICoordinates,
     oldCursorPosition: ICoordinates
 ): IFrame => {
@@ -54,7 +54,7 @@ export const moveFrame = (
     };
 };
 
-export const resizeFrame = (element: IBaseElement<any, any>, coordinates: ICoordinates, direction: Direction): IBaseElement<any, any> => {
+export const resizeFrame = (element: IBaseElement<any>, coordinates: ICoordinates, direction: Direction): IBaseElement<any> => {
     const { graphicData } = element;
 
     let width = 0;

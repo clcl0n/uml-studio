@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
 import SegmentDirection from '@enums/segmentDirection';
 import { useDispatch } from 'react-redux';
-import { newCanvasOperation, isMouseDown } from '@store/actions/canvas';
+import { newCanvasOperation, isMouseDown } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 
 const RelationshipSegment = (props: { segment: IRelationshipSegment, relationId: string }) => {

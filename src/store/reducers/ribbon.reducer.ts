@@ -1,12 +1,12 @@
+import RibbonActionEnum from "@enums/ribbonActionEnum";
 import IReducerPayload from '@interfaces/IReducerPayload';
-import RibbonActionEnum from '@enums/ribbonActionEnum';
 
 const defaultZoom: number = 100; 
 const zoomMin: number = 25;
 const zoomMax: number = 400;
 const canvasZoomState: number = defaultZoom;
 
-const canvasZoomReducer = (state = canvasZoomState, payload: IReducerPayload<RibbonActionEnum, number>) => {
+export const canvasZoomReducer = (state = canvasZoomState, payload: IReducerPayload<RibbonActionEnum, number>) => {
     let newZoom: number = 0;
     switch(payload.type) {
         case RibbonActionEnum.CANVAS_ZOOM_IN:
@@ -29,5 +29,3 @@ const canvasZoomReducer = (state = canvasZoomState, payload: IReducerPayload<Rib
             return state;
     }
 };
-
-export default canvasZoomReducer;

@@ -13,7 +13,8 @@ export const createNewPrimitiveType = (coordinates: ICoordinates) => {
         id: v4(),
         type: ClassDiagramElementsEnum.PRIMITIVE_TYPE,
         data: {
-            primitiveName: 'primitive type'
+            elementName: 'primitive type',
+            entryIds: []
         },
         graphicData: {
             frame,

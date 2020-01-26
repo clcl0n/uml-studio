@@ -8,7 +8,7 @@ import IDataTypeEntry from '@interfaces/class-diagram/data-type/IDataTypeEntry';
 import IDataTypeEntryProps from '@interfaces/class-diagram/data-type/IDataTypeEntryProps';
 import DataTypeEntry from './dataTypeEntry';
 import FrameRow from '../common/frameRow';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
 import IDataTypeHead from '@interfaces/class-diagram/data-type/IDataTypeHead';
@@ -114,7 +114,7 @@ const DataType = (props: IDataTypeProps) => {
             }
         },
         data: {
-            text: data.dataTypeName
+            text: data.elementName
         }
     };
     const dataTypeEntriesSegment: IFrameSegmentGraphicData = {
@@ -127,7 +127,7 @@ const DataType = (props: IDataTypeProps) => {
     };
 
     const frameEntriesSegment = () => {
-        return data.dataTypeEntryIds.length === 0 ? <g/> : (
+        return data.entryIds.length === 0 ? <g/> : (
             <FrameSegment graphicData={dataTypeEntriesSegment}>
                 {...dataTypeEntries}
             </FrameSegment>

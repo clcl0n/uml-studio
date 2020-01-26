@@ -6,6 +6,7 @@ import ICoordinates from '@interfaces/ICoordinates';
 import IInterface from '@interfaces/class-diagram/interface/IInterface';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
+import EntryTypeEnum from '@enums/EntryTypeEnum';
 
 export const createNewInterface = (coordinates: ICoordinates) => {
     const frame = createFrame(coordinates, 3);
@@ -13,15 +14,17 @@ export const createNewInterface = (coordinates: ICoordinates) => {
     const interfacePropertyId = v4();
     const newInterfaceProperty: IClassProperty = {
         id: interfacePropertyId,
+        type: EntryTypeEnum.PROPERTY,
         accessModifier: AccessModifierEnum.PUBLIC,
-        name: 'property_1'
+        value: 'property_1'
     };
 
     const interfaceMethodId = v4();
     const newInterfaceMethod: IClassMethod = {
         id: interfaceMethodId,
+        type: EntryTypeEnum.METHOD,
         accessModifier: AccessModifierEnum.PUBLIC,
-        name: 'method_1'
+        value: 'method_1'
     };
 
     frame.height += (frame.rowHeight / 2);
@@ -30,9 +33,8 @@ export const createNewInterface = (coordinates: ICoordinates) => {
         id: v4(),
         type: ClassDiagramElementsEnum.INTERFACE,
         data: {
-            interfaceName: 'interface Name',
-            interfaceMethodIds: [interfaceMethodId],
-            interfacePropertyIds: [interfacePropertyId],
+            elementName: 'interface Name',
+            entryIds: [interfaceMethodId, interfacePropertyId],
         },
         graphicData: {
             frame,
@@ -57,7 +59,7 @@ export const createNewInterface = (coordinates: ICoordinates) => {
     };
 };
 
-export const moveInterface = (element: IInterface, coordinates: ICoordinates, oldCursorPosition: ICoordinates): IInterface => {
+export const moveInterface = (element: IInterface, coordinates: ICoordinates, oldCursorPosition: ICoordinates, propertyCount: number): IInterface => {
     const newFrame = moveFrame(element, coordinates, oldCursorPosition);
 
     return {
@@ -72,25 +74,25 @@ export const moveInterface = (element: IInterface, coordinates: ICoordinates, ol
                     y: newFrame.y + newFrame.rowHeight + (newFrame.rowHeight / 2)
                 },
                 methods: {
-                    y: newFrame.y + ((1 + element.data.interfacePropertyIds.length) * newFrame.rowHeight) + (newFrame.rowHeight / 2)
+                    y: newFrame.y + ((1 + propertyCount) * newFrame.rowHeight) + (newFrame.rowHeight / 2)
                 }
             }
         }
     };
 };
 
-export const updateInterfaceGraphicData = (interfaceElement: IInterface) => {
+export const updateInterfaceGraphicData = (interfaceElement: IInterface, propertyCount: number, methodCount: number) => {
     const { graphicData, data } = interfaceElement;
 
-    if (data.interfaceMethodIds.length === 0 && data.interfacePropertyIds.length === 0) {
+    if (methodCount === 0 && propertyCount === 0) {
         graphicData.frame.height = graphicData.frame.rowHeight + (graphicData.frame.rowHeight / 2);
     } else {
             graphicData.sections.methods.y = graphicData.frame.y + (
-                (data.interfacePropertyIds.length + 1) * graphicData.frame.rowHeight
+                (propertyCount + 1) * graphicData.frame.rowHeight
             ) + (graphicData.frame.rowHeight / 2);
         
             graphicData.frame.height = (
-                data.interfacePropertyIds.length + data.interfaceMethodIds.length + 1
+                propertyCount + methodCount + 1
             ) * graphicData.frame.rowHeight + (graphicData.frame.rowHeight / 2);
     }
 

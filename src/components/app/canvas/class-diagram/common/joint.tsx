@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import ICoordinates from '@interfaces/ICoordinates';
 import { useDispatch } from 'react-redux';
-import { addNewNewRelationship } from '@store/actions/classDiagram';
-import { newCanvasOperation } from '@store/actions/canvas';
+import { addNewNewRelationship } from '@store/actions/classDiagram.action';
+import { newCanvasOperation } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import { createNewRelationship } from '@utils/elements/relationship';
 

@@ -4,7 +4,7 @@ import IInterfaceProps from '@interfaces/class-diagram/interface/IInterfaceProps
 import { useDispatch, useSelector } from 'react-redux';
 import Frame from '../common/frame';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import Joints from '../common/joints';
 import FrameHead from '../common/frameHead';
 import InterfaceHead from './interfaceHead';
@@ -133,7 +133,7 @@ const Interface = (props: IInterfaceProps) => {
             }
         },
         data: {
-            text: props.interface.data.interfaceName
+            text: props.interface.data.elementName
         }
     };
 

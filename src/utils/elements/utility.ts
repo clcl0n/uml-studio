@@ -6,6 +6,7 @@ import AccessModifierEnum from '@enums/accessModifierEnum';
 import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import IUtility from '@interfaces/class-diagram/utility/IUtility';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import EntryTypeEnum from '@enums/EntryTypeEnum';
 
 export const createNewUtility = (coordinates: ICoordinates) => {
     const frame = createFrame(coordinates, 3);
@@ -13,15 +14,17 @@ export const createNewUtility = (coordinates: ICoordinates) => {
     const utilityPropertyId = v4();
     const newUtilityProperty: IClassProperty = {
         id: utilityPropertyId,
+        type: EntryTypeEnum.PROPERTY,
         accessModifier: AccessModifierEnum.PUBLIC,
-        name: 'property_1'
+        value: 'property_1'
     };
 
     const utilityMethodId = v4();
     const newUtilityMethod: IClassMethod = {
         id: utilityMethodId,
+        type: EntryTypeEnum.METHOD,
         accessModifier: AccessModifierEnum.PUBLIC,
-        name: 'method_1'
+        value: 'method_1'
     };
 
     frame.height += (frame.rowHeight / 2);
@@ -30,9 +33,8 @@ export const createNewUtility = (coordinates: ICoordinates) => {
         id: v4(),
         type: ClassDiagramElementsEnum.UTILITY,
         data: {
-            utilityName: 'utility Name',
-            utilityMethodIds: [utilityMethodId],
-            utilityPropertyIds: [utilityPropertyId],
+            elementName: 'utility Name',
+            entryIds: [utilityMethodId, utilityPropertyId]
         },
         graphicData: {
             frame,
@@ -57,7 +59,7 @@ export const createNewUtility = (coordinates: ICoordinates) => {
     };
 };
 
-export const moveUtility = (element: IUtility, coordinates: ICoordinates, oldCursorPosition: ICoordinates): IUtility => {
+export const moveUtility = (element: IUtility, coordinates: ICoordinates, oldCursorPosition: ICoordinates, propertyCount: number): IUtility => {
     const newFrame = moveFrame(element, coordinates, oldCursorPosition);
 
     return {
@@ -72,25 +74,25 @@ export const moveUtility = (element: IUtility, coordinates: ICoordinates, oldCur
                     y: newFrame.y + newFrame.rowHeight + (newFrame.rowHeight / 2)
                 },
                 methods: {
-                    y: newFrame.y + ((1 + element.data.utilityPropertyIds.length) * newFrame.rowHeight) + (newFrame.rowHeight / 2)
+                    y: newFrame.y + ((1 + propertyCount) * newFrame.rowHeight) + (newFrame.rowHeight / 2)
                 }
             }
         }
     };
 };
 
-export const updateUtilityGraphicData = (utilityElement: IUtility) => {
-    const { graphicData, data } = utilityElement;
+export const updateUtilityGraphicData = (utilityElement: IUtility, propertyCount: number, methodCount: number) => {
+    const { graphicData } = utilityElement;
 
-    if (data.utilityMethodIds.length === 0 && data.utilityPropertyIds.length === 0) {
+    if (methodCount === 0 && propertyCount === 0) {
         graphicData.frame.height = graphicData.frame.rowHeight + (graphicData.frame.rowHeight / 2);
     } else {
             graphicData.sections.methods.y = graphicData.frame.y + (
-                (data.utilityPropertyIds.length + 1) * graphicData.frame.rowHeight
+                (propertyCount + 1) * graphicData.frame.rowHeight
             ) + (graphicData.frame.rowHeight / 2);
         
             graphicData.frame.height = (
-                data.utilityPropertyIds.length + data.utilityMethodIds.length + 1
+                propertyCount + methodCount + 1
             ) * graphicData.frame.rowHeight + (graphicData.frame.rowHeight / 2);
     }
 
