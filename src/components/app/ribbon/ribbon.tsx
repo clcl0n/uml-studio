@@ -7,8 +7,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
 import { canvasZoomIn, canvasZoomOut } from '@store/actions/ribbon.action';
+import classSimpleSVG from '@icons/class-simple.svg';
+import classFullSVG from '@icons/class-full.svg';
+import utilitySVG from '@icons/utility.svg';
+import primitiveTypeSVG from '@icons/primitive.svg';
+import objectSVG from '@icons/object.svg';
+import interfaceSVG from '@icons/interface.svg';
+import enumerationSVG from '@icons/enumeration.svg';
+import dataTypeSVG from '@icons/dataType.svg';
 
-const Ribbon = () => {
+const Ribbon = () => {  
     const dispatch = useDispatch();
     const canvasZoom: number = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
     const onElementDragStart = (event: React.DragEvent, ribbonOperation: RibbonOperationEnum) => {
@@ -19,49 +27,49 @@ const Ribbon = () => {
         {
             alt: 'table',
             label: 'Empty Class',
-            src: 'src/assets/icons/class-simple.svg',
+            src: classSimpleSVG,
             ribbonOperation: RibbonOperationEnum.ADD_NEW_EMPTY_CLASS
         },
         {
             alt: 'full class',
             label: 'Class',
-            src: 'src/assets/icons/class-full.svg',
+            src: classFullSVG,
             ribbonOperation: RibbonOperationEnum.ADD_NEW_CLASS
         },
         {
             alt: 'utility',
             label: 'utility',
-            src: 'src/assets/icons/utility.svg',
+            src: utilitySVG,
             ribbonOperation: RibbonOperationEnum.ADD_NEW_UTILITY
         },
         {
             alt: 'primitive',
             label: 'Primitive Type',
-            src: 'src/assets/icons/primitive.svg',
+            src: primitiveTypeSVG,
             ribbonOperation: RibbonOperationEnum.ADD_NEW_PRIMITIVE_TYPE
         },
         {
             alt: 'object',
             label: 'Object',
-            src: 'src/assets/icons/object.svg',
+            src: objectSVG,
             ribbonOperation: RibbonOperationEnum.ADD_NEW_OBJECT
         },
         {
             alt: 'interface',
             label: 'Interface',
-            src: 'src/assets/icons/interface.svg',
+            src: interfaceSVG,
             ribbonOperation: RibbonOperationEnum.ADD_NEW_INTERFACE
         },
         {
             alt: 'enumeration',
             label: 'Enumeration',
-            src: 'src/assets/icons/enumeration.svg',
+            src: enumerationSVG,
             ribbonOperation: RibbonOperationEnum.ADD_NEW_ENUMERATION
         },
         {
             alt: 'dataType',
             label: 'Data Type',
-            src: 'src/assets/icons/dataType.svg',
+            src: dataTypeSVG,
             ribbonOperation: RibbonOperationEnum.ADD_NEW_DATA_TYPE
         }
     ];

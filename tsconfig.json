@@ -1,10 +1,11 @@
 {
     "compilerOptions": {
+        "esModuleInterop": true,
         "outDir": "./build/",
         "sourceMap": true,
         "noImplicitAny": true,
         "module": "commonjs",
-        "target": "es6",
+        "target": "ES5",
         "importHelpers": true,
         "allowJs": true,
         "jsx": "react",
@@ -15,11 +16,13 @@
             "@interfaces/*": ["typings/interfaces/*"],
             "@actions/*": ["typings/actions/*"],
             "@store/*": ["store/*"],
-            "@utils/*": ["utils/*"]
+            "@utils/*": ["utils/*"],
+            "@icons/*": ["assets/icons/*"]
         }
     },
     "include": [
-        "src"
+        "src",
+        "src/typings/globals.d.ts"
     ],
     "exclude": [
         "node_modules"
