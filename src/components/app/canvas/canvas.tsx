@@ -8,7 +8,7 @@ import { isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import ClassDiagram from './class-diagram/classDiagram';
 import useCanvasMouseMove from 'hooks/useCanvasMouseMove';
 import useCanvasAddNewElement from 'hooks/useCanvasAddNewElement';
-import useSelectedElement from 'hooks/useSelectedElement';
+import useCanvasOperation from 'hooks/useCanvasOperation';
 import usePreviousMousePosition from 'hooks/usePreviousMousePosition';
 import { addNewRelationship, addNewRelationshipSegment, clearNewRelationship } from '@store/actions/classDiagram.action';
 
@@ -19,7 +19,7 @@ const Canvas = () => {
     const newRelationship = useSelector((state: IStoreState) => state.classDiagram.newRelationship);
     const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
     const { previousMousePosition, setPreviousMousePosition } = usePreviousMousePosition();
-    const { canvasOperation } = useSelectedElement();
+    const { canvasOperation } = useCanvasOperation();
     const { onMouseMove } = useCanvasMouseMove(classDiagram, canvasOperation);
     const { addNewElementToCanvas } = useCanvasAddNewElement();
 

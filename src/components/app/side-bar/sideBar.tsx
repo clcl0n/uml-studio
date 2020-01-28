@@ -37,7 +37,7 @@ const SideBar = () => {
                 editOptions = <InterfaceEdit {...{ interface: selectedElement as IInterface, methods: selectedMethods, properties: selectedProperties }}/>;
                 break;
             case ClassDiagramElementsEnum.UTILITY:
-                // editOptions = <UtilityEdit {...{ utility: selectedElement as IUtility, methods: selectedMethods, properties: selectedProperties }}/>;
+                editOptions = <UtilityEdit {...{ utility: selectedElement as IUtility, methods: selectedMethods, properties: selectedProperties }}/>;
                 break;
             case ClassDiagramElementsEnum.ENUMERATION:
                 editOptions = <EnumerationEdit {...{ enumeration: selectedElement as IEnumeration, entries: selectedEntries }}/>;

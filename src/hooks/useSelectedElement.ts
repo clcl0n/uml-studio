@@ -6,10 +6,11 @@ import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty
 import IEntry from '@interfaces/class-diagram/common/IEntry';
 import IObjectSlot from '@interfaces/class-diagram/object/IObjectSlot';
 
-const useSelectedElement = () => {
-    const canvasOperation = useSelector((state: IStoreState) => state.canvas.canvasOperation);
+const useSelectedElement = (selectedElementId: string = '') => {
+    const storeSelectedElementId = useSelector((state: IStoreState) => state.canvas.selectedElementId);
+    selectedElementId = selectedElementId === '' ? storeSelectedElementId: selectedElementId;
     const selectedElement = useSelector((state: IStoreState) => {
-        return state.classDiagram.elements.byId[canvasOperation.elementId];
+        return state.classDiagram.elements.byId[selectedElementId];
     });
     const selectedElementEntries = useSelector((state: IStoreState) => {
         return selectedElement?.data.entryIds.map((entryId) => {
@@ -23,7 +24,7 @@ const useSelectedElement = () => {
     const selectedSlots = selectedElementEntries?.filter((entry) => entry.type === EntryTypeEnum.SLOT) as Array<IObjectSlot>;
 
     return {
-        canvasOperation,
+        selectedElementId,
         selectedElement,
         selectedElementEntries,
         selectedMethods,

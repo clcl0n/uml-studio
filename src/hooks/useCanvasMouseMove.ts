@@ -25,14 +25,14 @@ import { moveEnumeration } from '@utils/elements/enumeration';
 import { moveDataType } from '@utils/elements/dataType';
 import { moveObject } from '@utils/elements/object';
 import { updateElement, updateNewRelationship, updateRelationshipSegment, addNewRelationshipSegment, updateRelationship } from '@store/actions/classDiagram.action';
-import useSelectedElement from './useSelectedElement';
+import useCanvasOperation from './useCanvasOperation';
 
 const useCanvasMouseMove = (
     classDiagram: IClassDiagramState,
     canvasOperation: ICanvasOperation
 ) => {
     const dispatch = useDispatch();
-    const { selectedElement, selectedProperties } = useSelectedElement();
+    const { selectedElement, selectedProperties } = useCanvasOperation();
 
     const movingRelationshipSegment = useSelector((state: IStoreState) => {
         if (canvasOperation.type === CanvasOperationEnum.MOVE_RELATIONSHIP_SEGMENT ||
