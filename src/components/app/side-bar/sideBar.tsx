@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './sideBar.scss';
-import { useSelector } from 'react-redux';
-import IStoreState from '@interfaces/IStoreState';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ClassEdit from './options/class/classEdit';
 import InterfaceEdit from './options/interface/interfaceEdit';
@@ -18,50 +16,40 @@ import ObjectEdit from './options/object/objectEdit';
 import IObject from '@interfaces/class-diagram/object/IObject';
 import PrimitiveTypeEdit from './options/primitive-type/primitiveTypeEdit';
 import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
+import useSelectedElement from 'hooks/useSelectedElement';
 
 const SideBar = () => {
-    const selectedElementId = useSelector((state: IStoreState) => state.canvas.selectedElementId);
-    const selectedElement = useSelector((state: IStoreState) => {
-        if (state.umlClassDiagram.classes.byId[selectedElementId]) {
-            return state.umlClassDiagram.classes.byId[selectedElementId];
-        } else if (state.umlClassDiagram.interfaces.byId[selectedElementId]) {
-            return state.umlClassDiagram.interfaces.byId[selectedElementId];
-        } else if (state.umlClassDiagram.utilities.byId[selectedElementId]) {
-            return state.umlClassDiagram.utilities.byId[selectedElementId];
-        } else if (state.umlClassDiagram.enumerations.byId[selectedElementId]) {
-            return state.umlClassDiagram.enumerations.byId[selectedElementId];
-        } else if (state.umlClassDiagram.dataTypes.byId[selectedElementId]) {
-            return state.umlClassDiagram.dataTypes.byId[selectedElementId];
-        } else if (state.umlClassDiagram.objects.byId[selectedElementId]) {
-            return state.umlClassDiagram.objects.byId[selectedElementId];
-        } else if (state.umlClassDiagram.primitiveTypes.byId[selectedElementId]) {
-            return state.umlClassDiagram.primitiveTypes.byId[selectedElementId];
-        }
-    });
-    
+    const {
+        selectedElement,
+        selectedEntries,
+        selectedMethods,
+        selectedProperties,
+        selectedSlots
+    } = useSelectedElement();
+
     let editOptions = <div/>;
     if (selectedElement) {
         switch (selectedElement.type) {
             case ClassDiagramElementsEnum.CLASS:
-                editOptions = <ClassEdit {...{ class: selectedElement as IClass }}/>;
+                editOptions = <ClassEdit {...{ class: selectedElement as IClass, methods: selectedMethods, properties: selectedProperties}}/>;
                 break;
             case ClassDiagramElementsEnum.INTERFACE:
-                editOptions = <InterfaceEdit {...{ interface: selectedElement as IInterface }}/>;
+                editOptions = <InterfaceEdit {...{ interface: selectedElement as IInterface, methods: selectedMethods, properties: selectedProperties }}/>;
                 break;
             case ClassDiagramElementsEnum.UTILITY:
-                editOptions = <UtilityEdit {...{ utility: selectedElement as IUtility }}/>;
+                editOptions = <UtilityEdit {...{ utility: selectedElement as IUtility, methods: selectedMethods, properties: selectedProperties }}/>;
                 break;
             case ClassDiagramElementsEnum.ENUMERATION:
-                editOptions = <EnumerationEdit {...{ enumeration: selectedElement as IEnumeration }}/>;
+                editOptions = <EnumerationEdit {...{ enumeration: selectedElement as IEnumeration, entries: selectedEntries }}/>;
                 break;
             case ClassDiagramElementsEnum.DATA_TYPE:
-                editOptions = <DataTypeEdit {...{ dataType: selectedElement as IDataType }}/>
+                editOptions = <DataTypeEdit {...{ dataType: selectedElement as IDataType, entries: selectedEntries }}/>;
                 break;
             case ClassDiagramElementsEnum.OBJECT:
-                editOptions = <ObjectEdit {...{ object: selectedElement as IObject }}/>
+                editOptions = <ObjectEdit {...{ object: selectedElement as IObject, slots: selectedSlots }}/>;
                 break;
             case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
-                editOptions = <PrimitiveTypeEdit {...{ primitiveType: selectedElement as IPrimitiveType }}/>
+                editOptions = <PrimitiveTypeEdit {...{ primitiveType: selectedElement as IPrimitiveType }}/>;
                 break;
         }
     }

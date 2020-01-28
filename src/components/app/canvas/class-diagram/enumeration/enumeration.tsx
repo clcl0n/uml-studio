@@ -2,10 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './enumeration.scss';
 import IEnumerationProps from '@interfaces/class-diagram/enumeration/IEnumerationProps';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import FrameRow from '../common/frameRow';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
 import IEnumerationHead from '@interfaces/class-diagram/enumeration/IEnumerationHead';
@@ -19,10 +19,12 @@ import EnumerationEntry from './enumerationEntry';
 import IEnumerationEntryProps from '@interfaces/class-diagram/enumeration/IEnumerationEntryProps';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import Direction from '@enums/direction';
+import IStoreState from '@interfaces/IStoreState';
 
 const Enumeration = (props: IEnumerationProps) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
+    const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const { frame } = props.enumeration.graphicData;
     const { data } = props.enumeration;
 
@@ -63,11 +65,14 @@ const Enumeration = (props: IEnumerationProps) => {
     const enumerationEntries = props.entries.map((entry, index) => createNewEnumerationEntry(index, entry));
     const frameFunctionality: IFrameFunctionality = {
         onFrameMove: () => {
-            dispatch(isMouseDown(true));
-            dispatch(newCanvasOperation({
-                type: CanvasOperationEnum.MOVE_ELEMENT,
-                elementId: props.enumeration.id
-            }));
+            if ((event.target as SVGElement).nodeName !== 'circle') {
+                dispatch(isMouseDown(true));
+                dispatch(newCanvasOperation({
+                    type: CanvasOperationEnum.MOVE_ELEMENT,
+                    elementId: props.enumeration.id
+                }));
+                setJoints(<g/>);
+            }
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));
@@ -75,6 +80,7 @@ const Enumeration = (props: IEnumerationProps) => {
                 type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
                 elementId: props.enumeration.id
             }));
+            setJoints(<g/>);
         },
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onEnumerationClick,
@@ -82,14 +88,18 @@ const Enumeration = (props: IEnumerationProps) => {
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            setJoints((
-                <Joints
-                    coordinates={{ x: frame.x, y: frame.y }}
-                    width={frame.width}
-                    height={frame.height}
-                    onJointClick={props.functionality.onJointClick}
-                />
-            ));
+            if (isMouseDownState) {
+                setJoints(<g/>);
+            } else {
+                setJoints((
+                    <Joints
+                        coordinates={{ x: frame.x, y: frame.y }}
+                        width={frame.width}
+                        height={frame.height}
+                        fromElementId={props.enumeration.id}
+                    />
+                ));
+            }
         }
     };
     const enumerationHeadData: IEnumerationHead = {
@@ -104,7 +114,7 @@ const Enumeration = (props: IEnumerationProps) => {
             }
         },
         data: {
-            text: data.enumerationName
+            text: data.elementName
         }
     };
 

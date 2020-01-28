@@ -1,28 +1,29 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import EntryTypeEnum from '@enums/EntryTypeEnum';
 
-const ClassMethodEdit = ( props: {
-    addNewProperty: () => void;
-    editProperties: () => Array<JSX.Element>;
+const ClassMethodEdit = (props: {
+    addNewEntry: (entryType: EntryTypeEnum) => void;
+    editMethods: () => Array<JSX.Element>;
 }) => {
-    const { addNewProperty, editProperties } = props;
-    
+    const { addNewEntry, editMethods } = props;
+
     return (
         <div className='field'>
-            <label className='label'>Properties</label>
+            <label className='label'>Methods</label>
             <table className='table is-fullwidth'>
                 <thead className='has-background-grey-light is-size-6'>
                     <tr>
                         <th>Modifier</th>
                         <th>Property</th>
                         <th>
-                            <FontAwesomeIcon onClick={(ev) => addNewProperty()} icon='plus'/>
+                            <FontAwesomeIcon onClick={(ev) => addNewEntry(EntryTypeEnum.METHOD)} icon='plus'/>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    {editProperties()}
+                    {editMethods()}
                 </tbody>
             </table>
         </div>

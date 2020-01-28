@@ -1,5 +1,4 @@
-import IDataTypeData from './IDataTypeData';
 import IBaseElement from '../common/IBaseElement';
 import IBaseElementGraphicData from '../common/IBaseElementGraphicData';
 
-export default interface IDataType extends IBaseElement<IBaseElementGraphicData<{}>, IDataTypeData> {}
+export default interface IDataType extends IBaseElement<IBaseElementGraphicData<{}>> {}

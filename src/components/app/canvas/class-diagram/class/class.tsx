@@ -1,9 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './class.scss';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
 import { useDispatch, useSelector } from 'react-redux';
-import IClassProps from '@interfaces/class-diagram/class/IClassProps';
 import Frame from '../common/frame';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import FrameSegment from '../common/frameSegment';
@@ -21,10 +19,12 @@ import IClassHead from '@interfaces/class-diagram/class/IClassHead';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import Direction from '@enums/direction';
 import IStoreState from '@interfaces/IStoreState';
+import { isMouseDown, newCanvasOperation, selectNewElement } from '@store/actions/canvas.action';
+import IClass from '@interfaces/class-diagram/class/IClass';
 
-const Class = (props: IClassProps) => {
+const Class = (props: { class: IClass, properties: Array<IClassProperty>, methods: Array<IClassMethod> }) => {
     const dispatch = useDispatch();
-    const canvasOperation = useSelector((state: IStoreState) => state.canvas.canvasOperation.type);
+    const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const [joints, setJoints] = React.useState(<g/>);
     const { frame, sections } = props.class.graphicData;
 
@@ -65,12 +65,15 @@ const Class = (props: IClassProps) => {
     };
 
     const frameFunctionality: IFrameFunctionality = {
-        onFrameMove: () => {
-            dispatch(isMouseDown(true));
-            dispatch(newCanvasOperation({
-                type: CanvasOperationEnum.MOVE_ELEMENT,
-                elementId: props.class.id
-            }));
+        onFrameMove: (event: React.MouseEvent) => {
+            if ((event.target as SVGElement).nodeName !== 'circle') {
+                dispatch(isMouseDown(true));
+                dispatch(newCanvasOperation({
+                    type: CanvasOperationEnum.MOVE_ELEMENT,
+                    elementId: props.class.id
+                }));
+                setJoints(<g/>);
+            }
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));
@@ -78,6 +81,7 @@ const Class = (props: IClassProps) => {
                 type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
                 elementId: props.class.id
             }));
+            setJoints(<g/>);
         },
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onClassClick,
@@ -85,7 +89,7 @@ const Class = (props: IClassProps) => {
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            if (canvasOperation === CanvasOperationEnum.RESIZE_ELEMENT_LEFT || canvasOperation === CanvasOperationEnum.RESIZE_ELEMENT_RIGHT) {
+            if (isMouseDownState) {
                 setJoints(<g/>);
             } else {
                 setJoints((
@@ -93,7 +97,7 @@ const Class = (props: IClassProps) => {
                         coordinates={{ x: frame.x, y: frame.y }}
                         width={frame.width}
                         height={frame.height}
-                        onJointClick={props.functionality.onJointClick}
+                        fromElementId={props.class.id}
                     />
                 ));
             }
@@ -126,7 +130,7 @@ const Class = (props: IClassProps) => {
             }
         },
         data: {
-            text: props.class.data.className
+            text: props.class.data.elementName
         }
     };
 

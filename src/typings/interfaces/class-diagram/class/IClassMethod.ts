@@ -1,7 +1,6 @@
 import AccessModifierEnum from '@enums/accessModifierEnum';
+import IEntry from '../common/IEntry';
 
-export default interface IClassMethod {
-    id: string;
+export default interface IClassMethod extends IEntry {
     accessModifier: AccessModifierEnum;
-    name: string;
 }

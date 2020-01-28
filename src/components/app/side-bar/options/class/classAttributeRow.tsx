@@ -26,7 +26,7 @@ const ClassAttributeRow = (props: {
                     type='text'
                     className='input'
                     placeholder={placeHolder}
-                    value={classAttribute.name}
+                    value={classAttribute.value}
                     onChange={(ev) => updateAttribute(ev.target.value, classAttribute)}
                 />
             </td>

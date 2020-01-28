@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import IInterfaceProps from '@interfaces/class-diagram/interface/IInterfaceProps';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Frame from '../common/frame';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import Joints from '../common/joints';
 import FrameHead from '../common/frameHead';
 import InterfaceHead from './interfaceHead';
@@ -19,10 +19,12 @@ import FrameSegment from '../common/frameSegment';
 import IInterfaceHead from '@interfaces/class-diagram/interface/IInterfaceHead';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import Direction from '@enums/direction';
+import IStoreState from '@interfaces/IStoreState';
 
 const Interface = (props: IInterfaceProps) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
+    const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const { frame, sections } = props.interface.graphicData;
     
     const createNewInterfaceRow = (index: number, classAttribute: IInterfaceMethod | IInterfaceProperty, y: number) => {
@@ -81,11 +83,14 @@ const Interface = (props: IInterfaceProps) => {
 
     const frameFunctionality: IFrameFunctionality = {
         onFrameMove: () => {
-            dispatch(isMouseDown(true));
-            dispatch(newCanvasOperation({
-                type: CanvasOperationEnum.MOVE_ELEMENT,
-                elementId: props.interface.id
-            }));
+            if ((event.target as SVGElement).nodeName !== 'circle') {
+                dispatch(isMouseDown(true));
+                dispatch(newCanvasOperation({
+                    type: CanvasOperationEnum.MOVE_ELEMENT,
+                    elementId: props.interface.id
+                }));
+                setJoints(<g/>);
+            }
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));
@@ -93,6 +98,7 @@ const Interface = (props: IInterfaceProps) => {
                 type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
                 elementId: props.interface.id
             }));
+            setJoints(<g/>);
         },
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onInterfaceClick,
@@ -100,14 +106,18 @@ const Interface = (props: IInterfaceProps) => {
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            setJoints((
-                <Joints
-                    coordinates={{ x: frame.x, y: frame.y }}
-                    width={frame.width}
-                    height={frame.height}
-                    onJointClick={props.functionality.onJointClick}
-                />
-            ));
+            if (isMouseDownState) {
+                setJoints(<g/>);
+            } else {
+                setJoints((
+                    <Joints
+                        coordinates={{ x: frame.x, y: frame.y }}
+                        width={frame.width}
+                        height={frame.height}
+                        fromElementId={props.interface.id}
+                    />
+                ));
+            }
         }
     };
 
@@ -123,7 +133,7 @@ const Interface = (props: IInterfaceProps) => {
             }
         },
         data: {
-            text: props.interface.data.interfaceName
+            text: props.interface.data.elementName
         }
     };
 

@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { useDispatch } from 'react-redux';
-import IUtilityProps from '@interfaces/class-diagram/utility/IUtilityProps';
+import { useDispatch, useSelector } from 'react-redux';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import IUtilityMethod from '@interfaces/class-diagram/utility/IUtilityMethod';
 import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty';
 import IClassAttribute from '@interfaces/class-diagram/class/IClassAttribute';
 import FrameRow from '../common/frameRow';
 import ClassAttribute from '../class/classAttribute';
-import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas';
+import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import IFrameSegmentGraphicData from '@interfaces/class-diagram/common/IFrameSegmentGraphicData';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Joints from '../common/joints';
@@ -19,10 +18,13 @@ import UtilityHead from './utilityHead';
 import FrameSegment from '../common/frameSegment';
 import Direction from '@enums/direction';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import IStoreState from '@interfaces/IStoreState';
+import IUtility from '@interfaces/class-diagram/utility/IUtility';
 
-const Utility = (props: IUtilityProps) => {
+const Utility = (props: { utility: IUtility, properties: Array<IUtilityProperty>, methods: Array<IUtilityMethod> }) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
+    const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const { frame, sections } = props.utility.graphicData;
 
     const createNewUtilityRow = (index: number, classAttribute: IUtilityMethod | IUtilityProperty, y: number) => {
@@ -81,11 +83,14 @@ const Utility = (props: IUtilityProps) => {
 
     const frameFunctionality: IFrameFunctionality = {
         onFrameMove: () => {
-            dispatch(isMouseDown(true));
-            dispatch(newCanvasOperation({
-                type: CanvasOperationEnum.MOVE_ELEMENT,
-                elementId: props.utility.id
-            }));
+            if ((event.target as SVGElement).nodeName !== 'circle') {
+                dispatch(isMouseDown(true));
+                dispatch(newCanvasOperation({
+                    type: CanvasOperationEnum.MOVE_ELEMENT,
+                    elementId: props.utility.id
+                }));
+                setJoints(<g/>);
+            }
         },
         onFrameResize: (direction: Direction) => {
             dispatch(isMouseDown(true));
@@ -93,6 +98,7 @@ const Utility = (props: IUtilityProps) => {
                 type: direction === Direction.LEFT ? CanvasOperationEnum.RESIZE_ELEMENT_LEFT : CanvasOperationEnum.RESIZE_ELEMENT_RIGHT,
                 elementId: props.utility.id
             }));
+            setJoints(<g/>);
         },
         onFrameSetDefaultWidth: () => {},
         onFrameClick: onUtilityClick,
@@ -100,14 +106,18 @@ const Utility = (props: IUtilityProps) => {
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            setJoints((
-                <Joints
-                    coordinates={{ x: frame.x, y: frame.y }}
-                    width={frame.width}
-                    height={frame.height}
-                    onJointClick={props.functionality.onJointClick}
-                />
-            ));
+            if (isMouseDownState) {
+                setJoints(<g/>);
+            } else {
+                setJoints((
+                    <Joints
+                        coordinates={{ x: frame.x, y: frame.y }}
+                        width={frame.width}
+                        height={frame.height}
+                        fromElementId={props.utility.id}
+                    />
+                ));
+            }   
         }
     };
 
@@ -123,7 +133,7 @@ const Utility = (props: IUtilityProps) => {
             }
         },
         data: {
-            text: props.utility.data.utilityName
+            text: props.utility.data.elementName
         }
     };
 
