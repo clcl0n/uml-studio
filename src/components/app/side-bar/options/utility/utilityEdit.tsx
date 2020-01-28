@@ -9,30 +9,35 @@ import ClassAttributeRow from '../class/classAttributeRow';
 import log = require('loglevel');
 import { v4 } from 'uuid';
 import FrameEdit from '../common/frameEdit';
-import ClassMethodEdit from '../class/classMethodEdit';
-import ClassProperyEdit from '../class/classPropertyEdit';
 import { updateUtilityGraphicData } from '@utils/elements/utility';
 import { updateElement, addNewElementEntry, removeElementEntry, updateElementEntry } from '@store/actions/classDiagram.action';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
+import ClassPropertyEdit from '../class/classPropertyEdit';
+import ClassMethodEdit from '../class/classMethodEdit';
 
 const UtilityEdit = (props: { utility: IUtility, properties: Array<IUtilityProperty>, methods: Array<IUtilityMethod> }) => {
     const dispatch = useDispatch();
     const { data } = props.utility;
     const { methods, properties } = props;
 
-    const updateGraphic = (utilityElement: IUtility): IUtility => updateUtilityGraphicData(utilityElement, properties.length, methods.length);
+    const updateGraphic = (utilityElement: IUtility, propertiesLength: number, methodsLength: number): IUtility => {
+        return updateUtilityGraphicData(utilityElement, propertiesLength, methodsLength);
+    };
     
     const removeEntry = (entry: IUtilityProperty | IUtilityMethod) => {
         const updatedInterface = {...props.utility};
+        let propertiesLength = properties.length;
+        let methodsLength = methods.length;
+        entry.type === EntryTypeEnum.PROPERTY ? propertiesLength-- : methodsLength--;
         updatedInterface.data.entryIds.splice(updatedInterface.data.entryIds.indexOf(entry.id), 1);
-        dispatch(updateElement(updateGraphic(updatedInterface)));
+        dispatch(updateElement(updateGraphic(updatedInterface, propertiesLength, methodsLength)));
         dispatch(removeElementEntry(entry));
     };
     
     const updateEntry = (newMethodName: string, entry: IUtilityMethod | IUtilityProperty) => {
         dispatch(updateElementEntry({
             ...entry,
-            name: newMethodName
+            value: newMethodName
         }));
     };
    
@@ -77,44 +82,33 @@ const UtilityEdit = (props: { utility: IUtility, properties: Array<IUtilityPrope
             );
         });
     };
-    const addNewProperty = () => {
-        log.debug(`Added new Utility Property. Class Id: ${props.utility.id}`);
+    const addNewEntry = (entryType: EntryTypeEnum) => {
+        log.debug(`Added new Utility Entry. Class Id: ${props.utility.id}`);
         const newPropertyId = v4();
         dispatch(addNewElementEntry({
             id: newPropertyId,
             value: '',
-            type: EntryTypeEnum.PROPERTY,
+            type: entryType,
             accessModifier: AccessModifierEnum.PUBLIC,
         }));
         const updatedClass = {...props.utility};
         updatedClass.data.entryIds.push(newPropertyId);
-        dispatch(updateElement(updateGraphic(updatedClass)));
-    };
-
-    const addNewMethod = () => {
-        log.debug(`Added new Utility Method. Class Id: ${props.utility.id}`);
-        const newMethodId = v4();
-        dispatch(addNewElementEntry({
-            id: newMethodId,
-            value: '',
-            type: EntryTypeEnum.METHOD,
-            accessModifier: AccessModifierEnum.PUBLIC
-        }));
-        const updatedUtility = {...props.utility};
-        updatedUtility.data.entryIds.push(newMethodId);
-        dispatch(updateElement(updateGraphic(updatedUtility)));
+        let propertiesLength = properties.length;
+        let methodsLength = methods.length;
+        entryType === EntryTypeEnum.PROPERTY ? propertiesLength++ : methodsLength++;
+        dispatch(updateElement(updateGraphic(updatedClass, propertiesLength, methodsLength)));
     };
 
     const onClassNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const updatedUtility = {...props.utility};
         updatedUtility.data.elementName = event.target.value;
-        dispatch(updateElement(updateGraphic(updatedUtility)));
+        dispatch(updateElement(updateGraphic(updatedUtility, properties.length, methods.length)));
     };
 
     return (
         <FrameEdit inputLabel='Utility Name' frameName={data.elementName} onNameChange={(ev) => onClassNameChange(ev)}>
-            <ClassMethodEdit addNewProperty={addNewProperty} editProperties={editProperties}/>
-            <ClassProperyEdit addNewMethod={addNewMethod} editMethods={editMethods}/>
+            <ClassPropertyEdit addNewEntry={addNewEntry} editProperties={editProperties}/>
+            <ClassMethodEdit addNewEntry={addNewEntry} editMethods={editMethods}/>
         </FrameEdit>
     );
 };

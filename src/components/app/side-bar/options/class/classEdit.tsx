@@ -10,45 +10,43 @@ import IStoreState from '@interfaces/IStoreState';
 import AccessModifierEnum from '@enums/accessModifierEnum';
 import './class-edit.scss';
 import FrameEdit from '../common/frameEdit';
-import ClassMethodEdit from './classMethodEdit';
-import ClassProperyEdit from './classPropertyEdit';
 import ClassAttributeRow from './classAttributeRow';
 import { updateClassGraphicData } from '@utils/elements/class';
 import { addNewElementEntry, updateElement, removeElementEntry, updateElementEntry } from '@store/actions/classDiagram.action';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
+import ClassPropertyEdit from './classPropertyEdit';
+import ClassMethodEdit from './classMethodEdit';
 
 const ClassEditOptions = (props: { class: IClass, properties: Array<IClassProperty>, methods: Array<IClassMethod> }) => {
     const dispatch = useDispatch();
     const { data } = props.class;
     const { methods, properties } = props;
 
-    const updateGraphic = (classElement: IClass): IClass =>  updateClassGraphicData(classElement, properties.length, methods.length);
-
-    const removeProperty = (classProperty: IClassProperty) => {
-        const updatedClass = {...props.class};
-        updatedClass.data.entryIds.splice(updatedClass.data.entryIds.indexOf(classProperty.id), 1);
-        dispatch(updateElement(updateGraphic(updatedClass)));
-        dispatch(removeElementEntry(classProperty));
+    const updateGraphic = (classElement: IClass, propertiesLength: number, methodsLength: number): IClass =>  {
+        return updateClassGraphicData(classElement, propertiesLength, methodsLength);
     };
 
-    const removeMethod = (classMethod: IClassMethod) => {
+    const removeEntry = (classEntry: IClassProperty | IClassMethod) => {
         const updatedClass = {...props.class};
-        updatedClass.data.entryIds.splice(updatedClass.data.entryIds.indexOf(classMethod.id), 1);
-        dispatch(updateElement(updateGraphic(updatedClass)));
-        dispatch(removeElementEntry(classMethod));
+        let propertiesLength = properties.length;
+        let methodsLength = methods.length;
+        classEntry.type === EntryTypeEnum.PROPERTY ? propertiesLength-- : methodsLength--;
+        updatedClass.data.entryIds.splice(updatedClass.data.entryIds.indexOf(classEntry.id), 1);
+        dispatch(updateElement(updateGraphic(updatedClass, propertiesLength, methodsLength)));
+        dispatch(removeElementEntry(classEntry));
     };
     
     const updateMethod = (newMethodName: string, classMethod: IClassMethod) => {
         dispatch(updateElementEntry({
             ...classMethod,
-            name: newMethodName
+            value: newMethodName
         }));
     };
 
     const updateProperty = (newPropertyName: string, classProperty: IClassProperty) => {
         dispatch(updateElementEntry({
             ...classProperty,
-            name: newPropertyName
+            value: newPropertyName
         }));
     };
 
@@ -65,7 +63,7 @@ const ClassEditOptions = (props: { class: IClass, properties: Array<IClassProper
                     key={index}
                     classAttribute={property}
                     placeHolder='Property'
-                    removeAttribute={removeProperty}
+                    removeAttribute={removeEntry}
                     onSelectNewOption={onSelectNewOption}
                     updateAttribute={updateProperty}
                 />
@@ -86,7 +84,7 @@ const ClassEditOptions = (props: { class: IClass, properties: Array<IClassProper
                     key={index}
                     classAttribute={method}
                     placeHolder='Methods'
-                    removeAttribute={removeMethod}
+                    removeAttribute={removeEntry}
                     onSelectNewOption={onSelectNewOption}
                     updateAttribute={updateMethod}
                 />
@@ -94,44 +92,33 @@ const ClassEditOptions = (props: { class: IClass, properties: Array<IClassProper
         });
     };
 
-    const addNewProperty = () => {
-        log.debug(`Added new Class Property. Class Id: ${props.class.id}`);
+    const addNewEntry = (entryType: EntryTypeEnum) => {
+        log.debug(`Added new Class Entry. Class Id: ${props.class.id}`);
         const newPropertyId = v4();
         dispatch(addNewElementEntry({
             id: newPropertyId,
             value: '',
-            type: EntryTypeEnum.PROPERTY,
+            type: entryType,
             accessModifier: AccessModifierEnum.PUBLIC,
         }));
+        let propertiesLength = properties.length;
+        let methodsLength = methods.length;
+        entryType === EntryTypeEnum.PROPERTY ? propertiesLength++ : methodsLength++;
         const updatedClass: IClass = {...props.class};
         updatedClass.data.entryIds.push(newPropertyId);
-        dispatch(updateElement(updateGraphic(updatedClass)));
-    };
-
-    const addNewMethod = () => {
-        log.debug(`Added new Class Method. Class Id: ${props.class.id}`);
-        const newMethodId = v4();
-        dispatch(addNewElementEntry({
-            id: newMethodId,
-            value: '',
-            type: EntryTypeEnum.METHOD,
-            accessModifier: AccessModifierEnum.PUBLIC,
-        }));
-        const updatedClass: IClass = {...props.class};
-        updatedClass.data.entryIds.push(newMethodId);
-        dispatch(updateElement(updateGraphic(updatedClass)));
+        dispatch(updateElement(updateGraphic(updatedClass, propertiesLength, methodsLength)));
     };
 
     const onClassNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const updatedClass: IClass = {...props.class};
         updatedClass.data.elementName = event.target.value;
-        dispatch(updateElement(updateGraphic(updatedClass)));
+        dispatch(updateElement(updateGraphic(updatedClass, properties.length, methods.length)));
     };
 
     return (
         <FrameEdit inputLabel='Class Name' frameName={data.elementName} onNameChange={(ev) => onClassNameChange(ev)}>
-            <ClassMethodEdit addNewProperty={addNewProperty} editProperties={editProperties}/>
-            <ClassProperyEdit addNewMethod={addNewMethod} editMethods={editMethods}/>
+            <ClassPropertyEdit addNewEntry={addNewEntry} editProperties={editProperties}/>
+            <ClassMethodEdit addNewEntry={addNewEntry} editMethods={editMethods}/>
         </FrameEdit>
     );
 };
