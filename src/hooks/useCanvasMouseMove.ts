@@ -26,12 +26,14 @@ import { moveDataType } from '@utils/elements/dataType';
 import { moveObject } from '@utils/elements/object';
 import { updateElement, updateNewRelationship, updateRelationshipSegment, addNewRelationshipSegment, updateRelationship } from '@store/actions/classDiagram.action';
 import useCanvasOperation from './useCanvasOperation';
+import useCanvasDefaultRelationshipType from './useCanvasDefaultRelationshipType';
 
 const useCanvasMouseMove = (
     classDiagram: IClassDiagramState,
     canvasOperation: ICanvasOperation
 ) => {
     const dispatch = useDispatch();
+    const { canvasDefaultRelationshipType } = useCanvasDefaultRelationshipType();
     const { selectedElement, selectedProperties } = useCanvasOperation();
 
     const movingRelationshipSegment = useSelector((state: IStoreState) => {
@@ -95,12 +97,15 @@ const useCanvasMouseMove = (
             switch (canvasOperation.type) {
                 case CanvasOperationEnum.DRAWING_NEW_RELATION:
                     let fixX = newRelationship.relationship.tail.x > coordinates.x ? -0.5 : 0.5;
-                    const updatedRelationship = createNewRelationship({
-                        x1: newRelationship.relationship.tail.x,
-                        y1: newRelationship.relationship.tail.y,
-                        x2: coordinates.x - fixX,
-                        y2: coordinates.y
-                    });
+                    const updatedRelationship = createNewRelationship(
+                        canvasDefaultRelationshipType,
+                        {
+                            x1: newRelationship.relationship.tail.x,
+                            y1: newRelationship.relationship.tail.y,
+                            x2: coordinates.x - fixX,
+                            y2: coordinates.y
+                        }
+                    );
                     dispatch(updateNewRelationship({
                         ...updatedRelationship,
                         relationship: {

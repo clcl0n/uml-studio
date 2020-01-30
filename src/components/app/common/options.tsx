@@ -4,10 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Options = (props: {
     children: Array<React.ReactNode>,
+    defaultSelectedOptionIndex: number,
     onSelectNewOption: (selectedOptionIndex: number) => void
 }) => {
-    const { children, onSelectNewOption } = props;
-    const [selectedOption, selectNewOption] = React.useState(0);
+    const { children, onSelectNewOption, defaultSelectedOptionIndex } = props;
+    const [selectedOption, selectNewOption] = React.useState(defaultSelectedOptionIndex);
     const [hiddenOptions, hideOptions] = React.useState(false);
 
     const selectOptionAndClose = (newOptionIndex: number) => {

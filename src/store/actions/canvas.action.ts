@@ -1,6 +1,14 @@
 import IReducerPayload from '@interfaces/IReducerPayload';
 import CanvasActionEnum from '@enums/canvasActionEnum';
 import ICanvasOperation from '@interfaces/ICanvasOperation';
+import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
+
+export const setDefaultRelationshipType = (defaultRelationshipType: ClassDiagramRelationshipTypesEnum): IReducerPayload<CanvasActionEnum, ClassDiagramRelationshipTypesEnum> => {
+    return {
+        type: CanvasActionEnum.SET_DEFAULT_RELATIONSHIP_TYPE,
+        data: defaultRelationshipType
+    };
+};
 
 export const selectNewElement = (elementId: string): IReducerPayload<CanvasActionEnum, string> => {
     return {

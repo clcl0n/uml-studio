@@ -12,6 +12,7 @@ import ICoordinates from '@interfaces/ICoordinates';
 import Composition from '../relationship-heads/composition';
 import Extension from '../relationship-heads/extension';
 import Association from '../relationship-heads/association';
+import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 
 const Relationship = (props: { relationship: IRelationship, relationshipSegments: Array<IRelationshipSegment> }) => {
     const dispatch = useDispatch();
@@ -36,13 +37,13 @@ const Relationship = (props: { relationship: IRelationship, relationshipSegments
     const relationshipHead = () => {
         const coordinates: ICoordinates = { x: relationship.head.x, y: relationship.head.y };
         switch (relationship.type) {
-            case ClassDiagramElementsEnum.AGGREGATION:
+            case ClassDiagramRelationshipTypesEnum.AGGREGATION:
                 return <Aggregation direction={relationship.direction} coordinates={coordinates}/>;
-            case ClassDiagramElementsEnum.COMPOSITION:
+            case ClassDiagramRelationshipTypesEnum.COMPOSITION:
                 return <Composition direction={relationship.direction} coordinates={coordinates}/>;
-            case ClassDiagramElementsEnum.EXTENSION:
+            case ClassDiagramRelationshipTypesEnum.EXTENSION:
                 return <Extension direction={relationship.direction} coordinates={coordinates}/>;
-            case ClassDiagramElementsEnum.ASSOCIATION:
+            case ClassDiagramRelationshipTypesEnum.ASSOCIATION:
                 return <Association direction={relationship.direction} coordinates={coordinates}/>;
         }
     };
