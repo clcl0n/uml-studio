@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
-import Association from './relationships/association/association';
 import Class from './class/class';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
@@ -18,6 +17,7 @@ import IInterfaceProperty from '@interfaces/class-diagram/interface/IInterfacePr
 import IInterfaceMethod from '@interfaces/class-diagram/interface/IInterfaceMethod';
 import Enumeration from './enumeration/enumeration';
 import DataType from './data-type/dataType';
+import Relationship from './relationship/relationship';
 
 const ClassDiagram = (props: { classDiagram: IClassDiagramState }) => {
     const { classDiagram } = props;
@@ -111,7 +111,7 @@ const ClassDiagram = (props: { classDiagram: IClassDiagramState }) => {
         const relationship = classDiagram.relationships.byId[relationshipId];
         const relationshipSegments = relationship.segmentIds.map((segmentId) => classDiagram.relationshipSegments.byId[segmentId]);
         elements.push(
-            <Association
+            <Relationship
                 key={relationshipId}
                 relationship={relationship}
                 relationshipSegments={relationshipSegments}
@@ -121,7 +121,7 @@ const ClassDiagram = (props: { classDiagram: IClassDiagramState }) => {
 
     if (classDiagram.newRelationship.relationship !== null) {
         elements.push(
-            <Association
+            <Relationship
                 key={elements.length + 1}
                 relationship={classDiagram.newRelationship.relationship}
                 relationshipSegments={classDiagram.newRelationship.relationshipSegments}

@@ -15,6 +15,11 @@ import objectSVG from '@icons/object.svg';
 import interfaceSVG from '@icons/interface.svg';
 import enumerationSVG from '@icons/enumeration.svg';
 import dataTypeSVG from '@icons/dataType.svg';
+import Options from '../common/options';
+import Aggregation from '../canvas/class-diagram/relationship-heads/aggregation';
+import Composition from '../canvas/class-diagram/relationship-heads/composition';
+import Extension from '../canvas/class-diagram/relationship-heads/extension';
+import Direction from '@enums/direction';
 
 const Ribbon = () => {  
     const dispatch = useDispatch();
@@ -114,6 +119,18 @@ const Ribbon = () => {
                     <a onClick={(ev) => dispatch(canvasZoomOut(zoomStep))} className='button is-small is-text'>
                         <FontAwesomeIcon icon='search-minus'/>
                     </a>
+                    <Options onSelectNewOption={(a) => { console.warn(a); }}>
+                        <svg height='20' width='30'>
+                            <Extension direction={Direction.RIGHT} coordinates={{x: 0, y: 10}}/>
+                        </svg>
+                        <svg height='20' width='30'>
+                            <path stroke='black' d='M 0 0 M 10 0'/>
+                            <Composition direction={Direction.RIGHT} coordinates={{x: 0, y: 10}}/>
+                        </svg>
+                        <svg height='20' width='30'>
+                            <Aggregation direction={Direction.RIGHT} coordinates={{x: 0, y: 10}}/>
+                        </svg>
+                    </Options>
                 </div>
                 <div id='elements'>
                     {...allElements}
