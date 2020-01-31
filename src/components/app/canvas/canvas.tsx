@@ -30,14 +30,8 @@ const Canvas = () => {
     };
 
     const resetCanvasOperation = (event: React.MouseEvent) => {
-        if (canvasOperationState.type === CanvasOperationEnum.DRAWING_NEW_RELATION && (event.target as SVGGElement).tagName !== 'circle') {
-            dispatch(addNewRelationship(newRelationship.relationship));
-            newRelationship.relationshipSegments.forEach((segment) => {
-                dispatch(addNewRelationshipSegment(segment));
-            });
-            dispatch(clearNewRelationship());
-        }
         dispatch(isMouseDown(false));
+        dispatch(clearNewRelationship());
         dispatch(newCanvasOperation({
             type: CanvasOperationEnum.NONE,
             elementId: ''

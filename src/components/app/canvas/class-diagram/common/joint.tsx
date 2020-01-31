@@ -2,10 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import ICoordinates from '@interfaces/ICoordinates';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment } from '@store/actions/classDiagram.action';
+import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment, updateRelationshipSegment } from '@store/actions/classDiagram.action';
 import { newCanvasOperation } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
-import { createNewRelationship } from '@utils/elements/relationship';
+import { createNewRelationship, updateRelationshipHelper } from '@utils/elements/relationship';
 import useCanvasDefaultRelationshipType from 'hooks/useCanvasDefaultRelationshipType';
 import IStoreState from '@interfaces/IStoreState';
 
@@ -30,6 +30,13 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
             newRelationship.relationship.toElementId = props.fromElementId;
             newRelationship.relationship.head.x = props.x;
             newRelationship.relationship.head.y = props.y;
+            const movingRelationshipSegment = newRelationship.relationshipSegments[newRelationship.relationshipSegments.length - 1];
+            const dependentSegments = newRelationship.relationshipSegments.filter((segment) => {
+                return segment.id === movingRelationshipSegment.toSegmentId || segment.id === movingRelationshipSegment.fromSegmentId;
+            });
+
+            
+            
             dispatch(addNewRelationship(newRelationship.relationship));
             newRelationship.relationshipSegments.forEach((segment) => {
                 dispatch(addNewRelationshipSegment(segment));
