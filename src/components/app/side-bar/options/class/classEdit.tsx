@@ -55,7 +55,7 @@ const ClassEditOptions = (props: { class: IClass, properties: Array<IClassProper
             const newClassProperty = {...property};
             const onSelectNewOption = (newAccessModifier: AccessModifierEnum) => {
                 newClassProperty.accessModifier = newAccessModifier;
-                updateProperty(newClassProperty.name, newClassProperty);
+                updateProperty(newClassProperty.value, newClassProperty);
             };
 
             return (
@@ -76,7 +76,7 @@ const ClassEditOptions = (props: { class: IClass, properties: Array<IClassProper
             const newClassMethod = {...method};
             const onSelectNewOption = (newAccessModifier: AccessModifierEnum) => {
                 newClassMethod.accessModifier = newAccessModifier;
-                updateMethod(newClassMethod.name, newClassMethod);
+                updateMethod(newClassMethod.value, newClassMethod);
             };
             
             return (
