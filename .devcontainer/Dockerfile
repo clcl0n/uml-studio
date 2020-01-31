@@ -23,4 +23,9 @@ RUN apt-get update \
     && curl -sSL "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
     && chmod +x /usr/local/bin/docker-compose
 
+RUN git config --global user.name "Patrik Frantisek Balaz"
+RUN git config --global user.email "patrik.f.balaz@outlook.com"
+
+EXPOSE 3000
+
 CMD ["zsh"]
