@@ -6,6 +6,8 @@ RUN apt-get install -y zsh
 
 RUN apt-get install -y git
 
+RUN apt-get install wget
+
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
 
 RUN apt-get update \

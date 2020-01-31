@@ -15,12 +15,60 @@ import objectSVG from '@icons/object.svg';
 import interfaceSVG from '@icons/interface.svg';
 import enumerationSVG from '@icons/enumeration.svg';
 import dataTypeSVG from '@icons/dataType.svg';
+import Options from '../common/options';
+import Aggregation from '../canvas/class-diagram/relationship-heads/aggregation';
+import Composition from '../canvas/class-diagram/relationship-heads/composition';
+import Extension from '../canvas/class-diagram/relationship-heads/extension';
+import Direction from '@enums/direction';
+import Association from '../canvas/class-diagram/relationship-heads/association';
+import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
+import useCanvasDefaultRelationshipType from 'hooks/useCanvasDefaultRelationshipType';
 
 const Ribbon = () => {  
     const dispatch = useDispatch();
     const canvasZoom: number = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
+    const { canvasDefaultRelationshipType, setCanvasDefaultRelationshipType } = useCanvasDefaultRelationshipType();
     const onElementDragStart = (event: React.DragEvent, ribbonOperation: RibbonOperationEnum) => {
         event.dataTransfer.setData('elementType', ribbonOperation);
+    };
+    const relationshipTypes = [ 
+        ClassDiagramRelationshipTypesEnum.AGGREGATION,
+        ClassDiagramRelationshipTypesEnum.ASSOCIATION,
+        ClassDiagramRelationshipTypesEnum.COMPOSITION,
+        ClassDiagramRelationshipTypesEnum.EXTENSION 
+    ];
+    const relationshipOptions = () => {
+        return relationshipTypes.map((relationshipType, index) => {
+            switch (relationshipType) {
+                case ClassDiagramRelationshipTypesEnum.AGGREGATION:
+                return (
+                    <svg key={index} height='20' width='30'>
+                        <Aggregation direction={Direction.RIGHT} coordinates={{ x: 0, y: 10 }}/>
+                    </svg>
+                );
+            case ClassDiagramRelationshipTypesEnum.COMPOSITION:
+                return (
+                    <svg key={index} height='20' width='30'>
+                        <Composition direction={Direction.RIGHT} coordinates={{ x: 0, y: 10 }}/>;
+                    </svg>
+                );
+            case ClassDiagramRelationshipTypesEnum.EXTENSION:
+                return (
+                    <svg key={index} height='20' width='30'>
+                        <Extension direction={Direction.RIGHT} coordinates={{ x: 0, y: 10 }}/>;
+                    </svg>
+                );
+            case ClassDiagramRelationshipTypesEnum.ASSOCIATION:
+                return (
+                    <svg key={index} height='20' width='30'>
+                        <Association direction={Direction.RIGHT} coordinates={{ x: 10, y: 10 }}/>;
+                    </svg>
+                );
+            }
+        });
+    };
+    const onRelationshipHeadSelect = (index: number) => {
+        setCanvasDefaultRelationshipType(relationshipTypes[index]);
     };
     const zoomStep = 5;
     const allElementsData = [
@@ -114,6 +162,12 @@ const Ribbon = () => {
                     <a onClick={(ev) => dispatch(canvasZoomOut(zoomStep))} className='button is-small is-text'>
                         <FontAwesomeIcon icon='search-minus'/>
                     </a>
+                    <Options
+                        defaultSelectedOptionIndex={relationshipTypes.findIndex((type) => type === canvasDefaultRelationshipType)}
+                        onSelectNewOption={(optionIndex) => onRelationshipHeadSelect(optionIndex)}
+                    >
+                        {relationshipOptions()}
+                    </Options>
                 </div>
                 <div id='elements'>
                     {...allElements}

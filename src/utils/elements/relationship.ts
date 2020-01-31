@@ -4,9 +4,9 @@ import SegmentDirection from '@enums/segmentDirection';
 import Direction from '@enums/direction';
 import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
 import { v4 } from 'uuid';
-import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 
-export const createNewRelationship = (coordinates: {x1: number, y1: number, x2: number, y2: number}, fromElementId: string = '', toElementId: string = '') => {
+export const createNewRelationship = (type: ClassDiagramRelationshipTypesEnum, coordinates: {x1: number, y1: number, x2: number, y2: number}, fromElementId: string = '', toElementId: string = '') => {
     const {x1, y1, x2, y2} = coordinates;
     const relationshipId = v4();
     const direction = x1 > x2 ? Direction.LEFT : Direction.RIGHT;
@@ -97,7 +97,7 @@ export const createNewRelationship = (coordinates: {x1: number, y1: number, x2: 
 
     const relationship: IRelationship = {
        id:  relationshipId,
-       type: ClassDiagramElementsEnum.ASSOCIATION,
+       type,
        fromElementId,
        toElementId,
        head: {
@@ -305,7 +305,64 @@ export const updateRelationshipHelper = (cooridates: ICoordinates, relationship:
             ...dependentSegments
         ]
     };
-}
+};
+
+export const updateRelationshipStartingHelper = (cooridates: ICoordinates, relationship: IRelationship, movingSegment: IRelationshipSegment, dependentSegments: Array<IRelationshipSegment>) => {
+    const { direction } = movingSegment;
+    let movingDirection = Direction.NONE;
+    let yLength = 0;
+    let xLength = 0;
+    switch (direction) {
+        case SegmentDirection.HORIZONTAL:
+            movingDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
+            yLength = Math.abs(movingSegment.y - cooridates.y);
+            xLength = Math.abs(movingSegment.x - cooridates.x);
+            if (movingSegment.isStart) {
+                let xDirection = movingSegment.x > cooridates.x ? Direction.LEFT: Direction.RIGHT;
+                let yDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
+                dependentSegments.forEach((segment) => {
+                    segment.y = cooridates.y;
+                    segment.lineToY -= yDirection === Direction.DOWN ? yLength : -yLength;
+                });
+                movingSegment.y = cooridates.y;
+                movingSegment.x = cooridates.x;
+                movingSegment.lineToX -= xDirection === Direction.RIGHT ? xLength : -xLength;
+                relationship.tail = {
+                    x: cooridates.x,
+                    y: movingSegment.y  
+                };
+            }
+            break;
+        case SegmentDirection.VERTICAL:
+            movingDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
+            yLength = Math.abs(movingSegment.y - cooridates.y);
+            xLength = Math.abs(movingSegment.x - cooridates.x);
+            if (movingSegment.isStart) {
+                let xDirection = movingSegment.x > cooridates.x ? Direction.LEFT: Direction.RIGHT;
+                let yDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
+                dependentSegments.forEach((segment) => {
+                    segment.x = cooridates.x;
+                    segment.lineToX -= xDirection === Direction.RIGHT ? xLength : -xLength;
+                });
+                movingSegment.x = cooridates.x;
+                movingSegment.y = cooridates.y;
+                movingSegment.lineToY -= yDirection === Direction.DOWN ? yLength : -yLength;
+                relationship.tail = {
+                    x: cooridates.x,
+                    y: movingSegment.y
+                };
+            }
+            break;
+    }
+
+    return {
+        relationship,
+        relationshipSegments: [
+            movingSegment,
+            ...dependentSegments
+        ]
+    };
+};
 
 export const updateRelationshipEndingHelper = (cooridates: ICoordinates, relationship: IRelationship, movingSegment: IRelationshipSegment, dependentSegments: Array<IRelationshipSegment>) => {
     const { direction } = movingSegment;

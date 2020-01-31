@@ -18,6 +18,8 @@ const Canvas = () => {
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
     const newRelationship = useSelector((state: IStoreState) => state.classDiagram.newRelationship);
     const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
+    const canvasWidth = 826;
+    const canvasHeight = 2337;
     const { previousMousePosition, setPreviousMousePosition } = usePreviousMousePosition();
     const { canvasOperation } = useCanvasOperation();
     const { onMouseMove } = useCanvasMouseMove(classDiagram, canvasOperation);
@@ -27,17 +29,9 @@ const Canvas = () => {
         event.preventDefault();
     };
 
-    const resetCanvasOperation = () => {
-        switch (canvasOperationState.type) {
-            case CanvasOperationEnum.DRAWING_NEW_RELATION:
-                dispatch(addNewRelationship(newRelationship.relationship));
-                newRelationship.relationshipSegments.forEach((segment) => {
-                    dispatch(addNewRelationshipSegment(segment));
-                });
-                dispatch(clearNewRelationship());
-                break;
-        }
+    const resetCanvasOperation = (event: React.MouseEvent) => {
         dispatch(isMouseDown(false));
+        dispatch(clearNewRelationship());
         dispatch(newCanvasOperation({
             type: CanvasOperationEnum.NONE,
             elementId: ''
@@ -54,14 +48,16 @@ const Canvas = () => {
     return (
         <div
             id='canvas'
-            onMouseUp={() => resetCanvasOperation()}
+            onMouseUp={(ev) => resetCanvasOperation(ev)}
             onMouseMove={(ev) => onCanvasMouseMove(ev)}
             onDragOver={(ev) => CanvasOnDragOver(ev)}
             onDrop={(ev) => addNewElementToCanvas(ev)}
         >
-            <svg viewBox='0 0 1500 1000' transform={`scale(${canvasZoom/100})`}  id='svg-canvas' width='100%' height='100%'>
-                <ClassDiagram classDiagram={classDiagram}/>
-            </svg>
+            <div style={{width: 400 + (canvasWidth * (canvasZoom/100)), height: 400 + (canvasHeight * (canvasZoom/100))}} className='canvas-wrapper'>
+                <svg viewBox={`0 0 ${canvasWidth} ${canvasHeight}`} transform={`scale(${canvasZoom/100})`}  id='svg-canvas' width={canvasWidth} height={canvasHeight}>
+                    <ClassDiagram classDiagram={classDiagram}/>
+                </svg>
+            </div>
         </div>
     );
 };

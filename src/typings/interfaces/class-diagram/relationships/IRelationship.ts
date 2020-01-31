@@ -1,10 +1,10 @@
 import ICoordinates from '@interfaces/ICoordinates';
 import Direction from '@enums/direction';
-import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 
 export default interface IRelationship {
     id: string;
-    type: ClassDiagramElementsEnum;
+    type: ClassDiagramRelationshipTypesEnum;
     fromElementId: string;
     toElementId: string;
     segmentIds: Array<string>;
