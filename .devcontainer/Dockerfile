@@ -25,6 +25,7 @@ RUN apt-get update \
 
 RUN git config --global user.name "Patrik Frantisek Balaz"
 RUN git config --global user.email "patrik.f.balaz@outlook.com"
+RUN git config --global credential.helper store
 
 EXPOSE 3000
 
