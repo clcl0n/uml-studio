@@ -53,7 +53,7 @@ const RelationshipSegment = (props: { segment: IRelationshipSegment, relationId:
 
     return (
         <g>
-            {segmentJoint()}
+            {/* {segmentJoint()} */}
             <g
                 cursor={segment.direction === SegmentDirection.HORIZONTAL ? 'ns-resize' : 'ew-resize'}
                 onMouseDown={(ev) => moveSegment()}

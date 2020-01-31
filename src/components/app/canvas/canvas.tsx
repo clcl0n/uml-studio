@@ -11,7 +11,6 @@ import useCanvasAddNewElement from 'hooks/useCanvasAddNewElement';
 import useCanvasOperation from 'hooks/useCanvasOperation';
 import usePreviousMousePosition from 'hooks/usePreviousMousePosition';
 import { addNewRelationship, addNewRelationshipSegment, clearNewRelationship } from '@store/actions/classDiagram.action';
-import { width } from '@fortawesome/free-solid-svg-icons/faCaretDown';
 
 const Canvas = () => {
     const dispatch = useDispatch();
@@ -30,15 +29,13 @@ const Canvas = () => {
         event.preventDefault();
     };
 
-    const resetCanvasOperation = () => {
-        switch (canvasOperationState.type) {
-            case CanvasOperationEnum.DRAWING_NEW_RELATION:
-                dispatch(addNewRelationship(newRelationship.relationship));
-                newRelationship.relationshipSegments.forEach((segment) => {
-                    dispatch(addNewRelationshipSegment(segment));
-                });
-                dispatch(clearNewRelationship());
-                break;
+    const resetCanvasOperation = (event: React.MouseEvent) => {
+        if (canvasOperationState.type === CanvasOperationEnum.DRAWING_NEW_RELATION && (event.target as SVGGElement).tagName !== 'circle') {
+            dispatch(addNewRelationship(newRelationship.relationship));
+            newRelationship.relationshipSegments.forEach((segment) => {
+                dispatch(addNewRelationshipSegment(segment));
+            });
+            dispatch(clearNewRelationship());
         }
         dispatch(isMouseDown(false));
         dispatch(newCanvasOperation({
@@ -57,7 +54,7 @@ const Canvas = () => {
     return (
         <div
             id='canvas'
-            onMouseUp={() => resetCanvasOperation()}
+            onMouseUp={(ev) => resetCanvasOperation(ev)}
             onMouseMove={(ev) => onCanvasMouseMove(ev)}
             onDragOver={(ev) => CanvasOnDragOver(ev)}
             onDrop={(ev) => addNewElementToCanvas(ev)}
