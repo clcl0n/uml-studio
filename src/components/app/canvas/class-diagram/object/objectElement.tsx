@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import FrameHead from '../common/frameHead';
 import IObjectProps from '@interfaces/class-diagram/object/IObjectProps';
 import { useDispatch, useSelector } from 'react-redux';

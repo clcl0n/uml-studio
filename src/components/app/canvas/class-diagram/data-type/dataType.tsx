@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import './data-type.scss';
 import IDataTypeProps from '@interfaces/class-diagram/data-type/IDataTypeProps';
 import { useDispatch, useSelector } from 'react-redux';

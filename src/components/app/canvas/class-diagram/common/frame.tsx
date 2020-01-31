@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IFrame from '@interfaces/class-diagram/common/IFrame';
 import IFrameFunctionality from '@interfaces/class-diagram/common/IFrameFunctionality';
 import Direction from '@enums/direction';

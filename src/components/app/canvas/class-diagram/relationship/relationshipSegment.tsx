@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
 import SegmentDirection from '@enums/segmentDirection';
 import { useDispatch } from 'react-redux';

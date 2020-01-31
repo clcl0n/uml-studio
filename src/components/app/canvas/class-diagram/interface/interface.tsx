@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IInterfaceProps from '@interfaces/class-diagram/interface/IInterfaceProps';
 import { useDispatch, useSelector } from 'react-redux';
 import Frame from '../common/frame';

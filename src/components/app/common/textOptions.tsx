@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import './options.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 

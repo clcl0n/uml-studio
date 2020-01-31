@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import './interface-head.scss';
 import IInterfaceHead from '@interfaces/class-diagram/interface/IInterfaceHead';
 

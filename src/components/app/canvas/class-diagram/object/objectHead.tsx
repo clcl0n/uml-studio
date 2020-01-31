@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IObjectHead from '@interfaces/class-diagram/object/IObjectHead';
 
 const ObjectHead = (props: { objectHead: IObjectHead }) => {

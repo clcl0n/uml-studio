@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import './sideBar.scss';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ClassEdit from './options/class/classEdit';

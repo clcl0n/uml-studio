@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 
 const FrameRow = (props: { frameRow: IFrameRow, children: React.ReactNode }) => {

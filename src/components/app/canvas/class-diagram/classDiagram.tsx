@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
 import Class from './class/class';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';

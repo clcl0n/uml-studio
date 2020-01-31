@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import IFrameRow from '@interfaces/class-diagram/common/IFrameRow';
 import IUtilityMethod from '@interfaces/class-diagram/utility/IUtilityMethod';
