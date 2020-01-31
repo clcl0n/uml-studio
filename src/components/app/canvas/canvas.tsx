@@ -10,14 +10,13 @@ import useCanvasMouseMove from 'hooks/useCanvasMouseMove';
 import useCanvasAddNewElement from 'hooks/useCanvasAddNewElement';
 import useCanvasOperation from 'hooks/useCanvasOperation';
 import usePreviousMousePosition from 'hooks/usePreviousMousePosition';
-import { addNewRelationship, addNewRelationshipSegment, clearNewRelationship } from '@store/actions/classDiagram.action';
+import { clearNewRelationship } from '@store/actions/classDiagram.action';
+import RibbonOperationEnum from '@enums/ribbonOperationEnum';
 
 const Canvas = () => {
     const dispatch = useDispatch();
     const classDiagram = useSelector((state: IStoreState) => state.classDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
-    const newRelationship = useSelector((state: IStoreState) => state.classDiagram.newRelationship);
-    const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
     const canvasWidth = 826;
     const canvasHeight = 2337;
     const { previousMousePosition, setPreviousMousePosition } = usePreviousMousePosition();
@@ -40,9 +39,18 @@ const Canvas = () => {
 
     const onCanvasMouseMove = (event: React.MouseEvent) => {
         event.preventDefault();
-        const coordinates = { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY };
+        let x = Math.trunc(event.nativeEvent.offsetX) % 5 === 0 ? event.nativeEvent.offsetX : previousMousePosition.x;
+        let y = Math.trunc(event.nativeEvent.offsetY) % 5 === 0 ? event.nativeEvent.offsetY : previousMousePosition.y;
+        const coordinates = {x, y};
         onMouseMove(coordinates, previousMousePosition);
         setPreviousMousePosition(coordinates);
+    };
+
+    const onCanvasDrop = (event: React.DragEvent) => {
+        event.preventDefault();
+        event.persist();
+        const coordinates = {x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY};
+        addNewElementToCanvas(coordinates, event.dataTransfer.getData('elementType') as RibbonOperationEnum);
     };
 
     return (
@@ -51,7 +59,7 @@ const Canvas = () => {
             onMouseUp={(ev) => resetCanvasOperation(ev)}
             onMouseMove={(ev) => onCanvasMouseMove(ev)}
             onDragOver={(ev) => CanvasOnDragOver(ev)}
-            onDrop={(ev) => addNewElementToCanvas(ev)}
+            onDrop={(ev) => onCanvasDrop(ev)}
         >
             <div style={{width: 400 + (canvasWidth * (canvasZoom/100)), height: 400 + (canvasHeight * (canvasZoom/100))}} className='canvas-wrapper'>
                 <svg viewBox={`0 0 ${canvasWidth} ${canvasHeight}`} transform={`scale(${canvasZoom/100})`}  id='svg-canvas' width={canvasWidth} height={canvasHeight}>

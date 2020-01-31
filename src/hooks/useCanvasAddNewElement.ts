@@ -8,15 +8,13 @@ import { createNewObject } from '@utils/elements/object';
 import { createNewPrimitiveType } from '@utils/elements/primitiveType';
 import { createNewUtility } from '@utils/elements/utility';
 import { addNewElement, addNewElementEntry } from '@store/actions/classDiagram.action';
+import ICoordinates from '@interfaces/ICoordinates';
 
 const useCanvasAddNewElement = () => {
     const dispatch = useDispatch();
     
-    const addNewElementToCanvas = (event: React.DragEvent) => {
-        event.preventDefault();
-        event.persist();
-        const coordinates = { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY };
-        switch(event.dataTransfer.getData('elementType') as RibbonOperationEnum) {
+    const addNewElementToCanvas = (coordinates: ICoordinates, elementType: RibbonOperationEnum) => {
+        switch(elementType) {
             case RibbonOperationEnum.ADD_NEW_CLASS:
                 const newClass = createNewClass(coordinates);
                 dispatch(addNewElement(newClass.newClass));

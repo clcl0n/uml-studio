@@ -6,7 +6,6 @@ import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelat
 import RelationshipSegment from './relationshipSegment';
 import Direction from '@enums/direction';
 import { selectNewElement } from '@store/actions/canvas.action';
-import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import Aggregation from '../relationship-heads/aggregation';
 import ICoordinates from '@interfaces/ICoordinates';
 import Composition from '../relationship-heads/composition';
@@ -19,7 +18,17 @@ const Relationship = (props: { relationship: IRelationship, relationshipSegments
     const { relationship, relationshipSegments } = props;
 
     const segments = relationshipSegments.map((relationshipSegment, index) => {
-        return <RelationshipSegment key={index} segment={relationshipSegment} relationId={relationship.id}/>;
+        return relationshipSegment.isStart ? (
+            <g key={index}>
+                <text className='class="svg-text svg-text-center' x={relationshipSegment.x + 10} y={relationshipSegment.y + 10}>{relationship.tailValue}</text>
+                <RelationshipSegment segment={relationshipSegment} relationId={relationship.id}/>
+            </g>
+        ) : relationshipSegment.isEnd ? (
+            <g key={index}>
+                <text className='class="svg-text svg-text-center' x={relationshipSegment.x + relationshipSegment.lineToX - 20} y={relationshipSegment.y + 10}>{relationship.headValue}</text>
+                <RelationshipSegment segment={relationshipSegment} relationId={relationship.id}/>
+            </g>
+        ) : <RelationshipSegment key={index} segment={relationshipSegment} relationId={relationship.id}/>;
     });
 
     //to-do UP DOWN in future
