@@ -39,8 +39,10 @@ const Canvas = () => {
 
     const onCanvasMouseMove = (event: React.MouseEvent) => {
         event.preventDefault();
-        let x = Math.trunc(event.nativeEvent.offsetX) % 5 === 0 ? event.nativeEvent.offsetX : previousMousePosition.x;
-        let y = Math.trunc(event.nativeEvent.offsetY) % 5 === 0 ? event.nativeEvent.offsetY : previousMousePosition.y;
+        let x = event.nativeEvent.offsetX;
+        let y = event.nativeEvent.offsetY;
+        // let x = Math.trunc(event.nativeEvent.offsetX) % 5 === 0 ? event.nativeEvent.offsetX : previousMousePosition.x;
+        // let y = Math.trunc(event.nativeEvent.offsetY) % 5 === 0 ? event.nativeEvent.offsetY : previousMousePosition.y;
         const coordinates = {x, y};
         onMouseMove(coordinates, previousMousePosition);
         setPreviousMousePosition(coordinates);

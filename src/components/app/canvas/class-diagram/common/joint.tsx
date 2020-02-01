@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment, updateRelationshipSegment } from '@store/actions/classDiagram.action';
 import { newCanvasOperation } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
-import { createNewRelationship, updateRelationshipHelper } from '@utils/elements/relationship';
+import { createNewRelationship, updateRelationshipHelper, updateRelationshipEndingHelper } from '@utils/elements/relationship';
 import useCanvasDefaultRelationshipType from 'hooks/useCanvasDefaultRelationshipType';
 import IStoreState from '@interfaces/IStoreState';
+import SegmentDirection from '@enums/segmentDirection';
 
 const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) => {
     const dispatch = useDispatch();
@@ -30,15 +31,23 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
             newRelationship.relationship.toElementId = props.fromElementId;
             newRelationship.relationship.head.x = props.x;
             newRelationship.relationship.head.y = props.y;
-            const movingRelationshipSegment = newRelationship.relationshipSegments[newRelationship.relationshipSegments.length - 1];
+            const movingRelationshipSegment = newRelationship.relationshipSegments.filter((segment) => segment.isEnd)[0];
             const dependentSegments = newRelationship.relationshipSegments.filter((segment) => {
                 return segment.id === movingRelationshipSegment.toSegmentId || segment.id === movingRelationshipSegment.fromSegmentId;
             });
 
+            const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
+                { x: props.x, y: props.y },
+                newRelationship.relationship,
+                movingRelationshipSegment,
+                dependentSegments
+            );
             
-            
-            dispatch(addNewRelationship(newRelationship.relationship));
-            newRelationship.relationshipSegments.forEach((segment) => {
+            dispatch(addNewRelationship(relationship));
+            [
+                ...relationshipSegments,
+                ...newRelationship.relationshipSegments.filter((segment) => relationshipSegments.findIndex((s) => s.id === segment.id) === -1)
+            ].forEach((segment) => {
                 dispatch(addNewRelationshipSegment(segment));
             });
             dispatch(clearNewRelationship());
