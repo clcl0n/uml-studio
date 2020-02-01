@@ -245,8 +245,9 @@ export const updateRelationshipHelper = (cooridates: ICoordinates, relationship:
     switch (direction) {
         case SegmentDirection.HORIZONTAL:
             movingDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
-            const yLength = Math.abs(movingSegment.y - cooridates.y);
+            let yLength = Math.abs(movingSegment.y - cooridates.y);
             if (movingSegment.isStart) {
+                yLength = movingSegment.y - dependentSegments.filter((segment) => segment.id === movingSegment.toSegmentId)[0].y;
                 const { id: newSegmentId } = pushNewStartingSegment(
                     0,
                     movingDirection === Direction.UP ? -1 * yLength : yLength,
@@ -258,6 +259,8 @@ export const updateRelationshipHelper = (cooridates: ICoordinates, relationship:
                 movingSegment.isStart = false;
                 movingSegment.fromSegmentId = newSegmentId;
             } else if (movingSegment.isEnd) {
+                const dependentSegment = dependentSegments.filter((segment) => segment.id === movingSegment.fromSegmentId)[0];
+                yLength = movingSegment.y - (dependentSegment.y + dependentSegment.lineToY);
                 const { id: newSegmentId } = pushNewEndingSegment(
                     0,
                     movingDirection === Direction.UP ? yLength : -1 * yLength,
@@ -273,8 +276,9 @@ export const updateRelationshipHelper = (cooridates: ICoordinates, relationship:
             break;
         case SegmentDirection.VERTICAL:
             movingDirection = movingSegment.x > cooridates.x ? Direction.LEFT: Direction.RIGHT;
-            const lenghtX = Math.abs(movingSegment.x - cooridates.x);
+            let lenghtX = Math.abs(movingSegment.x - cooridates.x);
             if (movingSegment.isStart) {
+                lenghtX = movingSegment.x - dependentSegments.filter((segment) => segment.id === movingSegment.toSegmentId)[0].x;
                 const { id: newSegmentId } = pushNewStartingSegment(
                     movingDirection === Direction.LEFT ? -1 * lenghtX : lenghtX,
                     0,
@@ -286,6 +290,8 @@ export const updateRelationshipHelper = (cooridates: ICoordinates, relationship:
                 movingSegment.isStart = false;
                 movingSegment.fromSegmentId = newSegmentId;
             } else if (movingSegment.isEnd) {
+                const dependentSegment = dependentSegments.filter((segment) => segment.id === movingSegment.fromSegmentId)[0];
+                lenghtX = movingSegment.x - (dependentSegment.x + dependentSegment.lineToX);
                 const { id: newSegmentId } = pushNewEndingSegment(
                     movingDirection === Direction.LEFT ? -1 * lenghtX : lenghtX,
                     0,

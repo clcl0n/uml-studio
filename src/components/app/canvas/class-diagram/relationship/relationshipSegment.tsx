@@ -61,7 +61,7 @@ const RelationshipSegment = (props: { segment: IRelationshipSegment, relationId:
             >
                 <path
                     stroke='transparent'
-                    strokeWidth='8'
+                    strokeWidth='20'
                     d={`M ${segment.x} ${segment.y} l ${segment.lineToX} ${segment.lineToY}`}
                 />
                 <path

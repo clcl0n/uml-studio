@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment, updateRelationshipSegment } from '@store/actions/classDiagram.action';
 import { newCanvasOperation } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
-import { createNewRelationship, updateRelationshipHelper, updateRelationshipEndingHelper } from '@utils/elements/relationship';
+import { createNewRelationship, updateRelationshipEndingHelper } from '@utils/elements/relationship';
 import useCanvasDefaultRelationshipType from 'hooks/useCanvasDefaultRelationshipType';
 import IStoreState from '@interfaces/IStoreState';
 import SegmentDirection from '@enums/segmentDirection';
