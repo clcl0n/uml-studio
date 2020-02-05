@@ -17,6 +17,14 @@ const useSelectedElement = (selectedElementId: string = '') => {
             return state.classDiagram.elementEntries.byId[entryId];
         });
     });
+    const selectedRelationship = useSelector((state: IStoreState) => {
+        return state.classDiagram.relationships.byId[selectedElementId];
+    });
+    const selectedRelationshipSegments = useSelector((state: IStoreState) => {
+        if (selectedRelationship) {
+            return selectedRelationship.segmentIds.map((id) => state.classDiagram.relationshipSegments.byId[id]);
+        }
+    });
 
     const selectedMethods = selectedElementEntries?.filter((entry) => entry.type === EntryTypeEnum.METHOD) as Array<IUtilityMethod>;
     const selectedProperties = selectedElementEntries?.filter((entry) => entry.type === EntryTypeEnum.PROPERTY) as Array<IUtilityProperty>;
@@ -24,6 +32,8 @@ const useSelectedElement = (selectedElementId: string = '') => {
     const selectedSlots = selectedElementEntries?.filter((entry) => entry.type === EntryTypeEnum.SLOT) as Array<IObjectSlot>;
 
     return {
+        selectedRelationship,
+        selectedRelationshipSegments,
         selectedElementId,
         selectedElement,
         selectedElementEntries,

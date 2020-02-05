@@ -55,6 +55,20 @@ export const updateRelationship = (data: IRelationship): IReducerPayload<ClassDi
     };
 };
 
+export const removeRelationship = (data: IRelationship): IReducerPayload<ClassDiagramActionEnum, IRelationship> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_RELATIONSHIP,
+        data
+    };
+};
+
+export const removeRelationshipSegment = (data: IRelationshipSegment): IReducerPayload<ClassDiagramActionEnum, IRelationshipSegment> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_RELATIONSHIP_SEGMENT,
+        data
+    }
+};
+
 export const addNewRelationshipSegment = (data: IRelationshipSegment): IReducerPayload<ClassDiagramActionEnum, IRelationshipSegment> => {
     return {
         type: ClassDiagramActionEnum.ADD_NEW_RELATIONSHIP_SEGMENT,

@@ -17,9 +17,12 @@ import IObject from '@interfaces/class-diagram/object/IObject';
 import PrimitiveTypeEdit from './options/primitive-type/primitiveTypeEdit';
 import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
 import useSelectedElement from 'hooks/useSelectedElement';
+import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
+import RelationshipEdit from './options/relationship/relationshipEdit';
 
 const SideBar = () => {
     const {
+        selectedRelationship,
         selectedElement,
         selectedEntries,
         selectedMethods,
@@ -52,6 +55,8 @@ const SideBar = () => {
                 editOptions = <PrimitiveTypeEdit {...{ primitiveType: selectedElement as IPrimitiveType }}/>;
                 break;
         }
+    } else if (selectedRelationship) {
+        editOptions = <RelationshipEdit relationship={selectedRelationship}/>;
     }
 
      return (

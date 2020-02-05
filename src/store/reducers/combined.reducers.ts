@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { canvasZoomReducer } from './ribbon.reducer';
-import { canvasOperationReducer, isMouseDownReducer, selectedElementIdReducer, defaultRelationshipTypeReducer } from './canvas.reducer';
+import { canvasOperationReducer, isMouseDownReducer, selectedElementIdReducer, defaultRelationshipTypeReducer, diagramTypeReducer } from './canvas.reducer';
 import { elementsReducer, elementEntriesReducer, newRelationshipReducer, relationshipsReducer, relationshipSegmentsReducer } from './classDiagram.reducer';
 
 const combinedReducers = combineReducers({
@@ -15,7 +15,8 @@ const combinedReducers = combineReducers({
         selectedElementId: selectedElementIdReducer,
         isMouseDown: isMouseDownReducer,
         canvasOperation: canvasOperationReducer,
-        defaultRelationshipType: defaultRelationshipTypeReducer
+        defaultRelationshipType: defaultRelationshipTypeReducer,
+        diagramType: diagramTypeReducer
     }),
     ribbon: combineReducers({
         canvasZoom: canvasZoomReducer

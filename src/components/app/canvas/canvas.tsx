@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './canvas.scss';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,19 +12,26 @@ import useCanvasOperation from 'hooks/useCanvasOperation';
 import usePreviousMousePosition from 'hooks/usePreviousMousePosition';
 import { clearNewRelationship } from '@store/actions/classDiagram.action';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
+import useDiagram from 'hooks/useDiagram';
+import DiagramTypeEnum from '@enums/diagramTypeEnum';
 
 const Canvas = () => {
     const dispatch = useDispatch();
     const classDiagram = useSelector((state: IStoreState) => state.classDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
-    const canvasWidth = 826;
-    const canvasHeight = 2337;
+    const { diagramType } = useDiagram();
+    const paperWidth = 2200;
+    const paperHeight = 2337;
+    const [canvasDimensions, setCanvasDimensions] = useState({
+        canvasWidth: paperWidth,
+        canvasHeight: paperHeight
+    });
     const { previousMousePosition, setPreviousMousePosition } = usePreviousMousePosition();
     const { canvasOperation } = useCanvasOperation();
     const { onMouseMove } = useCanvasMouseMove(classDiagram, canvasOperation);
     const { addNewElementToCanvas } = useCanvasAddNewElement();
 
-    const CanvasOnDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    const CanvasOnDragOver = (event: React.DragEvent) => {
         event.preventDefault();
     };
 
@@ -55,17 +62,29 @@ const Canvas = () => {
         addNewElementToCanvas(coordinates, event.dataTransfer.getData('elementType') as RibbonOperationEnum);
     };
 
+    const getDiagram = () => {
+        return diagramType === DiagramTypeEnum.CLASS ? (
+            <ClassDiagram classDiagram={classDiagram}/>
+        ) : (
+            <g/>
+        );
+    };
+
     return (
-        <div
-            id='canvas'
-            onMouseUp={(ev) => resetCanvasOperation(ev)}
-            onMouseMove={(ev) => onCanvasMouseMove(ev)}
-            onDragOver={(ev) => CanvasOnDragOver(ev)}
-            onDrop={(ev) => onCanvasDrop(ev)}
-        >
-            <div style={{width: 400 + (canvasWidth * (canvasZoom/100)), height: 400 + (canvasHeight * (canvasZoom/100))}} className='canvas-wrapper'>
-                <svg viewBox={`0 0 ${canvasWidth} ${canvasHeight}`} transform={`scale(${canvasZoom/100})`}  id='svg-canvas' width={canvasWidth} height={canvasHeight}>
-                    <ClassDiagram classDiagram={classDiagram}/>
+        <div id='canvas'>
+            <div style={{width: 400 + (canvasDimensions.canvasWidth * (canvasZoom/100)), height: 400 + (canvasDimensions.canvasHeight * (canvasZoom/100))}} className='canvas-wrapper'>
+                <svg
+                    id='svg-canvas'
+                    onMouseUp={(ev) => resetCanvasOperation(ev)}
+                    onDragOver={(ev) => CanvasOnDragOver(ev)}
+                    onDrop={(ev) => onCanvasDrop(ev)}
+                    onMouseMove={(ev) => onCanvasMouseMove(ev)}
+                    viewBox={`0 0 ${canvasDimensions.canvasWidth} ${canvasDimensions.canvasHeight}`}
+                    transform={`scale(${canvasZoom/100})`}  
+                    width={canvasDimensions.canvasWidth}
+                    height={canvasDimensions.canvasHeight}
+                >
+                    {getDiagram()}
                 </svg>
             </div>
         </div>

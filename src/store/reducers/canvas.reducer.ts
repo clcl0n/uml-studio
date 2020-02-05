@@ -4,13 +4,24 @@ import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import IReducerPayload from '@interfaces/IReducerPayload';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
+import DiagramTypeEnum from '@enums/diagramTypeEnum';
 
+const diagramType = DiagramTypeEnum.NONE;
 const defaultRelationshipType = ClassDiagramRelationshipTypesEnum.ASSOCIATION; 
 const isMouseDownState = false;
 const selectedElementId = '';
 const canvasOperationState: ICanvasOperation = {
     type: CanvasOperationEnum.NONE,
     elementId: ''     
+};
+
+export const diagramTypeReducer = (state = diagramType, payload: IReducerPayload<CanvasActionEnum, DiagramTypeEnum>) => {
+    switch (payload.type) {
+        case CanvasActionEnum.SET_DIAGRAM_TYPE:
+            return payload.data;
+        default:
+            return state;
+    }
 };
 
 export const defaultRelationshipTypeReducer = (state = defaultRelationshipType, payload: IReducerPayload<CanvasActionEnum, ClassDiagramRelationshipTypesEnum>) => {
