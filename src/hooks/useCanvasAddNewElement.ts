@@ -9,55 +9,69 @@ import { createNewPrimitiveType } from '@utils/elements/primitiveType';
 import { createNewUtility } from '@utils/elements/utility';
 import { addNewElement, addNewElementEntry } from '@store/actions/classDiagram.action';
 import ICoordinates from '@interfaces/ICoordinates';
+import useDiagram from './useDiagram';
+import DiagramTypeEnum from '@enums/diagramTypeEnum';
+import { createNewSimpleStateElement } from '@utils/elements/stateElement';
+import { addNewStateElement } from '@store/actions/stateDiagram.action';
 
 const useCanvasAddNewElement = () => {
     const dispatch = useDispatch();
+    const { diagramType } = useDiagram();
     
     const addNewElementToCanvas = (coordinates: ICoordinates, elementType: RibbonOperationEnum) => {
-        switch(elementType) {
-            case RibbonOperationEnum.ADD_NEW_CLASS:
-                const newClass = createNewClass(coordinates);
-                dispatch(addNewElement(newClass.newClass));
-                dispatch(addNewElementEntry(newClass.newClassMethod));
-                dispatch(addNewElementEntry(newClass.newClassProperty));
-                break;
-            case RibbonOperationEnum.ADD_NEW_DATA_TYPE:
-                const { newDataType, newDataTypeEntry } = createNewDataType(coordinates);
-                dispatch(addNewElementEntry(newDataTypeEntry));
-                dispatch(addNewElement(newDataType));
-                break;
-            case RibbonOperationEnum.ADD_NEW_EMPTY_CLASS:
-                const { newBaseClass } = createNewBaseClass(coordinates);
-                dispatch(addNewElement(newBaseClass));
-                break;
-            case RibbonOperationEnum.ADD_NEW_ENUMERATION:
-                const { newEnumeration, newEntry } = createNewEnumeration(coordinates);
-                dispatch(addNewElementEntry(newEntry));
-                dispatch(addNewElement(newEnumeration));
-                break;
-            case RibbonOperationEnum.ADD_NEW_INTERFACE:
-                const { newInterface, newInterfaceMethod, newInterfaceProperty } = createNewInterface(coordinates);
-                dispatch(addNewElementEntry(newInterfaceMethod));
-                dispatch(addNewElementEntry(newInterfaceProperty));
-                dispatch(addNewElement(newInterface));
-                break;
-            case RibbonOperationEnum.ADD_NEW_OBJECT:
-                const { newObjectSlot, newObject } = createNewObject(coordinates);
-                dispatch(addNewElementEntry(newObjectSlot));
-                dispatch(addNewElement(newObject));
-                break;
-            case RibbonOperationEnum.ADD_NEW_PRIMITIVE_TYPE:
-                const { newPrimitiveType } = createNewPrimitiveType(coordinates);
-                dispatch(addNewElement(newPrimitiveType));
-                break;
-            case RibbonOperationEnum.ADD_NEW_UTILITY:
-                const { newUtility, newUtilityProperty, newUtilityMethod } = createNewUtility(coordinates);
-                dispatch(addNewElementEntry(newUtilityMethod));
-                dispatch(addNewElementEntry(newUtilityProperty));
-                dispatch(addNewElement(newUtility));
-                break;
+        if (diagramType === DiagramTypeEnum.CLASS) {
+            switch(elementType) {
+                case RibbonOperationEnum.ADD_NEW_CLASS:
+                    const newClass = createNewClass(coordinates);
+                    dispatch(addNewElement(newClass.newClass));
+                    dispatch(addNewElementEntry(newClass.newClassMethod));
+                    dispatch(addNewElementEntry(newClass.newClassProperty));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_DATA_TYPE:
+                    const { newDataType, newDataTypeEntry } = createNewDataType(coordinates);
+                    dispatch(addNewElementEntry(newDataTypeEntry));
+                    dispatch(addNewElement(newDataType));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_EMPTY_CLASS:
+                    const { newBaseClass } = createNewBaseClass(coordinates);
+                    dispatch(addNewElement(newBaseClass));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_ENUMERATION:
+                    const { newEnumeration, newEntry } = createNewEnumeration(coordinates);
+                    dispatch(addNewElementEntry(newEntry));
+                    dispatch(addNewElement(newEnumeration));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_INTERFACE:
+                    const { newInterface, newInterfaceMethod, newInterfaceProperty } = createNewInterface(coordinates);
+                    dispatch(addNewElementEntry(newInterfaceMethod));
+                    dispatch(addNewElementEntry(newInterfaceProperty));
+                    dispatch(addNewElement(newInterface));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_OBJECT:
+                    const { newObjectSlot, newObject } = createNewObject(coordinates);
+                    dispatch(addNewElementEntry(newObjectSlot));
+                    dispatch(addNewElement(newObject));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_PRIMITIVE_TYPE:
+                    const { newPrimitiveType } = createNewPrimitiveType(coordinates);
+                    dispatch(addNewElement(newPrimitiveType));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_UTILITY:
+                    const { newUtility, newUtilityProperty, newUtilityMethod } = createNewUtility(coordinates);
+                    dispatch(addNewElementEntry(newUtilityMethod));
+                    dispatch(addNewElementEntry(newUtilityProperty));
+                    dispatch(addNewElement(newUtility));
+                    break;
+            }
+        } else if (diagramType === DiagramTypeEnum.STATE) {
+            switch(elementType) {
+                case RibbonOperationEnum.ADD_NEW_SIMPLE_STATE:
+                    const { stateElement } = createNewSimpleStateElement(coordinates);
+                    dispatch(addNewStateElement(stateElement));
+                    break;
+            }
         }
-    };
+     };
 
     return { addNewElementToCanvas };
 };

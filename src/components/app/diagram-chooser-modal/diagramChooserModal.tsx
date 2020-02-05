@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { useDispatch } from 'react-redux';
 import { setDiagramType } from '@store/actions/canvas.action';
 import DiagramTypeEnum from '@enums/diagramTypeEnum';
-import { diagramTypeReducer } from '@store/reducers/canvas.reducer';
+import { diagramTypeReducer } from '@store/reducers/canvas.reducers';
 
 const DiagramChooserModal = () => {
     const dispatch = useDispatch();

@@ -6,9 +6,8 @@ import Direction from '@enums/direction';
 
 const minWidth = 100;
 
-export const createFrame = (coordinates: ICoordinates, numerOfRows: number): IFrame => {
+export const createFrame = (coordinates: ICoordinates, numerOfRows: number, rowHeight: number = 25): IFrame => {
     const width: number = 100;
-    const rowHeight: number = 25;
     const height: number = numerOfRows * rowHeight;
     const xElementCenter: number = coordinates.x;
     const yElementCenter: number = coordinates.y;

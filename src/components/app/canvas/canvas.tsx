@@ -5,21 +5,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import IStoreState from '@interfaces/IStoreState';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import { isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
-import ClassDiagram from './class-diagram/classDiagram';
 import useCanvasMouseMove from 'hooks/useCanvasMouseMove';
 import useCanvasAddNewElement from 'hooks/useCanvasAddNewElement';
 import useCanvasOperation from 'hooks/useCanvasOperation';
 import usePreviousMousePosition from 'hooks/usePreviousMousePosition';
 import { clearNewRelationship } from '@store/actions/classDiagram.action';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
-import useDiagram from 'hooks/useDiagram';
-import DiagramTypeEnum from '@enums/diagramTypeEnum';
+import Diagram from './diagrams/diagram';
 
 const Canvas = () => {
     const dispatch = useDispatch();
     const classDiagram = useSelector((state: IStoreState) => state.classDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
-    const { diagramType } = useDiagram();
     const paperWidth = 2200;
     const paperHeight = 2337;
     const [canvasDimensions, setCanvasDimensions] = useState({
@@ -62,14 +59,6 @@ const Canvas = () => {
         addNewElementToCanvas(coordinates, event.dataTransfer.getData('elementType') as RibbonOperationEnum);
     };
 
-    const getDiagram = () => {
-        return diagramType === DiagramTypeEnum.CLASS ? (
-            <ClassDiagram classDiagram={classDiagram}/>
-        ) : (
-            <g/>
-        );
-    };
-
     return (
         <div id='canvas'>
             <div style={{width: 400 + (canvasDimensions.canvasWidth * (canvasZoom/100)), height: 400 + (canvasDimensions.canvasHeight * (canvasZoom/100))}} className='canvas-wrapper'>
@@ -84,7 +73,7 @@ const Canvas = () => {
                     width={canvasDimensions.canvasWidth}
                     height={canvasDimensions.canvasHeight}
                 >
-                    {getDiagram()}
+                    <Diagram/>
                 </svg>
             </div>
         </div>
