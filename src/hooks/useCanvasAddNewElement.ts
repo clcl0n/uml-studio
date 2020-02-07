@@ -11,7 +11,7 @@ import { addNewElement, addNewElementEntry } from '@store/actions/classDiagram.a
 import ICoordinates from '@interfaces/ICoordinates';
 import useDiagram from './useDiagram';
 import DiagramTypeEnum from '@enums/diagramTypeEnum';
-import { createNewSimpleStateElement } from '@utils/elements/stateElement';
+import { createNewSimpleStateElement, createNewStateElement } from '@utils/elements/stateElement';
 import { addNewStateElement } from '@store/actions/stateDiagram.action';
 
 const useCanvasAddNewElement = () => {
@@ -66,7 +66,11 @@ const useCanvasAddNewElement = () => {
         } else if (diagramType === DiagramTypeEnum.STATE) {
             switch(elementType) {
                 case RibbonOperationEnum.ADD_NEW_SIMPLE_STATE:
-                    const { stateElement } = createNewSimpleStateElement(coordinates);
+                    const { simpleStateElement } = createNewSimpleStateElement(coordinates);
+                    dispatch(addNewStateElement(simpleStateElement));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_STATE:
+                    const { stateElement } = createNewStateElement(coordinates);
                     dispatch(addNewStateElement(stateElement));
                     break;
             }

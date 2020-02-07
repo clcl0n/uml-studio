@@ -16,13 +16,15 @@ export const moveStateElement = (element: IStateElement, coordinates: ICoordinat
     };
 };
 
-export const createNewSimpleStateElement = (coordinates: ICoordinates) => {
+export const createNewStateElement = (coordinates: ICoordinates) => {
     const stateElement: IStateElement = {
         id: v4(),
-        name: 'state',
         type: StateDiagramElementsEnum.STATE,
-        regions: [],
-        internalActions: [],
+        data: {
+            name: 'state',
+            regions: ['region_1'],
+            internalActions: []
+        },
         graphicData: {
             frame: {
                 ...createFrame(coordinates, 1, 75),
@@ -33,5 +35,27 @@ export const createNewSimpleStateElement = (coordinates: ICoordinates) => {
 
     return {
         stateElement
+    };
+};
+
+export const createNewSimpleStateElement = (coordinates: ICoordinates) => {
+    const simpleStateElement: IStateElement = {
+        id: v4(),
+        type: StateDiagramElementsEnum.STATE,
+        data: {
+            name: 'state',
+            regions: [],
+            internalActions: [],
+        },
+        graphicData: {
+            frame: {
+                ...createFrame(coordinates, 1, 75),
+            },
+            rx: 20
+        }
+    };
+
+    return {
+        simpleStateElement
     };
 };

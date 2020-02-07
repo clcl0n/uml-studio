@@ -4,10 +4,12 @@ import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
 
 export default interface IStateElement {
     id: string;
-    name: string;
     type: StateDiagramElementsEnum,
-    regions: Array<string>;
-    internalActions: Array<IStateInternalAction>;
+    data: {
+        name: string;
+        regions: Array<string>;
+        internalActions: Array<IStateInternalAction>;
+    };
     graphicData: {
         frame: IFrameGraphicData;
         rx: number;

@@ -12,21 +12,21 @@ import CanvasOperationEnum from '@enums/canvasOperationEnum';
 const StateElement = (props: { stateElement: IStateElement }) => {
     const dispatch = useDispatch();
     const { stateElement } = props;
-    const { graphicData } = stateElement;
+    const { graphicData, data } = stateElement;
     
 
     const getStateHeader = () => {
         let nameX = graphicData.frame.xCenter;
         let nameY = graphicData.frame.yCenter;
     
-        if (stateElement.regions.length > 0) {
+        if (data.regions.length > 0) {
             nameY = graphicData.frame.y + graphicData.frame.fontPixelSize;
         }
         
         return (
             <g>
-                <text className='svg-text svg-text-center' x={nameX} y={nameY}>{stateElement.name}</text>
-                {stateElement.regions.length > 0 && <path stroke='black' d={`M ${graphicData.frame.x} ${nameY + graphicData.frame.fontPixelSize} l ${graphicData.frame.width} 0`}/>}
+                <text className='svg-text svg-text-center' x={nameX} y={nameY}>{data.name}</text>
+                {data.regions.length > 0 && <path stroke='black' d={`M ${graphicData.frame.x} ${nameY + graphicData.frame.fontPixelSize} l ${graphicData.frame.width} 0`}/>}
             </g>
         );
     };
@@ -67,7 +67,7 @@ const StateElement = (props: { stateElement: IStateElement }) => {
 
     const getRegions = () => {
         let regionsStartY = graphicData.frame.y + (graphicData.frame.fontPixelSize*3);
-        return stateElement.regions.map((region, index) => {
+        return data.regions.map((region, index) => {
             return (
                 <g key={index}>
                     <text className='svg-text' x={graphicData.frame.x + 5} y={regionsStartY*(index+1) + 3}>{`[${region}]`}</text>
