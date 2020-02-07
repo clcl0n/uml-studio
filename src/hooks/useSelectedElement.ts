@@ -5,17 +5,20 @@ import IUtilityMethod from '@interfaces/class-diagram/utility/IUtilityMethod';
 import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty';
 import IEntry from '@interfaces/class-diagram/common/IEntry';
 import IObjectSlot from '@interfaces/class-diagram/object/IObjectSlot';
+import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
 
 const useSelectedElement = (selectedElementId: string = '') => {
     const storeSelectedElementId = useSelector((state: IStoreState) => state.canvas.selectedElementId);
     selectedElementId = selectedElementId === '' ? storeSelectedElementId: selectedElementId;
     const selectedElement = useSelector((state: IStoreState) => {
-        return state.classDiagram.elements.byId[selectedElementId];
+        return state.classDiagram.elements.byId[selectedElementId] ? state.classDiagram.elements.byId[selectedElementId] : state.stateDiagram.elements.byId[selectedElementId];;
     });
     const selectedElementEntries = useSelector((state: IStoreState) => {
-        return selectedElement?.data.entryIds.map((entryId) => {
-            return state.classDiagram.elementEntries.byId[entryId];
-        });
+        if (selectedElement?.type !== StateDiagramElementsEnum.STATE) {
+            return selectedElement?.data.entryIds.map((entryId) => {
+                return state.classDiagram.elementEntries.byId[entryId];
+            });
+        } 
     });
     const selectedRelationship = useSelector((state: IStoreState) => {
         return state.classDiagram.relationships.byId[selectedElementId];

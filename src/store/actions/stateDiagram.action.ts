@@ -8,3 +8,10 @@ export const addNewStateElement = (element: IStateElement): IReducerPayload<Stat
         data: element
     };
 };
+
+export const updateStateElement = (element: IStateElement): IReducerPayload<StateDiagramActionEnum, IStateElement> => {
+    return {
+        type: StateDiagramActionEnum.UPDATE_STATE_ELEMENT,
+        data: element
+    };
+};

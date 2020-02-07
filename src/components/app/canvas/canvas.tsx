@@ -16,6 +16,7 @@ import Diagram from './diagrams/diagram';
 const Canvas = () => {
     const dispatch = useDispatch();
     const classDiagram = useSelector((state: IStoreState) => state.classDiagram);
+    const stateDiagram = useSelector((state: IStoreState) => state.stateDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
     const paperWidth = 2200;
     const paperHeight = 2337;
@@ -25,7 +26,7 @@ const Canvas = () => {
     });
     const { previousMousePosition, setPreviousMousePosition } = usePreviousMousePosition();
     const { canvasOperation } = useCanvasOperation();
-    const { onMouseMove } = useCanvasMouseMove(classDiagram, canvasOperation);
+    const { onMouseMove } = useCanvasMouseMove(classDiagram, stateDiagram, canvasOperation);
     const { addNewElementToCanvas } = useCanvasAddNewElement();
 
     const CanvasOnDragOver = (event: React.DragEvent) => {

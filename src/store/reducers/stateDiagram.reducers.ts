@@ -18,6 +18,14 @@ export const stateElementsReducer = (state = stateElementsState, payload: IReduc
                 },
                 allIds: [...state.allIds, payload.data.id]
             };
+        case StateDiagramActionEnum.UPDATE_STATE_ELEMENT:
+            return {
+                byId: {
+                    ...state.byId,
+                    [payload.data.id]: payload.data
+                },
+                allIds: [...state.allIds]
+            }
         default:
             return state;
     }
