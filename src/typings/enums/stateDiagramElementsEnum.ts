@@ -1,5 +1,6 @@
 enum StateDiagramElementsEnum {
-    STATE = 'STATE'
+    STATE = 'STATE',
+    INITIAL_STATE = 'INITIAL_STATE'
 }
 
 export default StateDiagramElementsEnum;

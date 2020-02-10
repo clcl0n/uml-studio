@@ -19,6 +19,9 @@ import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveT
 import useSelectedElement from 'hooks/useSelectedElement';
 import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 import RelationshipEdit from './options/relationship/relationshipEdit';
+import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
+import StateEdit from './options/state/stateEdit';
+import IStateElement from '@interfaces/state-diagram/state/IStateElement';
 
 const SideBar = () => {
     const {
@@ -53,6 +56,9 @@ const SideBar = () => {
                 break;
             case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
                 editOptions = <PrimitiveTypeEdit {...{ primitiveType: selectedElement as IPrimitiveType }}/>;
+                break;
+            case StateDiagramElementsEnum.STATE:
+                editOptions = <StateEdit {...{ state: selectedElement as IStateElement }}/>;
                 break;
         }
     } else if (selectedRelationship) {

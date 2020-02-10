@@ -6,6 +6,7 @@ import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty
 import IEntry from '@interfaces/class-diagram/common/IEntry';
 import IObjectSlot from '@interfaces/class-diagram/object/IObjectSlot';
 import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
+import IBaseElement from '@interfaces/class-diagram/common/IBaseElement';
 
 const useSelectedElement = (selectedElementId: string = '') => {
     const storeSelectedElementId = useSelector((state: IStoreState) => state.canvas.selectedElementId);
@@ -15,7 +16,7 @@ const useSelectedElement = (selectedElementId: string = '') => {
     });
     const selectedElementEntries = useSelector((state: IStoreState) => {
         if (selectedElement?.type !== StateDiagramElementsEnum.STATE) {
-            return selectedElement?.data.entryIds.map((entryId) => {
+            return (selectedElement as IBaseElement<any>)?.data.entryIds.map((entryId) => {
                 return state.classDiagram.elementEntries.byId[entryId];
             });
         } 
