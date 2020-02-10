@@ -21,6 +21,9 @@ const Aggregation = (props: {
             l3.x *= -1;
             break;
         case Direction.DOWN:
+            l1.y *= -1;
+            l2.y *= -1;
+            l3.y *= -1;
             break;
         case Direction.UP:
             break;

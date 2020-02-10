@@ -19,8 +19,13 @@ const Association = (props: {
             l2.x *= -1;
             break;
         case Direction.DOWN:
+            l2.x *= -1;
+            l1.y *= -1;
+            // l2.y *= -1;
             break;
         case Direction.UP:
+            l1.x *= -1;
+            l2.y *= -1;
             break;
     }
 

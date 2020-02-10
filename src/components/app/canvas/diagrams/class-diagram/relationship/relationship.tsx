@@ -45,15 +45,24 @@ const Relationship = (props: { relationship: IRelationship, relationshipSegments
 
     const relationshipHead = () => {
         const coordinates: ICoordinates = { x: relationship.head.x, y: relationship.head.y };
+        const endSegment = relationshipSegments.find((segment) => segment.isEnd);
+        let direction = relationship.direction;
+        if (endSegment.y < relationship.head.y) {
+            direction = Direction.DOWN;
+        } else if (endSegment.y > relationship.head.y) {
+            direction = Direction.UP;
+        } else if (endSegment.x > relationship.head.x) {
+            direction = Direction.LEFT;
+        }
         switch (relationship.type) {
             case ClassDiagramRelationshipTypesEnum.AGGREGATION:
-                return <Aggregation direction={relationship.direction} coordinates={coordinates}/>;
+                return <Aggregation direction={direction} coordinates={coordinates}/>;
             case ClassDiagramRelationshipTypesEnum.COMPOSITION:
-                return <Composition direction={relationship.direction} coordinates={coordinates}/>;
+                return <Composition direction={direction} coordinates={coordinates}/>;
             case ClassDiagramRelationshipTypesEnum.EXTENSION:
-                return <Extension direction={relationship.direction} coordinates={coordinates}/>;
+                return <Extension direction={direction} coordinates={coordinates}/>;
             case ClassDiagramRelationshipTypesEnum.ASSOCIATION:
-                return <Association direction={relationship.direction} coordinates={coordinates}/>;
+                return <Association direction={direction} coordinates={coordinates}/>;
         }
     };
 
