@@ -14,6 +14,18 @@ const RelationshipEdit = (props: { relationship: IRelationship }) => {
         dispatch(updateRelationship(updatedRelationship));
     };
 
+    const onRelationshipHeadValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const updatedRelationship = {...props.relationship};
+        updatedRelationship.headValue = event.target.value;
+        dispatch(updateRelationship(updatedRelationship));
+    };
+
+    const onRelationshipTailValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const updatedRelationship = {...props.relationship};
+        updatedRelationship.tailValue = event.target.value;
+        dispatch(updateRelationship(updatedRelationship));
+    };
+
     return (
         <div className='container' style={{margin: '10px'}}>
             <div className='field'>
@@ -25,6 +37,24 @@ const RelationshipEdit = (props: { relationship: IRelationship }) => {
                         type='text'
                         className='input'
                         placeholder='relationship name'
+                    />
+                </div>
+                <div className='control'>
+                    <input
+                        value={headValue}
+                        onChange={(ev) => onRelationshipHeadValueChange(ev)}
+                        type='text'
+                        className='input'
+                        placeholder='head value'
+                    />
+                </div>
+                <div className='control'>
+                    <input
+                        value={tailValue}
+                        onChange={(ev) => onRelationshipTailValueChange(ev)}
+                        type='text'
+                        className='input'
+                        placeholder='tail value'
                     />
                 </div>
             </div>
