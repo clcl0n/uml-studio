@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useDispatch } from 'react-redux';
 import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
@@ -13,10 +13,12 @@ import Extension from '../relationship-heads/extension';
 import Association from '../relationship-heads/association';
 import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 import SegmentDirection from '@enums/segmentDirection';
+import useSelectedElement from 'hooks/useSelectedElement';
 
 const Relationship = (props: { relationship: IRelationship, relationshipSegments: Array<IRelationshipSegment> }) => {
     const dispatch = useDispatch();
     const { relationship, relationshipSegments } = props;
+    const { selectedElementId } = useSelectedElement();
 
     const segments = relationshipSegments.map((relationshipSegment, index) => {
         if (relationshipSegment.isStart) {

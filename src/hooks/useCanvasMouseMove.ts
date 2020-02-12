@@ -32,6 +32,7 @@ import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
 import { updateStateElement } from '@store/actions/stateDiagram.action';
 import IStateElement from '@interfaces/state-diagram/state/IStateElement';
 import { moveStateElement } from '@utils/elements/stateElement';
+import SegmentDirection from '@enums/segmentDirection';
 
 const useCanvasMouseMove = (
     classDiagram: IClassDiagramState,
@@ -189,6 +190,8 @@ const useCanvasMouseMove = (
                     }));
                     break;
                 case CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD:
+                    coordinates.x -= movingRelationship.relationship.head.x > coordinates.x ? -0.5 : 0.5;
+                    coordinates.y -= movingRelationship.relationshipSegments.find((segment) => segment.isEnd).y > coordinates.y ? -0.5 : 0.5;
                     const dependentSegments = movingRelationship.relationshipSegments.filter((segment) => {
                         return segment.id === movingRelationshipSegment.toSegmentId || segment.id === movingRelationshipSegment.fromSegmentId;
                     });

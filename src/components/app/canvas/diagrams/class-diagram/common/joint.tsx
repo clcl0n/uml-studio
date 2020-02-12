@@ -2,18 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ICoordinates from '@interfaces/ICoordinates';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment, updateRelationshipSegment } from '@store/actions/classDiagram.action';
+import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment, updateRelationshipSegment, updateRelationship } from '@store/actions/classDiagram.action';
 import { newCanvasOperation } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import { createNewRelationship, updateRelationshipEndingHelper } from '@utils/elements/relationship';
 import useCanvasDefaultRelationshipType from 'hooks/useCanvasDefaultRelationshipType';
 import IStoreState from '@interfaces/IStoreState';
 import SegmentDirection from '@enums/segmentDirection';
+import useSelectedElement from 'hooks/useSelectedElement';
 
 const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) => {
     const dispatch = useDispatch();
     const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
     const newRelationship = useSelector((state: IStoreState) => state.classDiagram.newRelationship);
+    const { selectedRelationship, selectedRelationshipSegments } = useSelectedElement();
     const { canvasDefaultRelationshipType } = useCanvasDefaultRelationshipType();
 
     const startDrawingNewRelationship = (event: React.MouseEvent) => {
@@ -51,6 +53,29 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
                 dispatch(addNewRelationshipSegment(segment));
             });
             dispatch(clearNewRelationship());
+        } else if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD || canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_TAIL) {
+            selectedRelationship.toElementId = props.fromElementId;
+            selectedRelationship.head.x = props.x;
+            selectedRelationship.head.y = props.y;
+            const movingRelationshipSegment = selectedRelationshipSegments.filter((segment) => segment.isEnd)[0];
+            const dependentSegments = selectedRelationshipSegments.filter((segment) => {
+                return segment.id === movingRelationshipSegment.toSegmentId || segment.id === movingRelationshipSegment.fromSegmentId;
+            });
+
+            const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
+                { x: props.x, y: props.y },
+                selectedRelationship,
+                movingRelationshipSegment,
+                dependentSegments
+            );
+            
+            dispatch(updateRelationship(relationship));
+            [
+                ...relationshipSegments,
+                ...selectedRelationshipSegments.filter((segment) => relationshipSegments.findIndex((s) => s.id === segment.id) === -1)
+            ].forEach((segment) => {
+                dispatch(updateRelationshipSegment(segment));
+            });
         }
     };
 

@@ -21,10 +21,12 @@ import Direction from '@enums/direction';
 import IStoreState from '@interfaces/IStoreState';
 import { isMouseDown, newCanvasOperation, selectNewElement } from '@store/actions/canvas.action';
 import IClass from '@interfaces/class-diagram/class/IClass';
+import useCanvasOperation from 'hooks/useCanvasOperation';
 
 const Class = (props: { class: IClass, properties: Array<IClassProperty>, methods: Array<IClassMethod> }) => {
     const dispatch = useDispatch();
     const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
+    const { canvasOperation } = useCanvasOperation();
     const [joints, setJoints] = React.useState(<g/>);
     const { frame, sections } = props.class.graphicData;
 
@@ -89,7 +91,11 @@ const Class = (props: { class: IClass, properties: Array<IClassProperty>, method
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            if (isMouseDownState) {
+            if (
+                canvasOperation.type === CanvasOperationEnum.RESIZE_ELEMENT_RIGHT ||
+                canvasOperation.type === CanvasOperationEnum.RESIZE_ELEMENT_LEFT ||
+                canvasOperation.type === CanvasOperationEnum.MOVE_ELEMENT
+            ) {
                 setJoints(<g/>);
             } else {
                 setJoints((

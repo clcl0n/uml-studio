@@ -2,13 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
 import SegmentDirection from '@enums/segmentDirection';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { newCanvasOperation, isMouseDown } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import useSelectedElement from 'hooks/useSelectedElement';
+import IStoreState from '@interfaces/IStoreState';
 
 const RelationshipSegment = (props: { segment: IRelationshipSegment, relationId: string }) => {
     const dispatch = useDispatch();
     const { segment, relationId } = props;
+    const { selectedElementId } = useSelectedElement();
+    const isCanvasMouseDown = useSelector((state: IStoreState) => state.canvas.isMouseDown);
 
     const moveSegment = () => {
         dispatch(isMouseDown(true));
@@ -44,7 +48,7 @@ const RelationshipSegment = (props: { segment: IRelationshipSegment, relationId:
             cy = segment.y;
         }
 
-        return segment.isEnd || segment.isStart ? (
+        return (segment.isEnd || segment.isStart) && selectedElementId === relationId && !isCanvasMouseDown ? (
             <g cursor='pointer' onMouseDown={() => { segment.isStart ? moveTail() : moveHead();}}>
                 <circle stroke='black' cx={cx} cy={cy} r='5'/>
             </g>
@@ -53,7 +57,7 @@ const RelationshipSegment = (props: { segment: IRelationshipSegment, relationId:
 
     return (
         <g>
-            {/* {segmentJoint()} */}
+            {segmentJoint()}
             <g
                 cursor={segment.direction === SegmentDirection.HORIZONTAL ? 'ns-resize' : 'ew-resize'}
                 onMouseDown={(ev) => moveSegment()}
