@@ -12,10 +12,29 @@ const useSelectedElement = (selectedElementId: string = '') => {
     const storeSelectedElementId = useSelector((state: IStoreState) => state.canvas.selectedElementId);
     selectedElementId = selectedElementId === '' ? storeSelectedElementId: selectedElementId;
     const selectedElement = useSelector((state: IStoreState) => {
-        return state.classDiagram.elements.byId[selectedElementId] ? state.classDiagram.elements.byId[selectedElementId] : state.stateDiagram.elements.byId[selectedElementId];;
+        if (state.classDiagram.elements.byId[selectedElementId]) {
+            return state.classDiagram.elements.byId[selectedElementId];
+        } else if (state.stateDiagram.elements.byId[selectedElementId]) {
+            return state.stateDiagram.elements.byId[selectedElementId];
+        } else if (state.stateDiagram.initialStateElements.byId[selectedElementId]) {
+            return state.stateDiagram.initialStateElements.byId[selectedElementId];
+        } else if (state.stateDiagram.finalStateElements.byId[selectedElementId]) {
+            return state.stateDiagram.finalStateElements.byId[selectedElementId];
+        } else if (state.stateDiagram.forkJoinElements.byId[selectedElementId]) {
+            return state.stateDiagram.forkJoinElements.byId[selectedElementId];
+        } else if (state.stateDiagram.choiceElements.byId[selectedElementId]) {
+            return state.stateDiagram.choiceElements.byId[selectedElementId];
+        }
     });
     const selectedElementEntries = useSelector((state: IStoreState) => {
-        if (selectedElement?.type !== StateDiagramElementsEnum.STATE) {
+        if (
+            selectedElement?.type !== StateDiagramElementsEnum.STATE &&
+            selectedElement?.type !== StateDiagramElementsEnum.INITIAL_STATE &&
+            selectedElement?.type !== StateDiagramElementsEnum.FINAL_STATE &&
+            selectedElement?.type !== StateDiagramElementsEnum.FORK &&
+            selectedElement?.type !== StateDiagramElementsEnum.JOIN &&
+            selectedElement?.type !== StateDiagramElementsEnum.CHOICE
+        ) {
             return (selectedElement as IBaseElement<any>)?.data.entryIds.map((entryId) => {
                 return state.classDiagram.elementEntries.byId[entryId];
             });

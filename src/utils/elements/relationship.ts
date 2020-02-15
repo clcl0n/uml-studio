@@ -100,9 +100,9 @@ export const createNewRelationship = (type: ClassDiagramRelationshipTypesEnum, c
        type,
        fromElementId,
        toElementId,
-       headValue: '0',
+       headValue: '',
        relationshipValue: 'relationship',
-       tailValue: '0',
+       tailValue: '',
        head: {
            x: x2,
            y: y2

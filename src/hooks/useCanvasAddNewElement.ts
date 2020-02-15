@@ -11,8 +11,11 @@ import { addNewElement, addNewElementEntry } from '@store/actions/classDiagram.a
 import ICoordinates from '@interfaces/ICoordinates';
 import useDiagram from './useDiagram';
 import DiagramTypeEnum from '@enums/diagramTypeEnum';
-import { createNewSimpleStateElement, createNewStateElement } from '@utils/elements/stateElement';
-import { addNewStateElement } from '@store/actions/stateDiagram.action';
+import { createNewSimpleStateElement, createNewStateElement, createNewInitialStateElement, createNewFinalStateElement } from '@utils/elements/stateElement';
+import { addNewStateElement, addNewInitialStateElement, addNewFinalStateElement, addNewForkJoinElement, addNewChoiceElement } from '@store/actions/stateDiagram.action';
+import { createNewFork } from '@utils/elements/forkJoin';
+import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
+import { createNewChoice } from '@utils/elements/choice';
 
 const useCanvasAddNewElement = () => {
     const dispatch = useDispatch();
@@ -72,6 +75,26 @@ const useCanvasAddNewElement = () => {
                 case RibbonOperationEnum.ADD_NEW_STATE:
                     const { stateElement } = createNewStateElement(coordinates);
                     dispatch(addNewStateElement(stateElement));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_INITIAL_STATE:
+                    const { initialStateElement } = createNewInitialStateElement(coordinates);
+                    dispatch(addNewInitialStateElement(initialStateElement));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_FINAL_STATE:
+                    const { finalStateElement } = createNewFinalStateElement(coordinates);
+                    dispatch(addNewFinalStateElement(finalStateElement));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_FORK:
+                    const { newForkJoin: newFork } = createNewFork(coordinates, StateDiagramElementsEnum.FORK);
+                    dispatch(addNewForkJoinElement(newFork));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_JOIN:
+                    const { newForkJoin: newJoin } = createNewFork(coordinates, StateDiagramElementsEnum.JOIN);
+                    dispatch(addNewForkJoinElement(newJoin));
+                    break;
+                case RibbonOperationEnum.ADD_NEW_CHOICE:
+                    const { newChoice } = createNewChoice(coordinates);
+                    dispatch(addNewChoiceElement(newChoice));
                     break;
             }
         }

@@ -4,7 +4,7 @@ import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
 
 export default interface IStateElement {
     id: string;
-    type: StateDiagramElementsEnum,
+    type: StateDiagramElementsEnum;
     data: {
         name: string;
         regions: Array<string>;

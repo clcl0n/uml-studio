@@ -35,10 +35,16 @@ const StateElements = () => {
             ribbonOperation: RibbonOperationEnum.ADD_NEW_FINAL_STATE
         },
         {
-            alt: 'fork join',
-            label: 'Fork/Join',
+            alt: 'fork',
+            label: 'Fork',
             src: ForkJoin,
-            ribbonOperation: RibbonOperationEnum.ADD_NEW_FORK_JOIN
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_FORK
+        },
+        {
+            alt: 'join',
+            label: 'Join',
+            src: ForkJoin,
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_JOIN
         },
         {
             alt: 'choice',
