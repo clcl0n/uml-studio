@@ -5,6 +5,7 @@ import IReducerPayload from '@interfaces/IReducerPayload';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 import DiagramTypeEnum from '@enums/diagramTypeEnum';
+import ICoordinates from '@interfaces/ICoordinates';
 
 const diagramType = DiagramTypeEnum.NONE;
 const defaultRelationshipType = ClassDiagramRelationshipTypesEnum.ASSOCIATION; 
@@ -13,6 +14,14 @@ const selectedElementId = '';
 const canvasOperationState: ICanvasOperation = {
     type: CanvasOperationEnum.NONE,
     elementId: ''     
+};
+const canvasDimensionsState: ICoordinates = {
+    x: 4400,
+    y: 4684
+};
+
+export const canvasDimensionsReducer = (state = canvasDimensionsState) => {
+    return state;
 };
 
 export const diagramTypeReducer = (state = diagramType, payload: IReducerPayload<CanvasActionEnum, DiagramTypeEnum>) => {

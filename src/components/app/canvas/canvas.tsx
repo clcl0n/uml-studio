@@ -18,8 +18,7 @@ const Canvas = () => {
     const classDiagram = useSelector((state: IStoreState) => state.classDiagram);
     const stateDiagram = useSelector((state: IStoreState) => state.stateDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
-    const paperWidth = 2200;
-    const paperHeight = 2337;
+    const { x: paperWidth, y: paperHeight} = useSelector((state: IStoreState) => state.canvas.canvasDimensions);
     const [canvasDimensions, setCanvasDimensions] = useState({
         canvasWidth: paperWidth,
         canvasHeight: paperHeight

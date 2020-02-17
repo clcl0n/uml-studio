@@ -5,6 +5,27 @@ import { createFrame, moveFrame } from './frame';
 import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
 import IInitialStateElement from '@interfaces/state-diagram/initial-state/IInitialStateElement';
 import IFinalStateElement from '@interfaces/state-diagram/final-state/IFinalStateElement';
+import ISCXMLState from '@interfaces/scxml/ISCXMLState';
+
+const rx = 20;
+
+export const createNewStateElementFromSCXML = (element: ISCXMLState, coordinates: ICoordinates): IStateElement => {
+    const frame = createFrame(coordinates, 1, 75);
+
+    return {
+        id: v4(),
+        type: StateDiagramElementsEnum.STATE,
+        data: {
+            name: element.$.id ?? '',
+            internalActions: [],
+            regions: []
+        },
+        graphicData: {
+            frame,
+            rx
+        }
+    };
+};
 
 export const moveStateElement = (element: IStateElement, coordinates: ICoordinates, oldCursorPosition: ICoordinates): IStateElement => {
     const newFrame = moveFrame(element, coordinates, oldCursorPosition);
