@@ -7,7 +7,7 @@ import { diagramTypeReducer } from '@store/reducers/canvas.reducers';
 import  { parseString } from 'xml2js';
 import ISCXMLState from '@interfaces/scxml/ISCXMLState';
 import ISCXML from '@interfaces/scxml/ISCXML';
-import { addNewStateElement } from '@store/actions/stateDiagram.action';
+import { addNewStateElement, addNewFinalStateElement } from '@store/actions/stateDiagram.action';
 import { createNewStateElementFromSCXML } from '@utils/elements/stateElement';
 import IStoreState from '@interfaces/IStoreState';
 import ICoordinates from '@interfaces/ICoordinates';
@@ -33,47 +33,16 @@ const DiagramChooserModal = () => {
     };
 
     const openExistingDiagram = async () => {
-        var xml = `<?xml version="1.0" encoding="UTF-8"?>
-        <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="ready">
-           <state id="ready">
-              <transition event="watch.start" target="running" />
-              <transition event="watch.start" target="test" />
-           </state>
-           <state id="test">
-              <transition event="watch.split" target="paused" />
-              <transition event="watch.stop" target="stopped" />
-           </state>
-           <state id="running">
-              <transition event="watch.split" target="paused" />
-              <transition event="watch.stop" target="stopped" />
-              <transition event="watch.stop" target="test2" />
-              <transition event="watch.stop" target="test5" />
-              <transition event="watch.stop" target="test6" />
-           </state>
-           <state id="test2">
-                <transition event="watch.stop" target="test3" />
-           </state>
-           <state id="test3">
-                <transition event="watch.stop" target="test4" />
-           </state>
-           <state id="test5">
-           </state>
-           <state id="test6">
-           </state>
-           <state id="test4">
-           </state>
-           <state id="paused">
-              <transition event="watch.stop" target="stopped" />
-              <transition event="watch.unsplit" target="running" />
-           </state>
-           <state id="stopped">
-              <transition event="watch.reset" target="ready" />
-           </state>
-        </scxml>`;
+        var xml = `<scxml name="Scxml" version="1.0" xmlns="http://www.w3.org/2005/07/scxml" initialstate="WorkFinished">
+        <final id="WorkFinished"/>
+    </scxml>`;
 
-        const { newStateElements } = await parseStateDiagram(xml, { x: canvasWidth, y: canvasHeight });
+        const { newStateElements, newFinalStateElements } = await parseStateDiagram(xml, { x: canvasWidth, y: canvasHeight });
         newStateElements.forEach((newStateElement) => {
             dispatch(addNewStateElement(newStateElement));
+        });
+        newFinalStateElements.forEach((newFinalStateElement) => {
+            dispatch(addNewFinalStateElement(newFinalStateElement));
         });
         dispatch(setDiagramType(DiagramTypeEnum.STATE));
         setIsActive(false);

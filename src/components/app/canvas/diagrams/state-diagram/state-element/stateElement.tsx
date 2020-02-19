@@ -68,9 +68,16 @@ const StateElement = (props: { stateElement: IStateElement }) => {
     const getRegions = () => {
         let regionsStartY = graphicData.frame.y + (graphicData.frame.fontPixelSize*3);
         return data.regions.map((region, index) => {
+            const topOffset = index > 0 ? graphicData.frame.fontPixelSize : 0;
             return (
                 <g key={index}>
-                    <text className='svg-text' x={graphicData.frame.x + 5} y={regionsStartY*(index+1) + 3}>{`[${region}]`}</text>
+                    <text
+                        className='svg-text'
+                        x={graphicData.frame.x + 5}
+                        y={regionsStartY + (graphicData.frame.rowHeight *(index)) + 3 + topOffset}
+                    >
+                        {`[${region}]`}
+                    </text>
                 </g>
             );
         });

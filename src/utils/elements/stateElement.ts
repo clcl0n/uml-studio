@@ -6,8 +6,27 @@ import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
 import IInitialStateElement from '@interfaces/state-diagram/initial-state/IInitialStateElement';
 import IFinalStateElement from '@interfaces/state-diagram/final-state/IFinalStateElement';
 import ISCXMLState from '@interfaces/scxml/ISCXMLState';
+import ISCXMLParallel from '@interfaces/scxml/ISCXMLParallel';
 
 const rx = 20;
+
+export const createNewParallelStateElementFromSCXML = (element: ISCXMLParallel, coordinates: ICoordinates): IStateElement => {
+    const frame = createFrame(coordinates, element.state.length + 1, 250);
+
+    return {
+        id: v4(),
+        type: StateDiagramElementsEnum.STATE,
+        data: {
+            name: element.$.id ?? '',
+            internalActions: [],
+            regions: element.state.map((state) => state.$.id)
+        },
+        graphicData: {
+            frame,
+            rx
+        }
+    };
+};
 
 export const createNewStateElementFromSCXML = (element: ISCXMLState, coordinates: ICoordinates): IStateElement => {
     const frame = createFrame(coordinates, 1, 75);
