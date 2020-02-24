@@ -19,7 +19,6 @@ const Relationship = (props: { relationship: IRelationship, relationshipSegments
     const dispatch = useDispatch();
     const { relationship, relationshipSegments } = props;
     const { selectedElementId } = useSelectedElement();
-
     const segments = relationshipSegments.map((relationshipSegment, index) => {
         if (relationshipSegment.isStart) {
             let segmentDirection = Direction.NONE;
@@ -77,8 +76,21 @@ const Relationship = (props: { relationship: IRelationship, relationshipSegments
                 </g>
             );
         } else {
+            let textX = 0;
+            let textY = 0;
+            if (Math.abs(relationshipSegment.lineToY) < 30) {
+                textX = relationshipSegment.x;
+                textY = relationship.head.y > relationship.tail.y ? relationship.tail.y - 8 : relationship.head.y - 8;
+            } else {
+                textX = relationshipSegment.x + 8;
+                textY = relationshipSegment.y + (relationshipSegment.lineToY / 2);
+            }
+
             return (
-                <RelationshipSegment key={index} segment={relationshipSegment} relationId={relationship.id}/>
+                <g key={index}>
+                    {index === 1 && <text className='svg-text svg-text-center' writingMode={Math.abs(relationshipSegment.lineToY) < 30 ? 'lr' : 'tb'} x={textX} y={textY}>{relationship.relationshipValue}</text>}
+                    <RelationshipSegment segment={relationshipSegment} relationId={relationship.id}/>
+                </g>
             );
         }
     });

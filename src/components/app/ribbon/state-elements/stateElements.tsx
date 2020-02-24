@@ -17,40 +17,10 @@ const StateElements = () => {
             ribbonOperation: RibbonOperationEnum.ADD_NEW_SIMPLE_STATE
         },
         {
-            alt: 'state',
-            label: 'State',
-            src: State,
-            ribbonOperation: RibbonOperationEnum.ADD_NEW_STATE
-        },
-        {
-            alt: 'initial state',
-            label: 'Initial State',
-            src: InitialState,
-            ribbonOperation: RibbonOperationEnum.ADD_NEW_INITIAL_STATE
-        },
-        {
             alt: 'final state',
             label: 'Final State',
             src: FinalState,
             ribbonOperation: RibbonOperationEnum.ADD_NEW_FINAL_STATE
-        },
-        {
-            alt: 'fork',
-            label: 'Fork',
-            src: ForkJoin,
-            ribbonOperation: RibbonOperationEnum.ADD_NEW_FORK
-        },
-        {
-            alt: 'join',
-            label: 'Join',
-            src: ForkJoin,
-            ribbonOperation: RibbonOperationEnum.ADD_NEW_JOIN
-        },
-        {
-            alt: 'choice',
-            label: 'Choice',
-            src: Choice,
-            ribbonOperation: RibbonOperationEnum.ADD_NEW_CHOICE
         }
     ];
 

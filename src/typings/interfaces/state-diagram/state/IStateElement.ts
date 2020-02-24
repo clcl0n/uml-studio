@@ -1,4 +1,4 @@
-import IStateInternalAction from './IStateInternalAction';
+import IStateInternalActions from './IStateInternalActions';
 import IFrameGraphicData from '@interfaces/class-diagram/common/IFrameGraphicData';
 import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
 
@@ -8,7 +8,7 @@ export default interface IStateElement {
     data: {
         name: string;
         regions: Array<string>;
-        internalActions: Array<IStateInternalAction>;
+        executableContent: Array<any>;
     };
     graphicData: {
         frame: IFrameGraphicData;

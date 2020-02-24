@@ -7,6 +7,8 @@ import IInitialStateElement from '@interfaces/state-diagram/initial-state/IIniti
 import IFinalStateElement from '@interfaces/state-diagram/final-state/IFinalStateElement';
 import ISCXMLState from '@interfaces/scxml/ISCXMLState';
 import ISCXMLParallel from '@interfaces/scxml/ISCXMLParallel';
+import IStateInternalActions from '@interfaces/state-diagram/state/IStateInternalActions';
+import ISCXMLExecutable from '@interfaces/scxml/ISCXMLICSXMLExecutable';
 
 const rx = 20;
 
@@ -18,7 +20,7 @@ export const createNewParallelStateElementFromSCXML = (element: ISCXMLParallel, 
         type: StateDiagramElementsEnum.STATE,
         data: {
             name: element.$.id ?? '',
-            internalActions: [],
+            executableContent: [],
             regions: element.state.map((state) => state.$.id)
         },
         graphicData: {
@@ -29,14 +31,18 @@ export const createNewParallelStateElementFromSCXML = (element: ISCXMLParallel, 
 };
 
 export const createNewStateElementFromSCXML = (element: ISCXMLState, coordinates: ICoordinates): IStateElement => {
-    const frame = createFrame(coordinates, 1, 75);
+    const frame = createFrame(coordinates, 1, 100);
+    let onentry: Array<IStateInternalActions>;
+    const anyElement = element as any;
+    if (anyElement.onentry) {
+    }
 
     return {
         id: v4(),
         type: StateDiagramElementsEnum.STATE,
         data: {
             name: element.$.id ?? '',
-            internalActions: [],
+            executableContent: [ anyElement?.onentry ],
             regions: []
         },
         graphicData: {
@@ -65,11 +71,11 @@ export const createNewStateElement = (coordinates: ICoordinates) => {
         data: {
             name: 'state',
             regions: ['region_1'],
-            internalActions: []
+            executableContent: []
         },
         graphicData: {
             frame: {
-                ...createFrame(coordinates, 1, 75),
+                ...createFrame(coordinates, 1, 100),
             },
             rx: 20
         }
@@ -80,9 +86,10 @@ export const createNewStateElement = (coordinates: ICoordinates) => {
     };
 };
 
-export const createNewFinalStateElement = (coordinates: ICoordinates) => {
+export const createNewFinalStateElement = (coordinates: ICoordinates, name: string = '') => {
     const finalStateElement: IFinalStateElement = {
         id: v4(),
+        name,
         type: StateDiagramElementsEnum.FINAL_STATE,
         graphicData: {
             x: coordinates.x,
@@ -144,11 +151,11 @@ export const createNewSimpleStateElement = (coordinates: ICoordinates) => {
         data: {
             name: 'state',
             regions: [],
-            internalActions: [],
+            executableContent: [],
         },
         graphicData: {
             frame: {
-                ...createFrame(coordinates, 1, 75),
+                ...createFrame(coordinates, 1, 100),
             },
             rx: 20
         }

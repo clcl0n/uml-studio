@@ -5,6 +5,9 @@ import IInitialStateElement from '@interfaces/state-diagram/initial-state/IIniti
 import IFinalStateElement from '@interfaces/state-diagram/final-state/IFinalStateElement';
 import IForkJoinElement from '@interfaces/state-diagram/IForkJoinElement';
 import IChoiceElement from '@interfaces/state-diagram/IChoiceElement';
+import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
+import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
+import INewRelationship from '@interfaces/class-diagram/INewRelationship';
 
 export const addNewStateElement = (element: IStateElement): IReducerPayload<StateDiagramActionEnum, IStateElement> => {
     return {

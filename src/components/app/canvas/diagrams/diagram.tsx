@@ -16,7 +16,7 @@ const Diagram = () => {
         return diagramType === DiagramTypeEnum.CLASS ? (
             <ClassDiagram classDiagram={classDiagram}/>
         ) : (
-            <StateDiagram stateDiagram={stateDiagram}/>
+            <StateDiagram stateDiagram={stateDiagram} classDiagram={classDiagram}/>
         );
     };
 

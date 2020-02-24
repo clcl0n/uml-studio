@@ -8,10 +8,16 @@ import { useDispatch } from 'react-redux';
 import { updateStateElement } from '@store/actions/stateDiagram.action';
 import { selectNewElement, isMouseDown, newCanvasOperation } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
+import useCanvasOperation from 'hooks/useCanvasOperation';
+import Joints from '../../class-diagram/common/joints';
+import Joint from '../../class-diagram/common/joint';
+import StateElementJoints from '../state-element-joints';
 
 const StateElement = (props: { stateElement: IStateElement }) => {
     const dispatch = useDispatch();
     const { stateElement } = props;
+    const { canvasOperation } = useCanvasOperation();
+    const [joints, setJoints] = React.useState(<g/>);
     const { graphicData, data } = stateElement;
     
 
@@ -42,7 +48,7 @@ const StateElement = (props: { stateElement: IStateElement }) => {
                 type: CanvasOperationEnum.MOVE_ELEMENT,
                 elementId: stateElement.id
             }));
-            // setJoints(<g/>);
+            setJoints(<g/>);
         }
     };
 
@@ -62,7 +68,7 @@ const StateElement = (props: { stateElement: IStateElement }) => {
             type: dir,
             elementId: stateElement.id
         }));
-        // setJoints(<g/>);
+        setJoints(<g/>);
     };
 
     const getRegions = () => {
@@ -85,9 +91,25 @@ const StateElement = (props: { stateElement: IStateElement }) => {
 
     const rx = 20;
 
+    const onMouseOver = () => {
+        if (
+            canvasOperation.type === CanvasOperationEnum.RESIZE_ELEMENT_RIGHT ||
+            canvasOperation.type === CanvasOperationEnum.RESIZE_ELEMENT_LEFT ||
+            canvasOperation.type === CanvasOperationEnum.MOVE_ELEMENT
+        ) {
+            setJoints(<g/>);
+        } else {
+            setJoints(
+                <StateElementJoints stateElement={stateElement}/>
+            );
+        }
+    };
+
     return (
         <g
             onClick={() => onElementClick()}
+            onMouseOver={() => onMouseOver()}
+            onMouseLeave={() => setJoints(<g/>)}
         >
             <path
                 pointerEvents='stroke'
@@ -129,6 +151,7 @@ const StateElement = (props: { stateElement: IStateElement }) => {
             />
             {getStateHeader()}
             {getRegions()}
+            {joints}
         </g>
     );
 };

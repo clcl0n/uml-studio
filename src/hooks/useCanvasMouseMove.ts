@@ -174,12 +174,15 @@ const useCanvasMouseMove = (
                             dispatch(updateElement(moveObject(selectedElement as IObject, coordinates, previousMousePosition)));
                             break;
                         case StateDiagramElementsEnum.STATE:
+                            moveDependingRelationships();
                             dispatch(updateStateElement(moveStateElement(selectedElement as IStateElement, coordinates, previousMousePosition)));
                             break;
                         case StateDiagramElementsEnum.INITIAL_STATE:
+                            moveDependingRelationships();
                             dispatch(updateInitialStateElement(moveInitialStateElement(selectedElement as IInitialStateElement, coordinates, previousMousePosition)));  
                             break;
                         case StateDiagramElementsEnum.FINAL_STATE:
+                            moveDependingRelationships();
                             dispatch(updateFinalStateElement(moveFinalStateElement(selectedElement as IFinalStateElement, coordinates, previousMousePosition)));
                             break;
                         case StateDiagramElementsEnum.FORK:

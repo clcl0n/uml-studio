@@ -6,4 +6,7 @@ export default interface ISCXMLState {
         initial?: string;
     };
     transition: Array<ISCXMLTransition>;
+    onentry: Array<any>;
+    onexit: Array<any>;
+    invoke: Array<any>;
 }

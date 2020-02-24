@@ -8,9 +8,11 @@ import ForkElement from './fork-element/forkElement';
 import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
 import JoinElement from './join-element/joinElement';
 import ChoiceElement from './choice-element/choiceElement';
+import Relationship from '../class-diagram/relationship/relationship';
+import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
 
-const StateDiagram = (props: { stateDiagram: IStateDiagramState }) => {
-    const { stateDiagram } = props;
+const StateDiagram = (props: { stateDiagram: IStateDiagramState, classDiagram: IClassDiagramState }) => {
+    const { stateDiagram, classDiagram } = props;
     let elements: Array<JSX.Element> = [];
 
     stateDiagram.elements.allIds.forEach((elementId) => {
@@ -53,6 +55,28 @@ const StateDiagram = (props: { stateDiagram: IStateDiagramState }) => {
             <ChoiceElement key={elementId} choiceElement={choiceElement}/>
         );
     });
+
+    classDiagram.relationships.allIds.forEach((relationshipId) => {
+        const relationship = classDiagram.relationships.byId[relationshipId];
+        const relationshipSegments = relationship.segmentIds.map((segmentId) => classDiagram.relationshipSegments.byId[segmentId]);
+        elements.push(
+            <Relationship
+                key={relationshipId}
+                relationship={relationship}
+                relationshipSegments={relationshipSegments}
+            />
+        );
+    });
+
+    if (classDiagram.newRelationship.relationship !== null) {
+        elements.push(
+            <Relationship
+                key={elements.length + 1}
+                relationship={classDiagram.newRelationship.relationship}
+                relationshipSegments={classDiagram.newRelationship.relationshipSegments}
+            />
+        );
+    }
 
     return (
         <g>

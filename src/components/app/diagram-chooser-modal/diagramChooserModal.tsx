@@ -12,6 +12,7 @@ import { createNewStateElementFromSCXML } from '@utils/elements/stateElement';
 import IStoreState from '@interfaces/IStoreState';
 import ICoordinates from '@interfaces/ICoordinates';
 import { parseStateDiagram } from '@utils/scxmlParser';
+import { addNewRelationship, addNewRelationshipSegment } from '@store/actions/classDiagram.action';
 
 const DiagramChooserModal = () => {
     const dispatch = useDispatch();
@@ -33,102 +34,97 @@ const DiagramChooserModal = () => {
     };
 
     const openExistingDiagram = async () => {
-        var xml = `<scxml name="Scxml" version="1.0" xmlns="http://www.w3.org/2005/07/scxml" initialstate="WorkFinished">
-        <final id="WorkFinished"/>
+        var xml = `<scxml name="Scxml" version="1.0" xmlns="http://www.w3.org/2005/07/scxml" initialstate="Generator">
+        <state id="Generator">
+            <onentry>
+                <assign expr="os.clock()" location="tm_ELAPSED"/>
+            </onentry>
+            <transition event="Start" target="1"/>
+        </state>
+        <state id="1">
+            <onentry>
+                <assign expr="os.clock()" location="tm_ELAPSED"/>
+            </onentry>
+            <transition event="Start" target="2"/>
+            <transition event="Start" target="7"/>
+            <transition event="Start" target="8"/>
+            <transition event="Start" target="9"/>
+            <transition event="Start" target="10"/>
+            <transition event="Start" target="11"/>
+            <transition event="Start" target="12"/>
+            <transition event="Start" target="13"/>
+            <transition event="Start" target="14"/>
+            <transition event="Start" target="15"/>
+            <transition event="Start" target="Generator"/>
+        </state>
+        <state id="3">
+            
+            <onentry>
+                <assign expr="os.clock()" location="tm_ELAPSED"/>
+            </onentry>
+        </state>
+        <state id="4">
+        <transition event="Start" target="2"/>
+        </state>
+        <state id="5">
+        <transition event="Start" target="4"/>
+        <transition event="Start" target="2"/>
+        <transition event="Start" target="6"/>
+        </state>
+        <state id="6">
+        <transition event="Start" target="2"/>
+        </state>
+        <state id="7">
+        <transition event="Start" target="5"/>
+        <transition event="Start" target="1"/>
+        </state>
+        <state id="8">
+        </state>
+        <state id="9">
+        </state>
+        <state id="12">
+        </state>
+        <state id="13">
+        </state>
+        <state id="14">
+        </state>
+        <state id="15">
+        </state>
+        <state id="11">
+        <transition event="Start" target="1"/>
+        </state>
+        <state id="10">
+        <transition event="Start" target="2"/>
+        <transition event="Start" target="1"/>
+        </state>
+        <state id="2">
+            
+            <onentry>
+                <assign expr="os.clock()" location="tm_ELAPSED"/>
+            </onentry>
+            <transition event="Start" target="3"/>
+            <transition event="Start" target="4"/>
+            <transition event="Start" target="1"/>
+            <transition event="Start" target="5"/>
+            <transition event="Start" target="6"/>
+        </state>
     </scxml>`;
 
-        const { newStateElements, newFinalStateElements } = await parseStateDiagram(xml, { x: canvasWidth, y: canvasHeight });
+        const { newStateElements, newFinalStateElements, newRelationShipSegments, newRelationShips } = await parseStateDiagram(xml, { x: canvasWidth, y: canvasHeight });
         newStateElements.forEach((newStateElement) => {
             dispatch(addNewStateElement(newStateElement));
         });
         newFinalStateElements.forEach((newFinalStateElement) => {
             dispatch(addNewFinalStateElement(newFinalStateElement));
         });
+        newRelationShipSegments.forEach((segment) => {
+            dispatch(addNewRelationshipSegment(segment));
+        });
+        newRelationShips.forEach((relationship) => {
+            dispatch(addNewRelationship(relationship));
+        });
         dispatch(setDiagramType(DiagramTypeEnum.STATE));
         setIsActive(false);
-
-        // parseString(xml, (err, result) => {
-        //     if (result.scxml) {
-        //         const scxml: ISCXML = result.scxml;
-        //         if (scxml) {
-        //             const states = scxml.state;
-        //             if (states) {
-        //                 let initialState;
-        //                 if (scxml.$.initial) {
-        //                     initialState = states.find((state) => state.$.id === scxml.$.initial);
-        //                 } else {
-        //                     initialState = states[0];
-        //                 }
-
-        //                 const coordinates: ICoordinates = { x: canvasWidth / 2, y: canvasHeight / 2 };
-
-        //                 const initialStateElement = createNewStateElementFromSCXML(initialState, coordinates);
-        //                 dispatch(addNewStateElement(initialStateElement));
-
-        //                 const initialStateTransitionsLength = initialState.transition.length;
-        //                 if (initialStateTransitionsLength === 1) {
-        //                     coordinates.x += initialStateElement.graphicData.frame.width * 2;
-        //                     initialState.transition.forEach((transition) => {
-        //                         const targetState = states.find((state) => state.$.id === transition.$.target);
-        //                         dispatch(addNewStateElement(createNewStateElementFromSCXML(targetState, coordinates)));
-        //                     });
-        //                 } else {
-        //                     let firstUpLayerLength = 0;
-        //                     let firstDownLayerLength = 0;
-        //                     if (initialStateTransitionsLength % 2 === 0) {
-        //                         firstUpLayerLength = initialStateTransitionsLength / 2;
-        //                         firstDownLayerLength = initialStateTransitionsLength / 2;
-        //                     } else {
-        //                         firstUpLayerLength = (initialStateTransitionsLength - 1) / 2;
-        //                         firstDownLayerLength = firstUpLayerLength + 1;
-        //                     }
-        //                     coordinates.x += initialStateElement.graphicData.frame.width * 2;
-        //                     coordinates.y -= initialStateElement.graphicData.frame.height * 2;
-        //                     let isDown = false;
-        //                     const existingStates: Array<string> = [];
-        //                     existingStates.push(initialState.$.id);
-        //                     initialState.transition.forEach((transition, index) => {
-        //                         if (index + 1 <= firstUpLayerLength) {
-        //                             const targetState = states.find((state) => state.$.id === transition.$.target);
-        //                             dispatch(addNewStateElement(createNewStateElementFromSCXML(targetState, coordinates)));
-        //                             existingStates.push(targetState.$.id);
-        //                             coordinates.x -= initialStateElement.graphicData.frame.width * 2;
-        //                         } else {
-        //                             if (!isDown) {
-        //                                 coordinates.y += initialStateElement.graphicData.frame.height * 4;
-        //                                 coordinates.x = (canvasWidth / 2) + initialStateElement.graphicData.frame.width * 2;
-        //                             }
-        //                             const targetState = states.find((state) => state.$.id === transition.$.target);
-        //                             dispatch(addNewStateElement(createNewStateElementFromSCXML(targetState, coordinates)));
-        //                             existingStates.push(targetState.$.id);
-        //                             coordinates.x -= initialStateElement.graphicData.frame.width * 2;
-        //                             isDown = true;
-        //                         }
-        //                     });
-                            
-        //                     //
-        //                     let toDrawStates = states.filter((state) => existingStates.indexOf(state.$.id) === -1);
-        //                     while (toDrawStates.length > 0) {
-        //                         existingStates.forEach((existingState) => {
-        //                             const s = states.find((state) => state.$.id === existingState);
-        //                             s.transition.forEach((transition) => {
-        //                                 if (existingStates.indexOf(transition.$.target) === -1) {
-        //                                     const toDraw = states.find((state) => state.$.id === transition.$.target);
-        //                                     dispatch(addNewStateElement(createNewStateElementFromSCXML(toDraw, coordinates)));
-        //                                     existingStates.push(toDraw.$.id);
-        //                                 }
-        //                             });
-        //                         });
-        //                         toDrawStates = states.filter((state) => existingStates.indexOf(state.$.id) === -1);
-        //                     }
-        //                     // existingStates.
-        //                 }
-        //             }
-        //         }
-        //         dispatch(setDiagramType(DiagramTypeEnum.STATE));
-        //         setIsActive(false);
-        //     }
-        // });
     };
 
     return (
