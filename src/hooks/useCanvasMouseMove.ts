@@ -200,7 +200,7 @@ const useCanvasMouseMove = (
         } else if (isMouseDown) {
             switch (canvasOperation.type) {
                 case CanvasOperationEnum.DRAWING_NEW_RELATION:
-                    let fixX = newRelationship.relationship.tail.x > coordinates.x ? -0.5 : 0.5;
+                    let fixX = newRelationship.relationship.tail.x > coordinates.x ? -1 : 1;
                     if (newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION) {
                         fixX += newRelationship.relationship.tail.x > coordinates.x ? -30 : 30;
                     }
@@ -223,11 +223,20 @@ const useCanvasMouseMove = (
                     }));
                     break;
                 case CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD:
-                    coordinates.x -= movingRelationship.relationship.head.x > coordinates.x ? -0.5 : 0.5;
-                    coordinates.y -= movingRelationship.relationshipSegments.find((segment) => segment.isEnd).y > coordinates.y ? -0.5 : 0.5;
-                    // if (movingRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION) {
-                    //     coordinates.x -= movingRelationship.relationship.tail.x > coordinates.x ? -30 : 30;
-                    // }
+                    const endSegment = movingRelationship.relationshipSegments.find((segment) => segment.isEnd);
+                    let direction = movingRelationship.relationship.direction;
+                    if (endSegment.y < movingRelationship.relationship.head.y) {
+                        direction = Direction.DOWN;
+                        coordinates.y -= 5;
+                    } else if (endSegment.y > movingRelationship.relationship.head.y) {
+                        direction = Direction.UP;
+                        coordinates.y -= -5;
+                    } else if (endSegment.x > movingRelationship.relationship.head.x) {
+                        direction = Direction.LEFT;
+                        coordinates.x -= -5;
+                    } else {
+                        coordinates.x -= 5;
+                    }
                     const dependentSegments = movingRelationship.relationshipSegments.filter((segment) => {
                         return segment.id === movingRelationshipSegment.toSegmentId || segment.id === movingRelationshipSegment.fromSegmentId;
                     });

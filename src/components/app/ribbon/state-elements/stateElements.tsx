@@ -21,6 +21,12 @@ const StateElements = () => {
             label: 'Final State',
             src: FinalState,
             ribbonOperation: RibbonOperationEnum.ADD_NEW_FINAL_STATE
+        },
+        {
+            alt: 'initil state',
+            label: 'Initial State',
+            src: InitialState,
+            ribbonOperation: RibbonOperationEnum.ADD_NEW_INITIAL_STATE
         }
     ];
 

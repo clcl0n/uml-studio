@@ -1,0 +1,78 @@
+<scxml name="Scxml" version="1.0" xmlns="http://www.w3.org/2005/07/scxml" initialstate="Generator">
+        <state id="Generator">
+            <onentry>
+                <assign expr="os.clock()" location="tm_ELAPSED"/>
+            </onentry>
+            <transition event="Start" target="1"/>
+        </state>
+        <state id="1">
+            <onentry>
+                <assign expr="os.clock()" location="tm_ELAPSED"/>
+            </onentry>
+            <transition event="Start" target="2"/>
+            <transition event="Start" target="7"/>
+            <transition event="Start" target="8"/>
+            <transition event="Start" target="9"/>
+            <transition event="Start" target="10"/>
+            <transition event="Start" target="11"/>
+            <transition event="Start" target="12"/>
+            <transition event="Start" target="13"/>
+            <transition event="Start" target="14"/>
+            <transition event="Start" target="15"/>
+            <transition event="Start" target="Generator"/>
+        </state>
+        <state id="3">
+            
+            <onentry>
+                <assign expr="os.clock()" location="tm_ELAPSED"/>
+            </onentry>
+        </state>
+        <state id="4">
+        <transition event="Start" target="2"/>
+        </state>
+        <state id="5">
+        <transition event="Start" target="4"/>
+        <transition event="Start" target="2"/>
+        <transition event="Start" target="6"/>
+        </state>
+        <state id="6">
+        <transition event="Start" target="2"/>
+        </state>
+        <state id="7">
+        <transition event="Start" target="5"/>
+        <transition event="Start" target="1"/>
+        </state>
+        <state id="8">
+        </state>
+        <state id="9">
+        </state>
+        <state id="12">
+        </state>
+        <state id="13">
+        </state>
+        <state id="14">
+        </state>
+        <state id="15">
+        </state>
+        <state id="11">
+        <transition event="Start" target="1"/>
+        </state>
+        <state id="10">
+        <transition event="Start" target="2"/>
+        <transition event="Start" target="1"/>
+        </state>
+        <state id="2">
+            
+            <onentry>
+                <assign expr="os.clock()" location="tm_ELAPSED"/>
+            </onentry>
+            <transition event="Start" target="3"/>
+            <transition event="Start" target="4"/>
+            <transition event="Start" target="1"/>
+            <transition event="Start" target="5"/>
+            <transition event="Start" target="6"/>
+            <transition event="stop" target="final"/>
+        </state>
+        <final id="final">
+        </final>
+    </scxml>

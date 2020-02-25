@@ -79,6 +79,17 @@ const Ribbon = () => {
         }
     };
 
+    const getRelationsipOptions = () => {
+        return diagramType === DiagramTypeEnum.CLASS ? (
+            <Options
+                defaultSelectedOptionIndex={relationshipTypes.findIndex((type) => type === canvasDefaultRelationshipType)}
+                onSelectNewOption={(optionIndex) => onRelationshipHeadSelect(optionIndex)}
+            >
+                {relationshipOptions()}
+            </Options>
+        ) : <div/>;
+    };
+
     return (
         <div id='ribbon'>
             <NavTools/>
@@ -105,12 +116,7 @@ const Ribbon = () => {
                     <a onClick={(ev) => dispatch(canvasZoomOut(zoomStep))} className='button is-small is-text'>
                         <FontAwesomeIcon icon='search-minus'/>
                     </a>
-                    <Options
-                        defaultSelectedOptionIndex={relationshipTypes.findIndex((type) => type === canvasDefaultRelationshipType)}
-                        onSelectNewOption={(optionIndex) => onRelationshipHeadSelect(optionIndex)}
-                    >
-                        {relationshipOptions()}
-                    </Options>
+                    {getRelationsipOptions()}
                 </div>
                 {getDiagramElements()}
             </div>

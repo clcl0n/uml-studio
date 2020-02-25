@@ -16,8 +16,9 @@ import { faRedo } from '@fortawesome/free-solid-svg-icons/faRedo';
 import { faSave } from '@fortawesome/free-solid-svg-icons/faSave';
 import { faSearchPlus } from '@fortawesome/free-solid-svg-icons/faSearchPlus';
 import { faSearchMinus } from '@fortawesome/free-solid-svg-icons/faSearchMinus';
+import { faUpload } from '@fortawesome/free-solid-svg-icons/faUpload';
 
 initialize();
-library.add(faCaretDown, faTrashAlt, faPlus, faPrint, faUndo, faRedo, faSave, faSearchPlus, faSearchMinus);
+library.add(faCaretDown, faTrashAlt, faPlus, faPrint, faUndo, faRedo, faSave, faSearchPlus, faSearchMinus, faUpload);
 
 ReactDOM.render(<Provider store={store}><App/></Provider>, document.getElementById('app'));
