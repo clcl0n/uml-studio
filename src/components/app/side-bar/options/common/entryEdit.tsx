@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IEntry from '@interfaces/class-diagram/common/IEntry';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 

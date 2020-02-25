@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IUtility from '@interfaces/class-diagram/utility/IUtility';
 import {  useDispatch } from 'react-redux';
 import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty';
@@ -46,7 +46,7 @@ const UtilityEdit = (props: { utility: IUtility, properties: Array<IUtilityPrope
             const newClassProperty = {...property};
             const onSelectNewOption = (newAccessModifier: AccessModifierEnum) => {
                 newClassProperty.accessModifier = newAccessModifier;
-                updateEntry(newClassProperty.name, newClassProperty);
+                updateEntry(newClassProperty.value, newClassProperty);
             };
 
             return (
@@ -67,7 +67,7 @@ const UtilityEdit = (props: { utility: IUtility, properties: Array<IUtilityPrope
             const newClassMethod = {...method};
             const onSelectNewOption = (newAccessModifier: AccessModifierEnum) => {
                 newClassMethod.accessModifier = newAccessModifier;
-                updateEntry(newClassMethod.name, newClassMethod);
+                updateEntry(newClassMethod.value, newClassMethod);
             };
             
             return (

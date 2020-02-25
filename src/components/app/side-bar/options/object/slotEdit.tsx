@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IObjectSlot from '@interfaces/class-diagram/object/IObjectSlot';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 

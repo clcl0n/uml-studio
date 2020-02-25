@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
 import FrameEdit from '../common/frameEdit';
 import { useDispatch } from 'react-redux';

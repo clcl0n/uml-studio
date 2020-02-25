@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import AccessModifierEnum from '@enums/accessModifierEnum';

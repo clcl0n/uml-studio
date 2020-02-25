@@ -3,12 +3,13 @@ import ICoordinates from '@interfaces/ICoordinates';
 import IBaseElement from '@interfaces/class-diagram/common/IBaseElement';
 import IBaseElementGraphicData from '@interfaces/class-diagram/common/IBaseElementGraphicData';
 import Direction from '@enums/direction';
+import IStateElement from '@interfaces/state-diagram/state/IStateElement';
 
 const minWidth = 100;
+const minHeight = 100;
 
-export const createFrame = (coordinates: ICoordinates, numerOfRows: number): IFrame => {
+export const createFrame = (coordinates: ICoordinates, numerOfRows: number, rowHeight: number = 25): IFrame => {
     const width: number = 100;
-    const rowHeight: number = 25;
     const height: number = numerOfRows * rowHeight;
     const xElementCenter: number = coordinates.x;
     const yElementCenter: number = coordinates.y;
@@ -31,7 +32,7 @@ export const createFrame = (coordinates: ICoordinates, numerOfRows: number): IFr
 };
 
 export const moveFrame = (
-    element: IBaseElement<IBaseElementGraphicData<any>>,
+    element: IBaseElement<IBaseElementGraphicData<any>> | IStateElement,
     coordinates: ICoordinates,
     oldCursorPosition: ICoordinates
 ): IFrame => {
@@ -54,23 +55,42 @@ export const moveFrame = (
     };
 };
 
-export const resizeFrame = (element: IBaseElement<any>, coordinates: ICoordinates, direction: Direction): IBaseElement<any> => {
+export const resizeFrame = (element: IBaseElement<any> | IStateElement, coordinates: ICoordinates, direction: Direction): IBaseElement<any> | IStateElement => {
     const { graphicData } = element;
-
     let width = 0;
-    if (direction === Direction.RIGHT) {
-        width = (coordinates.x - graphicData.frame.x);
-        if (width >= minWidth) {
-            graphicData.frame.width = width;
-            graphicData.frame.xCenter = graphicData.frame.x + (graphicData.frame.width / 2);
-        }
-    } else {
-        width = ((graphicData.frame.x + graphicData.frame.width) - coordinates.x);
-        if (width >= minWidth) {
-            graphicData.frame.width += (graphicData.frame.x - coordinates.x); 
-            graphicData.frame.x = coordinates.x;
-            graphicData.frame.xCenter = graphicData.frame.x + graphicData.frame.width / 2;
-        }
+    let height = 0;
+    switch(direction) {
+        case Direction.RIGHT:
+            width = (coordinates.x - graphicData.frame.x);
+            if (width >= minWidth) {
+                graphicData.frame.width = width;
+                graphicData.frame.xCenter = graphicData.frame.x + (graphicData.frame.width / 2);
+            }
+            break;
+        case Direction.LEFT:
+            width = ((graphicData.frame.x + graphicData.frame.width) - coordinates.x);
+            if (width >= minWidth) {
+                graphicData.frame.width += (graphicData.frame.x - coordinates.x); 
+                graphicData.frame.x = coordinates.x;
+                graphicData.frame.xCenter = graphicData.frame.x + graphicData.frame.width / 2;
+            }
+            break;
+        case Direction.UP:
+            height = ((graphicData.frame.y + graphicData.frame.height) - coordinates.y);
+            if (height >= minHeight) {
+                graphicData.frame.height += (graphicData.frame.y - coordinates.y); 
+                graphicData.frame.y = coordinates.y;
+                graphicData.frame.yCenter = graphicData.frame.y + graphicData.frame.height / 2;
+            } 
+            break;
+            break;
+        case Direction.DOWN:
+            height = (coordinates.y - graphicData.frame.y);
+            if (height >= minHeight) {
+                graphicData.frame.height = height;
+                graphicData.frame.yCenter = graphicData.frame.y + (graphicData.frame.height / 2);
+            }
+            break;
     }
 
     return {

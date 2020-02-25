@@ -9,6 +9,9 @@ export default interface IRelationship {
     toElementId: string;
     segmentIds: Array<string>;
     head: ICoordinates;
+    headValue: string;
     tail: ICoordinates;
+    tailValue: string;
+    relationshipValue: string;
     direction: Direction;
 }

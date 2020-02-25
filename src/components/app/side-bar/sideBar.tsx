@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import './sideBar.scss';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ClassEdit from './options/class/classEdit';
@@ -17,9 +17,15 @@ import IObject from '@interfaces/class-diagram/object/IObject';
 import PrimitiveTypeEdit from './options/primitive-type/primitiveTypeEdit';
 import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
 import useSelectedElement from 'hooks/useSelectedElement';
+import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
+import RelationshipEdit from './options/relationship/relationshipEdit';
+import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
+import StateEdit from './options/state/stateEdit';
+import IStateElement from '@interfaces/state-diagram/state/IStateElement';
 
 const SideBar = () => {
     const {
+        selectedRelationship,
         selectedElement,
         selectedEntries,
         selectedMethods,
@@ -51,7 +57,12 @@ const SideBar = () => {
             case ClassDiagramElementsEnum.PRIMITIVE_TYPE:
                 editOptions = <PrimitiveTypeEdit {...{ primitiveType: selectedElement as IPrimitiveType }}/>;
                 break;
+            case StateDiagramElementsEnum.STATE:
+                editOptions = <StateEdit {...{ state: selectedElement as IStateElement }}/>;
+                break;
         }
+    } else if (selectedRelationship) {
+        editOptions = <RelationshipEdit relationship={selectedRelationship}/>;
     }
 
      return (

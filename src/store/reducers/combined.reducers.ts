@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
-import { canvasZoomReducer } from './ribbon.reducer';
-import { canvasOperationReducer, isMouseDownReducer, selectedElementIdReducer, defaultRelationshipTypeReducer } from './canvas.reducer';
-import { elementsReducer, elementEntriesReducer, newRelationshipReducer, relationshipsReducer, relationshipSegmentsReducer } from './classDiagram.reducer';
+import { canvasZoomReducer } from './ribbon.reducers';
+import { canvasOperationReducer, isMouseDownReducer, selectedElementIdReducer, defaultRelationshipTypeReducer, diagramTypeReducer, canvasDimensionsReducer } from './canvas.reducers';
+import { elementsReducer, elementEntriesReducer, newRelationshipReducer, relationshipsReducer, relationshipSegmentsReducer } from './classDiagram.reducers';
+import { stateElementsReducer, initialStateElementsReducer, finalStateElementsReducer, forkJoinElementsReducer, choiceElementsReducer } from './stateDiagram.reducers';
 
 const combinedReducers = combineReducers({
     classDiagram: combineReducers({
@@ -11,11 +12,20 @@ const combinedReducers = combineReducers({
         relationshipSegments: relationshipSegmentsReducer,
         newRelationship: newRelationshipReducer
     }),
+    stateDiagram: combineReducers({
+        elements: stateElementsReducer,
+        initialStateElements: initialStateElementsReducer,
+        finalStateElements: finalStateElementsReducer,
+        forkJoinElements: forkJoinElementsReducer,
+        choiceElements: choiceElementsReducer
+    }),
     canvas: combineReducers({
         selectedElementId: selectedElementIdReducer,
         isMouseDown: isMouseDownReducer,
         canvasOperation: canvasOperationReducer,
-        defaultRelationshipType: defaultRelationshipTypeReducer
+        defaultRelationshipType: defaultRelationshipTypeReducer,
+        diagramType: diagramTypeReducer,
+        canvasDimensions: canvasDimensionsReducer
     }),
     ribbon: combineReducers({
         canvasZoom: canvasZoomReducer
