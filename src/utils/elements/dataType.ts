@@ -5,6 +5,42 @@ import IDataType from '@interfaces/class-diagram/data-type/IDataType';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ICoordinates from '@interfaces/ICoordinates';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
+import ICCXMLDataType from '@interfaces/ccxml/ICCXMLDataType';
+
+export const createNewDataTypeFromCCXML = (coordinates: ICoordinates, ccxmlDataType: ICCXMLDataType) => {
+    const frame = createFrame(coordinates, ccxmlDataType.entry.length + 1);
+    frame.height += (frame.rowHeight / 2);
+
+    const entryIds: Array<string> = [];
+    const entries: Array<IDataTypeEntry> = ccxmlDataType.entry.map((ccxmlEntry): IDataTypeEntry => {
+        const newEntryId = v4();
+        entryIds.push(newEntryId);
+
+        return {
+            id: newEntryId,
+            type: EntryTypeEnum.BASE,
+            value: ccxmlEntry.$.value
+        };
+    });
+
+    const newDataType: IDataType = {
+        id: v4(),
+        type: ClassDiagramElementsEnum.DATA_TYPE,
+        data: {
+            elementName: ccxmlDataType.$.id,
+            entryIds: entryIds
+        },
+        graphicData: {
+            frame,
+            sections: {}
+        }
+    };
+
+    return {
+        newDataType,
+        entries
+    };
+};
 
 export const createNewDataType = (coordinates: ICoordinates) => {
     const frame = createFrame(coordinates, 2);

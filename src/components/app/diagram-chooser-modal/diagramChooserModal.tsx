@@ -3,18 +3,13 @@ import ReactDOM from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDiagramType } from '@store/actions/canvas.action';
 import DiagramTypeEnum from '@enums/diagramTypeEnum';
-import { diagramTypeReducer } from '@store/reducers/canvas.reducers';
-import  { parseString } from 'xml2js';
-import ISCXMLState from '@interfaces/scxml/ISCXMLState';
-import ISCXML from '@interfaces/scxml/ISCXML';
+import  { parseStringPromise } from 'xml2js';
 import { addNewStateElement, addNewFinalStateElement, addNewInitialStateElement } from '@store/actions/stateDiagram.action';
-import { createNewStateElementFromSCXML } from '@utils/elements/stateElement';
 import IStoreState from '@interfaces/IStoreState';
-import ICoordinates from '@interfaces/ICoordinates';
 import { parseStateDiagram } from '@utils/scxmlParser';
-import { addNewRelationship, addNewRelationshipSegment } from '@store/actions/classDiagram.action';
+import { addNewRelationship, addNewRelationshipSegment, addNewElement, addNewElementEntry } from '@store/actions/classDiagram.action';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { InputFileSystem } from 'webpack';
+import { parseClassDiagram } from '@utils/ccxmlParser';
 
 const DiagramChooserModal = () => {
     const dispatch = useDispatch();
@@ -31,39 +26,54 @@ const DiagramChooserModal = () => {
         setIsActive(false);
     };
 
-    const createTargetState = () => {
-
-    };
-
     const openExistingDiagram = async (xml: string) => {
-        const {
-            newStateElements,
-            newFinalStateElements,
-            newRelationShipSegments,
-            newRelationShips,
-            newInitialStateElement,
-            isValid,
-            error,
-            warning
-        } = await parseStateDiagram(xml, { x: canvasWidth, y: canvasHeight });
-        if (isValid) {
-            newStateElements.forEach((newStateElement) => {
-                dispatch(addNewStateElement(newStateElement));
+        const parsedXml = (await parseStringPromise(xml));
+
+        if (parsedXml.scxml) {
+            const {
+                newStateElements,
+                newFinalStateElements,
+                newRelationShipSegments,
+                newRelationShips,
+                newInitialStateElement,
+                isValid,
+                error,
+                warning
+            } = await parseStateDiagram(parsedXml.scxml, { x: canvasWidth, y: canvasHeight });
+            if (isValid) {
+                newStateElements.forEach((newStateElement) => {
+                    dispatch(addNewStateElement(newStateElement));
+                });
+                newFinalStateElements.forEach((newFinalStateElement) => {
+                    dispatch(addNewFinalStateElement(newFinalStateElement));
+                });
+                newRelationShipSegments.forEach((segment) => {
+                    dispatch(addNewRelationshipSegment(segment));
+                });
+                newRelationShips.forEach((relationship) => {
+                    dispatch(addNewRelationship(relationship));
+                });
+                dispatch(addNewInitialStateElement(newInitialStateElement));
+                dispatch(setDiagramType(DiagramTypeEnum.STATE));
+                setIsActive(false);
+            } else {
+                error !== '' ? alert(error) : alert(warning);
+            }
+        } else if (parsedXml.ccxml) {
+            const {
+                newElements,
+                newRelationShipSegments,
+                newRelationShips,
+                newEntries
+            } = await parseClassDiagram(parsedXml.ccxml, { x: canvasWidth, y: canvasHeight });
+            newEntries.forEach((newEntry) => {
+                dispatch(addNewElementEntry(newEntry));
             });
-            newFinalStateElements.forEach((newFinalStateElement) => {
-                dispatch(addNewFinalStateElement(newFinalStateElement));
+            newElements.forEach((newElement) => {
+                dispatch(addNewElement(newElement));
             });
-            newRelationShipSegments.forEach((segment) => {
-                dispatch(addNewRelationshipSegment(segment));
-            });
-            newRelationShips.forEach((relationship) => {
-                dispatch(addNewRelationship(relationship));
-            });
-            dispatch(addNewInitialStateElement(newInitialStateElement));
-            dispatch(setDiagramType(DiagramTypeEnum.STATE));
+            dispatch(setDiagramType(DiagramTypeEnum.CLASS));
             setIsActive(false);
-        } else {
-            error !== '' ? alert(error) : alert(warning);
         }
     };
 

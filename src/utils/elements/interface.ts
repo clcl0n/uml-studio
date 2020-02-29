@@ -7,6 +7,67 @@ import IInterface from '@interfaces/class-diagram/interface/IInterface';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
+import ICCXMLInterface from '@interfaces/ccxml/ICCXMLInterface';
+import IInterfaceProperty from '@interfaces/class-diagram/interface/IInterfaceProperty';
+import IInterfaceMethod from '@interfaces/class-diagram/interface/IInterfaceMethod';
+
+export const createNewInterfaceFromCCXML = (coordinates: ICoordinates, ccxmlInterface: ICCXMLInterface) => {
+    const frame = createFrame(coordinates, ccxmlInterface.method.length + ccxmlInterface.property.length + 1);
+    frame.height += (frame.rowHeight / 2);
+
+    const entryIds: Array<string> = [];
+    const entries: Array<IInterfaceProperty | IInterfaceMethod> = [
+        ...ccxmlInterface.method.map((ccxmlMethod): IInterfaceMethod => {
+            const newMethodId = v4();
+            entryIds.push(newMethodId);
+            return {
+                id: newMethodId,
+                accessModifier: ccxmlMethod.$.modifier.toUpperCase() as AccessModifierEnum,
+                type: EntryTypeEnum.METHOD,
+                value: ccxmlMethod.$.property
+            };
+        }),
+        ...ccxmlInterface.property.map((ccxmProperty): IInterfaceProperty => {
+            const newPropertyId = v4();
+            entryIds.push(newPropertyId);
+
+            return {
+                id: newPropertyId,
+                accessModifier: ccxmProperty.$.modifier.toUpperCase() as AccessModifierEnum,
+                type: EntryTypeEnum.PROPERTY,
+                value: ccxmProperty.$.property
+            };
+        })
+    ];
+
+    const newInterface: IInterface = {
+        id: v4(),
+        type: ClassDiagramElementsEnum.INTERFACE,
+        data: {
+            elementName: ccxmlInterface.$.id,
+            entryIds
+        },
+        graphicData: {
+            frame,
+            sections: {
+                head: {
+                    y: frame.y
+                },
+                properties: {
+                    y: frame.y + frame.rowHeight + (frame.rowHeight / 2)
+                },
+                methods: {
+                    y: frame.y + (2 * frame.rowHeight) + (frame.rowHeight / 2)
+                }
+            }
+        }
+    };
+
+    return {
+        newInterface,
+        entries
+    };
+};
 
 export const createNewInterface = (coordinates: ICoordinates) => {
     const frame = createFrame(coordinates, 3);

@@ -5,6 +5,41 @@ import { v4 } from 'uuid';
 import ICoordinates from '@interfaces/ICoordinates';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
+import ICCXMLObject from '@interfaces/ccxml/ICCXMLObject';
+
+export const createNewObjectFromCCXML = (coordinates: ICoordinates, ccxmlObject: ICCXMLObject) => {
+    const frame = createFrame(coordinates, ccxmlObject.slot.length + 1);
+    const entryIds: Array<string> = [];
+    const entries: Array<IObjectSlot> = ccxmlObject.slot.map((ccxmlSlot): IObjectSlot => {
+        const newSlotId = v4();
+        entryIds.push(newSlotId);
+
+        return {
+            id: newSlotId,
+            featureName: ccxmlSlot.$.feature,
+            value: ccxmlSlot.$.value,
+            type: EntryTypeEnum.SLOT
+        };
+    });
+
+    const newObject: IObject = {
+        id: v4(),
+        data: {
+            elementName: ccxmlObject.$.id,
+            entryIds: entryIds
+        },
+        type: ClassDiagramElementsEnum.OBJECT,
+        graphicData: {
+            frame,
+            sections: {}
+        }
+    };
+
+    return {
+        newObject,
+        entries
+    };
+};
 
 export const createNewObject = (coordinates: ICoordinates) => {
     const frame = createFrame(coordinates, 2);

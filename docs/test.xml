@@ -1,0 +1,52 @@
+<ccxml name="Ccxml" version="1.0" initialclass="class2">
+    <utility id="utility">
+        <property modifier="public" property="text..."/>
+        <method modifier="public" property="text..."/>
+                <transition head="Start" value="value..." tail="1" target="utility2"/>
+        <transition head="Start" value="value..." tail="1" target="utility3"/>
+    </utility>
+    <class id="class2">
+        <property modifier="public" property="text..."/>
+        <method modifier="private" property="text..."/>
+        <method modifier="private" property="text..."/>
+        <method modifier="private" property="text..."/>
+        <method modifier="private" property="text..."/>
+        <transition head="Start" value="value..." tail="1" target="utility3"/>
+    </class>
+    <class id="class">
+        <property modifier="public" property="text..."/>
+        <method modifier="public" property="text..."/>
+        <transition head="Start" value="value..." tail="1" target="utility2"/>
+        <transition head="Start" value="value..." tail="1" target="utility3"/>
+    </class>
+    <utility id="utility2">
+        <property modifier="public" property="text..."/>
+        <method modifier="public" property="text..."/>
+        <transition head="Start" value="value..." tail="1" target="class"/>
+        <transition head="Start" value="value..." tail="1" target="utility"/>
+    </utility>
+    <utility id="utility3">
+        <property modifier="public" property="text..."/>
+        <method modifier="public" property="text..."/>
+        <transition head="Start" value="value..." tail="1" target="utility"/>
+        <transition head="Start" value="value..." tail="1" target="object"/>
+        <transition head="Start" value="value..." tail="1" target="primitive"/>
+    </utility>
+    <primitive id="primitive">
+        <transition head="Start" value="value..." tail="1" target="object"/>
+    </primitive>
+    <object id="object">
+        <slot feature="feature..." value="value..."/>
+        <transition head="Start" value="value..." tail="1" target="interface"/>
+    </object>
+    <!-- <interface id="interface">
+        <property modifier="public" property="text..."/>
+        <method modifier="public" property="text..."/>
+    </interface>
+    <enumeration id="enumeration">
+        <entry value="value..."/>
+    </enumeration>
+    <datatype id="datatype">
+        <entry value="value..."/>
+    </datatype> -->
+</ccxml>

@@ -16,15 +16,13 @@ import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelat
 import Direction from '@enums/direction';
 import IInitialStateElement from '@interfaces/state-diagram/initial-state/IInitialStateElement';
 
-export const parseStateDiagram =  async (xml: string, canvasDimensions: ICoordinates) => {
+export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoordinates) => {
     const newStateElements: Array<IStateElement> = [];
     const newFinalStateElements: Array<IFinalStateElement> = [];
     const newRelationShips: Array<IRelationship> = [];
     const newRelationShipSegments: Array<IRelationshipSegment> = [];
     let newInitialStateElement: IInitialStateElement;
     const scxmlExistingStates: Array<string> = [];
-
-    const scxml: ISCXML = (await parseStringPromise(xml)).scxml;
 
     const canvasMiddle: ICoordinates = { x: canvasDimensions.x / 2, y: canvasDimensions.y / 2 };
     const coordinates: ICoordinates = { x: canvasMiddle.x, y: canvasMiddle.y };
