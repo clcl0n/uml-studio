@@ -72,6 +72,12 @@ const DiagramChooserModal = () => {
             newElements.forEach((newElement) => {
                 dispatch(addNewElement(newElement));
             });
+            newRelationShipSegments.forEach((newRelationShipSegment) => {
+                dispatch(addNewRelationshipSegment(newRelationShipSegment));
+            });
+            newRelationShips.forEach((newRelationShip) => {
+                dispatch(addNewRelationship(newRelationShip));
+            });
             dispatch(setDiagramType(DiagramTypeEnum.CLASS));
             setIsActive(false);
         }

@@ -20,6 +20,9 @@ import { createNewEnumeration, createNewEnumerationFromCCXML } from './elements/
 import { createNewInterface, createNewInterfaceFromCCXML } from './elements/interface';
 import { createNewObject, createNewObjectFromCCXML } from './elements/object';
 import { createNewPrimitiveType, createNewPrimitiveTypeFromCCXML } from './elements/primitiveType';
+import Direction from '@enums/direction';
+import { createNewRelationship } from './elements/relationship';
+import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 
 const isCCXMLValid = (ccxml: ICCXML) => {
     let error = '';
@@ -283,7 +286,136 @@ export const parseClassDiagram = async (ccxml: ICCXML, canvasDimensions: ICoordi
             coordinates.y = canvasMiddle.y;
             previousLayer = currentLayer;
         }
+
+        const allElements = elementsToAdd(
+            ccxmlClass,
+            ccxmlDatatype,
+            ccxmlEnumeration,
+            ccxmlInterface,
+            ccxmlObject,
+            ccxmlPrimitive,
+            ccxmlUtility,
+            []
+        ).map((a) => {
+            return {
+                name: a.$.id,
+                upOffset: 0,
+                downOffset: 0,
+                transition: a.transition
+            };
+        });
+        allElements.forEach((ccxmlElement) => {
+            let relationshipCenterOffsetUp = 0;
+            let relationshipCenterOffsetDown = 0;
+            let offsetRelation = 0;
+            const fromElement = newElements.find((newElement) => newElement.data.elementName === ccxmlElement.name);
+            const { graphicData } = fromElement;
+            const ccxmlTransitions = ccxmlElement.transition;
+            const out_1: ICoordinates = {
+                x: graphicData.frame.x + graphicData.frame.width,
+                y: graphicData.frame.y
+            };
+            const out_2: ICoordinates = {
+                x: graphicData.frame.x + graphicData.frame.width,
+                y: graphicData.frame.y + graphicData.frame.height
+            };
+
+            if (ccxmlTransitions?.length > 0) {
+                ccxmlTransitions.forEach((ccxmlTransition) => {
+                    let toStateElementPosition: Direction;
+                    let toStateElementPositionY: Direction;
+                    let toStateX = 0;
+                    let fromStateX = 0;
+                    let offsetJoin = 0;
+                    const toElement = newElements.find((newElement) => newElement.data.elementName === ccxmlTransition.$.target);
+                    toStateX = toElement.graphicData.frame.x;
+                    fromStateX = fromElement.graphicData.frame.x;
+                    toStateElementPositionY = fromElement.graphicData.frame.y >= toElement.graphicData.frame.y ? Direction.UP : Direction.DOWN;
+                    toStateElementPosition = fromElement.graphicData.frame.x > toElement.graphicData.frame.x ? Direction.LEFT : Direction.RIGHT;
+
+                    if (toStateElementPositionY === Direction.UP) {
+                        if (toStateElementPosition === Direction.RIGHT) {
+                            if (relationshipCenterOffsetUp > -80) {
+                                relationshipCenterOffsetUp -= 15;
+                            }
+                            offsetRelation = relationshipCenterOffsetUp;
+                        } else {
+                            let t = allElements.find((s) => s.name === ccxmlTransition.$.target);
+                            if (t.upOffset < 80) {
+                                t.upOffset += 15;
+                            }
+                            offsetRelation = t.upOffset;
+                        }
+                    } else {
+                        if (toStateElementPosition === Direction.RIGHT) {
+                            if (relationshipCenterOffsetDown > -80) {
+                                relationshipCenterOffsetDown -= 15;
+                            }
+                            offsetRelation = relationshipCenterOffsetDown;
+                        } else {
+                            let t = allElements.find((s) => s.name === ccxmlTransition.$.target);
+                            if (t.downOffset < 80) {
+                                t.downOffset += 15;
+                            }
+                            offsetRelation = t.downOffset;
+                        }
+                    }
+                    const fromSegmentOffsets = (fromElement.graphicData.frame.height / 3);
+                    const snapPoint: ICoordinates = {
+                        x: toElement.graphicData.frame.x,
+                        y: fromElement.graphicData.frame.y + (fromElement.graphicData.frame.height / 3)
+                    };
+                    const snapPoint2: ICoordinates = {
+                        x: toElement.graphicData.frame.x,
+                        y: fromElement.graphicData.frame.y + ((fromElement.graphicData.frame.height / 3) * 2)
+                    };
+
+                    // TODO:
+                    offsetJoin = toElement.graphicData.frame.height / 3;
+                    snapPoint.y = toElement.graphicData.frame.y;
+
+                    if (toStateX === fromStateX) {
+                        const { relationship, relationshipSegments } = createNewRelationship(
+                            ClassDiagramRelationshipTypesEnum.ASSOCIATION,
+                            {
+                                x1: toStateElementPosition === Direction.LEFT ? graphicData.frame.x : out_1.x,
+                                y1: toStateElementPosition === Direction.LEFT ? out_1.y : 
+                                    toStateElementPositionY === Direction.UP ? out_1.y : out_2.y,
+                                x2: toStateX + toElement.graphicData.frame.width,
+                                y2: toStateElementPositionY === Direction.UP ? snapPoint.y + (offsetJoin * 3) : snapPoint.y
+                            },
+                            fromElement.id,
+                            toElement.id,
+                            20
+                        );
+                        newRelationShips.push(relationship);
+                        newRelationShipSegments.push(...relationshipSegments);
+                    } else {
+                        const { relationship, relationshipSegments } = createNewRelationship(
+                            ClassDiagramRelationshipTypesEnum.ASSOCIATION,
+                            {
+                                x1: toStateElementPosition === Direction.LEFT ? graphicData.frame.x : out_1.x,
+                                y1: toStateElementPosition === Direction.LEFT ? 
+                                    toStateElementPositionY === Direction.UP ? graphicData.frame.y + fromSegmentOffsets : graphicData.frame.y + (fromSegmentOffsets * 2)
+                                    : toStateElementPositionY === Direction.UP ? out_1.y : out_2.y,
+                                x2: toStateElementPosition === Direction.LEFT ? toStateX + toElement.graphicData.frame.width : snapPoint.x,
+                                y2: toStateElementPosition === Direction.LEFT ?
+                                    toStateElementPositionY === Direction.UP ? snapPoint.y + (offsetJoin * 2) : snapPoint.y + offsetJoin
+                                    : snapPoint.y
+                            },
+                            fromElement.id,
+                            toElement.id,
+                            offsetRelation,
+                            ccxmlTransition.$.value
+                        );
+                        newRelationShips.push(relationship);
+                        newRelationShipSegments.push(...relationshipSegments);
+                    }
+                }); 
+            }
+        });
     }
+
 
     return {
         newElements,
