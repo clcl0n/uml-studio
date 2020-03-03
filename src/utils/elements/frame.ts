@@ -8,8 +8,7 @@ import IStateElement from '@interfaces/state-diagram/state/IStateElement';
 const minWidth = 100;
 const minHeight = 100;
 
-export const createFrame = (coordinates: ICoordinates, numerOfRows: number, rowHeight: number = 25): IFrame => {
-    const width: number = 100;
+export const createFrame = (coordinates: ICoordinates, numerOfRows: number, rowHeight: number = 25, width: number = 100): IFrame => {
     const height: number = numerOfRows * rowHeight;
     const xElementCenter: number = coordinates.x;
     const yElementCenter: number = coordinates.y;

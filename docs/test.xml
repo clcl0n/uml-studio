@@ -1,4 +1,4 @@
-<ccxml name="Ccxml" version="1.0" initialclass="class2">
+<ccxml name="Ccxml" version="1.0" coordinates="false" initialclass="class2">
     <utility id="utility">
         <property modifier="public" property="text..."/>
         <method modifier="public" property="text..."/>

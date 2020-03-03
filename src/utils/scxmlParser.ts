@@ -15,12 +15,16 @@ import IRelationship from '@interfaces/class-diagram/relationships/IRelationship
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
 import Direction from '@enums/direction';
 import IInitialStateElement from '@interfaces/state-diagram/initial-state/IInitialStateElement';
+import { v4 } from 'uuid';
+import SegmentDirection from '@enums/segmentDirection';
+import ICSXMLInitial from '@interfaces/scxml/ICSXMLInitial';
 
 export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoordinates) => {
     const newStateElements: Array<IStateElement> = [];
     const newFinalStateElements: Array<IFinalStateElement> = [];
     const newRelationShips: Array<IRelationship> = [];
     const newRelationShipSegments: Array<IRelationshipSegment> = [];
+    const newInitialStateElements: Array<IInitialStateElement> = [];
     let newInitialStateElement: IInitialStateElement;
     const scxmlExistingStates: Array<string> = [];
 
@@ -32,7 +36,7 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
 
     const { isValid, warning, error } = isSCXMLValid(scxml);
 
-    if (scxml && isValid) {
+    if (scxml && isValid && !scxml.$.coordinates) {
         const scxmlStates = scxml.state ?? [];
         const scxmlParallels = scxml.parallel ?? [];
         const scxmlFinals = scxml.final ?? [];
@@ -41,7 +45,7 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
             newInitialStateElement = createNewInitialStateElement({
                 x: coordinates.x - (layerDistance / 2),
                 y: coordinates.y
-            }).initialStateElement;
+            }, 'initial').initialStateElement;
             const { relationship, relationshipSegments } = createNewRelationship(
                 ClassDiagramRelationshipTypesEnum.ASSOCIATION,
                 {
@@ -53,7 +57,9 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
                     y2:  initialState.type === StateDiagramElementsEnum.STATE ? 
                     (initialState as IStateElement).graphicData.frame.y + (initialState as IStateElement).graphicData.rx : 
                     (initialState as IFinalStateElement).graphicData.y
-                }
+                },
+                newInitialStateElement.id,
+                initialState.id
             );
             newRelationShips.push(relationship);
             newRelationShipSegments.push(...relationshipSegments);
@@ -251,6 +257,85 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
 
             }
         }
+    } else if (scxml.$.coordinates === 'true') {
+        scxml?.state?.forEach(e => {
+            const stateElement = createNewStateElementFromSCXML(e, { x: Number.parseFloat(e.$.x), y: Number.parseFloat(e.$.y) });
+            newStateElements.push(stateElement);
+        });
+        scxml?.final?.forEach(e => {
+            const { finalStateElement } = createNewFinalStateElement({ x: Number.parseFloat(e.$.x), y: Number.parseFloat(e.$.y) }, e.$.id);
+           newFinalStateElements.push(finalStateElement); 
+        });
+
+        const createRelationships = (element: ISCXMLState | ICSXMLInitial) => {
+            element?.transition?.forEach(t => {
+                const fromElement = newStateElements.find(e => e.data.name === element.$.id)?.id ?? newInitialStateElements.find(e => e.name === element.$.id).id;
+                const toElement = newStateElements.find(e => e.data.name === t.$.target);
+                const toFinalElement = newFinalStateElements.find(e => e.name === t.$.target);
+                const relationshipId = v4();
+                const headCoord: ICoordinates = { x: Number.parseFloat(t.$.headCoord.split(':')[0]), y: Number.parseFloat(t.$.headCoord.split(':')[1]) }; 
+                const tailCoord: ICoordinates = { x: Number.parseFloat(t.$.tailCoord.split(':')[0]), y: Number.parseFloat(t.$.tailCoord.split(':')[1]) };
+                const relationshipSegmentIds: Array<string> = [];
+                
+                const segments = t.$.segments.split(';');
+
+                segments.forEach((segment) => {
+                    const segmentSplit = segment.split(':');
+                    const x = Number.parseFloat(segmentSplit[0]);
+                    const y = Number.parseFloat(segmentSplit[1]);
+                    const lineToX = Number.parseFloat(segmentSplit[2]);
+                    const lineToY = Number.parseFloat(segmentSplit[3]);
+                    const isStart = segmentSplit[4] === 'true';
+                    const isEnd = segmentSplit[5] === 'true';
+                    const direction = segmentSplit[6].toUpperCase() as SegmentDirection;
+                    const newId = segmentSplit[7];
+                    const fromElementId = segmentSplit[8];
+                    const toElementId = segmentSplit[9];
+                    newRelationShipSegments.push({
+                        id: newId,
+                        x,
+                        y,
+                        lineToX,
+                        lineToY,
+                        isEnd,
+                        isStart,
+                        direction,
+                        relationshipId,
+                        fromSegmentId: fromElementId,
+                        toSegmentId: toElementId
+                    });
+                    relationshipSegmentIds.push(newId);
+                });
+
+
+                newRelationShips.push({
+                    id: relationshipId,
+                    fromElementId: fromElement,
+                    toElementId: toElement ? toElement.id : toFinalElement.id,
+                    direction: t.$.direction.toUpperCase() as Direction,
+                    headValue: '',
+                    tailValue: '',
+                    relationshipValue: t.$.event,
+                    segmentIds: relationshipSegmentIds,
+                    type: t.$.type.toUpperCase() as ClassDiagramRelationshipTypesEnum,
+                    head: headCoord,
+                    tail: tailCoord
+                });
+            });
+        };
+
+        scxml?.initial?.forEach(e => {
+            const { initialStateElement } = createNewInitialStateElement({
+                x: Number.parseFloat(e.$.x),
+                y: Number.parseFloat(e.$.y)
+            }, e.$.id);
+
+            newInitialStateElements.push(initialStateElement);
+        });
+
+        scxml?.state?.forEach(e => createRelationships(e));
+        scxml?.initial?.forEach(e => createRelationships(e));
+
     } else {
         error !== '' ? console.error(error) : console.warn(warning);
     }
@@ -260,6 +345,7 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
         newFinalStateElements,
         newRelationShips,
         newRelationShipSegments,
+        newInitialStateElements,
         newInitialStateElement,
         isValid,
         error,
@@ -287,7 +373,9 @@ const createInitialDiagramState = (scxml: ISCXML, coordinates: ICoordinates) => 
         newInitialStateElement = createNewFinalStateElement(coordinates, finalState.$.id).finalStateElement;
         scxmlInitialState = {
             $: {
-                id: finalState.$.id
+                id: finalState.$.id,
+                x: finalState.$.x,
+                y: finalState.$.y
             },
             transition: [],
             invoke: [],
@@ -314,7 +402,9 @@ const createTargetedState = (scxmlStates: Array<ISCXMLState>, scxmlParallels: Ar
         newFinal = finalStateElement;
         targetedState = {
             $: {
-                id: final.$.id
+                id: final.$.id,
+                x: final.$.x,
+                y: final.$.y
             },
             transition: [],
             invoke: [],

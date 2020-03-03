@@ -36,6 +36,7 @@ const DiagramChooserModal = () => {
                 newRelationShipSegments,
                 newRelationShips,
                 newInitialStateElement,
+                newInitialStateElements,
                 isValid,
                 error,
                 warning
@@ -53,7 +54,12 @@ const DiagramChooserModal = () => {
                 newRelationShips.forEach((relationship) => {
                     dispatch(addNewRelationship(relationship));
                 });
-                dispatch(addNewInitialStateElement(newInitialStateElement));
+                if (newInitialStateElement) {
+                    dispatch(addNewInitialStateElement(newInitialStateElement));
+                }
+                newInitialStateElements.forEach(e => {
+                    dispatch(addNewInitialStateElement(e));
+                });
                 dispatch(setDiagramType(DiagramTypeEnum.STATE));
                 setIsActive(false);
             } else {

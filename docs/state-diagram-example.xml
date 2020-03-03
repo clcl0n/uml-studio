@@ -1,4 +1,4 @@
-<scxml name="Scxml" version="1.0" xmlns="http://www.w3.org/2005/07/scxml" initialstate="Generator">
+<scxml name="Scxml" version="1.0" xmlns="http://www.w3.org/2005/07/scxml" initial="Generator">
         <state id="Generator">
             <onentry>
                 <assign expr="os.clock()" location="tm_ELAPSED"/>

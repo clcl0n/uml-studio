@@ -78,3 +78,24 @@ export const updateStateElement = (element: IStateElement): IReducerPayload<Stat
         data: element
     };
 };
+
+export const clearStateElements = () : IReducerPayload<StateDiagramActionEnum, {}> => {
+    return {
+        type: StateDiagramActionEnum.CLEAR_STATE_ELEMENTS,
+        data: {}
+    };
+};
+
+export const clearFinalStateElements = () : IReducerPayload<StateDiagramActionEnum, {}> => {
+    return {
+        type: StateDiagramActionEnum.CLEAR_FINAL_STATE_ELEMENTS,
+        data: {}
+    };
+};
+
+export const clearInitialStateElements = () : IReducerPayload<StateDiagramActionEnum, {}> => {
+    return {
+        type: StateDiagramActionEnum.CLEAR_INITIAL_STATE_ELEMENTS,
+        data: {}
+    };
+};

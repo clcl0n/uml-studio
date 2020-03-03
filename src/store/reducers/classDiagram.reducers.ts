@@ -61,6 +61,11 @@ export const relationshipsReducer = (state = relationshipsState, payload: IReduc
                 byId: {...state.byId},
                 allIds: state.allIds.filter((id) => id !== payload.data.id)
             };
+        case ClassDiagramActionEnum.CLEAR_RELATIONSHIPS:
+            return {
+                byId: {},
+                allIds: []
+            };
         default:
             return state;
     }
@@ -93,6 +98,11 @@ export const relationshipSegmentsReducer = (state = relationshipSegmentsState, p
             return {
                 byId: {...state.byId},
                 allIds: state.allIds.filter((id) => id !== payload.data.id)
+            };
+        case ClassDiagramActionEnum.CLEAR_RELATIONSHIP_SEGMENTS:
+            return {
+                byId: {},
+                allIds: []
             };
         default:
             return state;
@@ -141,6 +151,11 @@ export const elementEntriesReducer = (state = elementEntriesState, payload: IRed
             delete state.byId[payload.data.id];
 
             return {...state};
+        case ClassDiagramActionEnum.CLEAR_ELEMENT_ENTRIES:
+            return {
+                byId: {},
+                allIds: []
+            };
         default:
             return state;
     }
@@ -166,6 +181,11 @@ export const elementsReducer = (state = elementsState, payload: IReducerPayload<
                     ...newElement
                 },
                 allIds: [...state.allIds]
+            };
+        case ClassDiagramActionEnum.CLEAR_ELEMENTS:
+            return {
+                byId: {},
+                allIds: []
             };
         default:
             return state;

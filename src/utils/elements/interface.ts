@@ -11,8 +11,8 @@ import ICCXMLInterface from '@interfaces/ccxml/ICCXMLInterface';
 import IInterfaceProperty from '@interfaces/class-diagram/interface/IInterfaceProperty';
 import IInterfaceMethod from '@interfaces/class-diagram/interface/IInterfaceMethod';
 
-export const createNewInterfaceFromCCXML = (coordinates: ICoordinates, ccxmlInterface: ICCXMLInterface) => {
-    const frame = createFrame(coordinates, ccxmlInterface.method.length + ccxmlInterface.property.length + 1);
+export const createNewInterfaceFromCCXML = (coordinates: ICoordinates, ccxmlInterface: ICCXMLInterface, width: number = 100) => {
+    const frame = createFrame(coordinates, ccxmlInterface.method.length + ccxmlInterface.property.length + 1, width);
     frame.height += (frame.rowHeight / 2);
 
     const entryIds: Array<string> = [];

@@ -22,6 +22,9 @@ import RelationshipEdit from './options/relationship/relationshipEdit';
 import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
 import StateEdit from './options/state/stateEdit';
 import IStateElement from '@interfaces/state-diagram/state/IStateElement';
+import FinalInitialStateEdit from './options/final-initial-state/finalInitialStateEdit';
+import IFinalStateElement from '@interfaces/state-diagram/final-state/IFinalStateElement';
+import IInitialStateElement from '@interfaces/state-diagram/initial-state/IInitialStateElement';
 
 const SideBar = () => {
     const {
@@ -59,6 +62,12 @@ const SideBar = () => {
                 break;
             case StateDiagramElementsEnum.STATE:
                 editOptions = <StateEdit {...{ state: selectedElement as IStateElement }}/>;
+                break;
+            case StateDiagramElementsEnum.INITIAL_STATE:
+                editOptions = <FinalInitialStateEdit element={selectedElement as IInitialStateElement}/>;
+                break;
+            case StateDiagramElementsEnum.FINAL_STATE:
+                editOptions = <FinalInitialStateEdit element={selectedElement as IFinalStateElement}/>;
                 break;
         }
     } else if (selectedRelationship) {

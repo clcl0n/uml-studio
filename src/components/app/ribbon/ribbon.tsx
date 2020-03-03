@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './ribbon.scss';
 import NavTools from './nav-tools';
@@ -19,12 +19,23 @@ import ClassElements from './class-elements/classElements';
 import useDiagram from 'hooks/useDiagram';
 import DiagramTypeEnum from '@enums/diagramTypeEnum';
 import StateElements from './state-elements/stateElements';
+import { serializeCCXML } from '@utils/serializeCCXML';
+import { saveAs } from 'file-saver';
+import { serializeSCXML } from '@utils/serializeSCXML';
+import { parseStringPromise } from 'xml2js';
+import { parseStateDiagram } from '@utils/scxmlParser';
+import { addNewStateElement, addNewFinalStateElement, addNewInitialStateElement, clearFinalStateElements, clearInitialStateElements, clearStateElements } from '@store/actions/stateDiagram.action';
+import { addNewRelationshipSegment, addNewRelationship, addNewElementEntry, addNewElement, clearRelationshipSegments, clearRelationships, clearElementEntries, clearElements } from '@store/actions/classDiagram.action';
+import { setDiagramType } from '@store/actions/canvas.action';
+import { parseClassDiagram } from '@utils/ccxmlParser';
 
 const Ribbon = () => {  
     const dispatch = useDispatch();
+    const [isActive, setIsActive] = useState(true);
+    const { x: canvasWidth, y: canvasHeight } = useSelector((store: IStoreState) => store.canvas.canvasDimensions);
     const canvasZoom: number = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
     const { canvasDefaultRelationshipType, setCanvasDefaultRelationshipType } = useCanvasDefaultRelationshipType();
-    const { diagramType } = useDiagram();
+    const { diagramType, classDiagram, stateDiagram } = useDiagram();
 
     const relationshipTypes = [ 
         ClassDiagramRelationshipTypesEnum.AGGREGATION,
@@ -90,6 +101,106 @@ const Ribbon = () => {
         ) : <div/>;
     };
 
+    const save = () => {
+        if (diagramType === DiagramTypeEnum.CLASS) {
+            const xml = serializeCCXML(classDiagram);
+            const xmlBlob = new Blob([xml], {
+                type: 'text/plain;charset=utf-8'
+            });
+            saveAs(xmlBlob, 'ccxml.xml');
+        } else {
+            const xml = serializeSCXML(stateDiagram, classDiagram);
+            const xmlBlob = new Blob([xml], {
+                type: 'text/plain;charset=utf-8'
+            });
+            saveAs(xmlBlob, 'scxml.xml');
+        }
+    };
+
+    const load = async (xml: string) => {
+        dispatch(clearFinalStateElements());
+        dispatch(clearInitialStateElements());
+        dispatch(clearStateElements());
+        dispatch(clearRelationships());
+        dispatch(clearRelationshipSegments());
+        dispatch(clearElementEntries());
+        dispatch(clearElements());
+        const parsedXml = (await parseStringPromise(xml));
+
+        if (parsedXml.scxml) {
+            const {
+                newStateElements,
+                newFinalStateElements,
+                newRelationShipSegments,
+                newRelationShips,
+                newInitialStateElement,
+                newInitialStateElements,
+                isValid,
+                error,
+                warning
+            } = await parseStateDiagram(parsedXml.scxml, { x: canvasWidth, y: canvasHeight });
+            if (isValid) {
+                newStateElements.forEach((newStateElement) => {
+                    dispatch(addNewStateElement(newStateElement));
+                });
+                newFinalStateElements.forEach((newFinalStateElement) => {
+                    dispatch(addNewFinalStateElement(newFinalStateElement));
+                });
+                newRelationShipSegments.forEach((segment) => {
+                    dispatch(addNewRelationshipSegment(segment));
+                });
+                newRelationShips.forEach((relationship) => {
+                    dispatch(addNewRelationship(relationship));
+                });
+                if (newInitialStateElement) {
+                    dispatch(addNewInitialStateElement(newInitialStateElement));
+                }
+                newInitialStateElements.forEach(e => {
+                    dispatch(addNewInitialStateElement(e));
+                });
+                dispatch(setDiagramType(DiagramTypeEnum.STATE));
+                setIsActive(false);
+            } else {
+                error !== '' ? alert(error) : alert(warning);
+            }
+        } else if (parsedXml.ccxml) {
+            const {
+                newElements,
+                newRelationShipSegments,
+                newRelationShips,
+                newEntries
+            } = await parseClassDiagram(parsedXml.ccxml, { x: canvasWidth, y: canvasHeight });
+            newEntries.forEach((newEntry) => {
+                dispatch(addNewElementEntry(newEntry));
+            });
+            newElements.forEach((newElement) => {
+                dispatch(addNewElement(newElement));
+            });
+            newRelationShipSegments.forEach((newRelationShipSegment) => {
+                dispatch(addNewRelationshipSegment(newRelationShipSegment));
+            });
+            newRelationShips.forEach((newRelationShip) => {
+                dispatch(addNewRelationship(newRelationShip));
+            });
+            dispatch(setDiagramType(DiagramTypeEnum.CLASS));
+            setIsActive(false);
+        }
+    };
+
+    const onFileUpload = (event: React.FormEvent<HTMLInputElement>) => {
+        event.persist();
+        const file = (event.target as any).files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            load(e.target.result.toString());
+        };
+        reader.readAsText(file);
+    };
+    
+    const clearFileInput = (ev: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+        (ev.target as any).value = null;
+    };
+
     return (
         <div id='ribbon'>
             <NavTools/>
@@ -97,8 +208,8 @@ const Ribbon = () => {
                 <div id='tools'>
                     <a className='button is-small is-text'>
                         <FontAwesomeIcon size='lg' icon='print'/>
-                    </a>    
-                    <a className='button is-small is-text'>
+                    </a>  
+                    <a onClick={() => save()} className='button is-small is-text'>
                         <FontAwesomeIcon icon='save'/>
                     </a>
                     <a className='button is-small is-text'>
@@ -116,6 +227,17 @@ const Ribbon = () => {
                     <a onClick={(ev) => dispatch(canvasZoomOut(zoomStep))} className='button is-small is-text'>
                         <FontAwesomeIcon icon='search-minus'/>
                     </a>
+                    <div className='file is-small'>
+                        <label className='file-label'>
+                            <input onClick={(ev) => clearFileInput(ev)} onChange={(ev) => onFileUpload(ev)} className='file-input' type='file' name='resume' accept='.xml'/>
+                            <span className='file-cta'>
+                                <span className='file-icon'>
+                                    <FontAwesomeIcon icon='upload'/>
+                                </span>
+                                <span className='file-label'>Choose a file...</span>
+                            </span>
+                        </label>
+                    </div>  
                     {getRelationsipOptions()}
                 </div>
                 {getDiagramElements()}

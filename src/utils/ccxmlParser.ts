@@ -12,17 +12,19 @@ import ICCXMLPrimitive from '@interfaces/ccxml/ICCXMLPrimitive';
 import ICCXMLUtility from '@interfaces/ccxml/ICCXMLUtility';
 import ICCXMLBaseElement from '@interfaces/ccxml/ICCXMLBaseElement';
 import ICCXMLTransition from '@interfaces/ccxml/ICCXMLTransition';
-import { createNewBaseClass, createNewClassFromCCXML } from './elements/class';
-import { createNewUtility, createNewUtilityFromCCXML } from './elements/utility';
+import { createNewClassFromCCXML } from './elements/class';
+import { createNewUtilityFromCCXML } from './elements/utility';
 import IEntry from '@interfaces/class-diagram/common/IEntry';
-import { createNewDataType, createNewDataTypeFromCCXML } from './elements/dataType';
-import { createNewEnumeration, createNewEnumerationFromCCXML } from './elements/enumeration';
-import { createNewInterface, createNewInterfaceFromCCXML } from './elements/interface';
-import { createNewObject, createNewObjectFromCCXML } from './elements/object';
-import { createNewPrimitiveType, createNewPrimitiveTypeFromCCXML } from './elements/primitiveType';
+import { createNewDataTypeFromCCXML } from './elements/dataType';
+import { createNewEnumerationFromCCXML } from './elements/enumeration';
+import { createNewInterfaceFromCCXML } from './elements/interface';
+import { createNewObjectFromCCXML } from './elements/object';
+import { createNewPrimitiveTypeFromCCXML } from './elements/primitiveType';
 import Direction from '@enums/direction';
 import { createNewRelationship } from './elements/relationship';
 import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
+import { v4 } from 'uuid';
+import SegmentDirection from '@enums/segmentDirection';
 
 const isCCXMLValid = (ccxml: ICCXML) => {
     let error = '';
@@ -169,7 +171,7 @@ export const parseClassDiagram = async (ccxml: ICCXML, canvasDimensions: ICoordi
 
     const { isValid, warning, error } = isCCXMLValid(ccxml);
 
-    if (ccxml && isValid) {
+    if (ccxml && isValid && ccxml.$.coordinates === 'false') {
         const ccxmlClass = ccxml.class ?? [];
         const ccxmlDatatype = ccxml.datatype ?? [];
         const ccxmlEnumeration = ccxml.enumeration ?? [];
@@ -203,7 +205,12 @@ export const parseClassDiagram = async (ccxml: ICCXML, canvasDimensions: ICoordi
                     head: '',
                     tail: '',
                     value: '',
-                    target: initialElement.$.id
+                    headCoord: '',
+                    tailCoord: '',
+                    target: initialElement.$.id,
+                    segments: '',
+                    direction: '',
+                    type: ''
                 }
             },
             coordinates
@@ -414,6 +421,111 @@ export const parseClassDiagram = async (ccxml: ICCXML, canvasDimensions: ICoordi
                 }); 
             }
         });
+    } else if (ccxml.$.coordinates === 'true') {
+        ccxml?.class?.forEach(c => {
+            const { entries, newClass } = createNewClassFromCCXML({ x: Number.parseFloat(c.$.x), y: Number.parseFloat(c.$.y) }, c);
+                newElements.push(newClass);
+                newEntries.push(...entries);
+        });
+
+        ccxml?.datatype?.forEach(c => {
+                const { entries, newDataType } = createNewDataTypeFromCCXML({ x: Number.parseFloat(c.$.x), y: Number.parseFloat(c.$.y) }, c);
+                newElements.push(newDataType);
+                newEntries.push(...entries);
+        });
+
+        ccxml?.enumeration?.forEach(c => {
+                const { entries, newEnumeration } = createNewEnumerationFromCCXML({ x: Number.parseFloat(c.$.x), y: Number.parseFloat(c.$.y) }, c);
+                newElements.push(newEnumeration);
+                newEntries.push(...entries);
+        });
+
+        ccxml?.interface?.forEach(c => {
+                const { entries, newInterface } = createNewInterfaceFromCCXML({ x: Number.parseFloat(c.$.x), y: Number.parseFloat(c.$.y) }, c);
+                newElements.push(newInterface);
+                newEntries.push(...entries);
+        });
+
+        ccxml?.object?.forEach(c => {
+                const { entries, newObject } = createNewObjectFromCCXML({ x: Number.parseFloat(c.$.x), y: Number.parseFloat(c.$.y) }, c);
+                newElements.push(newObject);
+                newEntries.push(...entries);
+        });
+
+        ccxml?.primitive?.forEach(c => {
+                const { newPrimitiveType } = createNewPrimitiveTypeFromCCXML({ x: Number.parseFloat(c.$.x), y: Number.parseFloat(c.$.y) }, c);
+                newElements.push(newPrimitiveType);
+        });
+
+        ccxml?.utility?.forEach(c => {
+                const { entries, newUtility } = createNewUtilityFromCCXML({ x: Number.parseFloat(c.$.x), y: Number.parseFloat(c.$.y) }, c);
+                newElements.push(newUtility);
+                newEntries.push(...entries);
+        });
+
+        const createRelationships = (element: ICCXMLBaseElement) => {
+            element?.transition?.forEach(t => {
+                const fromElement = newElements.find(e => e.data.elementName === element.$.id);
+                const toElement = newElements.find(e => e.data.elementName === t.$.target);
+                const relationshipId = v4();
+                const headCoord: ICoordinates = { x: Number.parseFloat(t.$.headCoord.split(':')[0]), y: Number.parseFloat(t.$.headCoord.split(':')[1]) }; 
+                const tailCoord: ICoordinates = { x: Number.parseFloat(t.$.tailCoord.split(':')[0]), y: Number.parseFloat(t.$.tailCoord.split(':')[1]) };
+                const relationshipSegmentIds: Array<string> = [];
+                
+                const segments = t.$.segments.split(';');
+
+                segments.forEach((segment) => {
+                    const segmentSplit = segment.split(':');
+                    const x = Number.parseFloat(segmentSplit[0]);
+                    const y = Number.parseFloat(segmentSplit[1]);
+                    const lineToX = Number.parseFloat(segmentSplit[2]);
+                    const lineToY = Number.parseFloat(segmentSplit[3]);
+                    const isStart = segmentSplit[4] === 'true';
+                    const isEnd = segmentSplit[5] === 'true';
+                    const direction = segmentSplit[6].toUpperCase() as SegmentDirection;
+                    const newId = segmentSplit[7];
+                    const fromElementId = segmentSplit[8];
+                    const toElementId = segmentSplit[9];
+                    newRelationShipSegments.push({
+                        id: newId,
+                        x,
+                        y,
+                        lineToX,
+                        lineToY,
+                        isEnd,
+                        isStart,
+                        direction,
+                        relationshipId,
+                        fromSegmentId: fromElementId,
+                        toSegmentId: toElementId
+                    });
+                    relationshipSegmentIds.push(newId);
+                });
+
+
+                newRelationShips.push({
+                    id: relationshipId,
+                    fromElementId: fromElement.id,
+                    toElementId: toElement.id,
+                    direction: t.$.direction.toUpperCase() as Direction,
+                    headValue: t.$.head,
+                    tailValue: t.$.tail,
+                    relationshipValue: t.$.value,
+                    segmentIds: relationshipSegmentIds,
+                    type: t.$.type.toUpperCase() as ClassDiagramRelationshipTypesEnum,
+                    head: headCoord,
+                    tail: tailCoord
+                });
+            });
+        };
+
+        ccxml?.class?.forEach(c => createRelationships(c));
+        ccxml?.datatype?.forEach(c => createRelationships(c));
+        ccxml?.enumeration?.forEach(c => createRelationships(c));
+        ccxml?.interface?.forEach(c => createRelationships(c));
+        ccxml?.object?.forEach(c => createRelationships(c));
+        ccxml?.primitive?.forEach(c => createRelationships(c));
+        ccxml?.utility?.forEach(c => createRelationships(c));
     }
 
 

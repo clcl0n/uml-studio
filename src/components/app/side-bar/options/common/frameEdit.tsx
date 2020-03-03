@@ -6,7 +6,7 @@ const FrameEdit = (props: {
     frameName: string;
     inputLabel: string;
     onNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    children: Array<React.ReactNode> | React.ReactNode
+    children?: Array<React.ReactNode> | React.ReactNode
 }) => {
     const { frameName, inputLabel, onNameChange } = props;
 

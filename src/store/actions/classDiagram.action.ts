@@ -103,3 +103,31 @@ export const clearNewRelationship = (): IReducerPayload<ClassDiagramActionEnum, 
         data: null
     };
 };
+
+export const clearElements = () : IReducerPayload<ClassDiagramActionEnum, {}> => {
+    return {
+        type: ClassDiagramActionEnum.CLEAR_ELEMENTS,
+        data: {}
+    };
+};
+
+export const clearRelationships = () : IReducerPayload<ClassDiagramActionEnum, {}> => {
+    return {
+        type: ClassDiagramActionEnum.CLEAR_RELATIONSHIPS,
+        data: {}
+    };
+};
+
+export const clearRelationshipSegments = () : IReducerPayload<ClassDiagramActionEnum, {}> => {
+    return {
+        type: ClassDiagramActionEnum.CLEAR_RELATIONSHIP_SEGMENTS,
+        data: {}
+    };
+};
+
+export const clearElementEntries = () : IReducerPayload<ClassDiagramActionEnum, {}> => {
+    return {
+        type: ClassDiagramActionEnum.CLEAR_ELEMENT_ENTRIES,
+        data: {}
+    };
+};

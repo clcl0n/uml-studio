@@ -96,6 +96,11 @@ export const finalStateElementsReducer = (state = finalStateElementsState, paylo
                 },
                 allIds: [...state.allIds]
             };
+        case StateDiagramActionEnum.CLEAR_FINAL_STATE_ELEMENTS:
+            return {
+                byId: {},
+                allIds: []
+            };
         default:
             return state;
     }
@@ -119,6 +124,11 @@ export const initialStateElementsReducer = (state = initialStateElementsState, p
                 },
                 allIds: [...state.allIds]
             };
+        case StateDiagramActionEnum.CLEAR_INITIAL_STATE_ELEMENTS:
+            return {
+                byId: {},
+                allIds: []
+            };
         default:
             return state;
     }
@@ -141,6 +151,11 @@ export const stateElementsReducer = (state = stateElementsState, payload: IReduc
                     [payload.data.id]: payload.data
                 },
                 allIds: [...state.allIds]
+            };
+        case StateDiagramActionEnum.CLEAR_STATE_ELEMENTS:
+            return {
+                byId: {},
+                allIds: []
             };
         default:
             return state;
