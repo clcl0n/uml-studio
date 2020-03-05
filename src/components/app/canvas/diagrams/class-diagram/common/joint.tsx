@@ -82,7 +82,7 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
                 dispatch(updateRelationshipSegment(segment));
             });
         } else if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_TAIL) {
-            // selectedRelationship.toElementId = props.fromElementId;
+            selectedRelationship.fromElementId = props.fromElementId;
             selectedRelationship.tail.x = props.x;
             selectedRelationship.tail.y = props.y;
             const movingRelationshipSegment = selectedRelationshipSegments.filter((segment) => segment.isEnd)[0];

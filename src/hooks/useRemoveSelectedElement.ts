@@ -1,9 +1,14 @@
 import useSelectedElement from './useSelectedElement';
 import { useDispatch } from 'react-redux';
-import { removeRelationship, removeRelationshipSegment } from '@store/actions/classDiagram.action';
+import { removeRelationship, removeRelationshipSegment, removeElement, removeElementEntry } from '@store/actions/classDiagram.action';
+import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
+import IBaseElement from '@interfaces/class-diagram/common/IBaseElement';
+import useDiagram from './useDiagram';
+import IStateElement from '@interfaces/state-diagram/state/IStateElement';
 
 const useRemoveSelectedElement = () => {
     const dispatch = useDispatch();
+    const { classDiagram } = useDiagram();
     const {
         selectedElement,
         selectedElementEntries,
@@ -19,6 +24,34 @@ const useRemoveSelectedElement = () => {
         if (selectedRelationship) {
             dispatch(removeRelationship(selectedRelationship));
             selectedRelationshipSegments.forEach((segment) => dispatch(removeRelationshipSegment(segment)));
+        } else if (
+            selectedElement &&
+            selectedElement.type !== StateDiagramElementsEnum.STATE &&
+            selectedElement.type !== StateDiagramElementsEnum.INITIAL_STATE &&
+            selectedElement.type !== StateDiagramElementsEnum.FINAL_STATE
+        ) {
+            classDiagram.relationships.allIds.forEach(id => {
+                if (classDiagram.relationships.byId[id].fromElementId === selectedElement.id) {
+                    classDiagram.relationships.byId[id].fromElementId = '';
+                } else if (classDiagram.relationships.byId[id].toElementId === selectedElement.id) {
+                    classDiagram.relationships.byId[id].toElementId = '';
+                }
+            });
+            dispatch(removeElement(selectedElement as IBaseElement<any>));
+            selectedElementEntries.forEach(entry => dispatch(removeElementEntry(entry)));
+        } else if (
+            selectedElement &&
+            selectedElement.type === StateDiagramElementsEnum.STATE
+        ) {
+            classDiagram.relationships.allIds.forEach(id => {
+                if (classDiagram.relationships.byId[id].fromElementId === selectedElement.id) {
+                    classDiagram.relationships.byId[id].fromElementId = '';
+                } else if (classDiagram.relationships.byId[id].toElementId === selectedElement.id) {
+                    classDiagram.relationships.byId[id].toElementId = '';
+                }
+            });
+            // dispatch(removeElement(selectedElement as IStateElement));
+            // selectedElementEntries.forEach(entry => dispatch(removeElementEntry(entry)));
         }
     };
 

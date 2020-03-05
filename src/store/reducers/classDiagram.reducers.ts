@@ -187,6 +187,11 @@ export const elementsReducer = (state = elementsState, payload: IReducerPayload<
                 byId: {},
                 allIds: []
             };
+        case ClassDiagramActionEnum.REMOVE_ELEMENT:
+            state.allIds.splice(state.allIds.indexOf(payload.data.id), 1);
+            delete state.byId[payload.data.id];
+
+            return {...state};
         default:
             return state;
     }

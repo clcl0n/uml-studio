@@ -123,8 +123,8 @@ const Ribbon = () => {
         dispatch(clearStateElements());
         dispatch(clearRelationships());
         dispatch(clearRelationshipSegments());
-        dispatch(clearElementEntries());
         dispatch(clearElements());
+        dispatch(clearElementEntries());
         const parsedXml = (await parseStringPromise(xml));
 
         if (parsedXml.scxml) {

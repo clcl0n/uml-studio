@@ -21,19 +21,7 @@ const StateEdit = (props: { state: IStateElement }) => {
     };
 
     return (
-        <FrameEdit frameName={state.data.name} onNameChange={onStateNameChange} inputLabel='State Name'>
-            <p>State Type</p>
-            <div className='control'>
-                <label className='radio'>
-                    <input type='radio' name='stateType' checked={!isComposite}/>
-                    Simple
-                </label>
-                <label className='radio'>
-                    <input type='radio' name='stateType' checked={isComposite}/>
-                    Composite
-                </label>
-            </div>
-        </FrameEdit>
+        <FrameEdit frameName={state.data.name} onNameChange={onStateNameChange} inputLabel='State Name'/>
     );
 };
 

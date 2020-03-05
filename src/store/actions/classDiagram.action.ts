@@ -62,6 +62,13 @@ export const removeRelationship = (data: IRelationship): IReducerPayload<ClassDi
     };
 };
 
+export const removeElement = (data: IBaseElement<any>): IReducerPayload<ClassDiagramActionEnum, IBaseElement<any>> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_ELEMENT,
+        data
+    };
+};
+
 export const removeRelationshipSegment = (data: IRelationshipSegment): IReducerPayload<ClassDiagramActionEnum, IRelationshipSegment> => {
     return {
         type: ClassDiagramActionEnum.REMOVE_RELATIONSHIP_SEGMENT,
