@@ -7,10 +7,17 @@ import { newCanvasOperation, isMouseDown } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import useSelectedElement from 'hooks/useSelectedElement';
 import IStoreState from '@interfaces/IStoreState';
+import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 
-const RelationshipSegment = (props: { segment: IRelationshipSegment, relationId: string }) => {
+const RelationshipSegment = (
+    props: { 
+        segment: IRelationshipSegment,
+        relationId: string,
+        type: ClassDiagramRelationshipTypesEnum
+    }
+) => {
     const dispatch = useDispatch();
-    const { segment, relationId } = props;
+    const { segment, relationId, type } = props;
     const { selectedElementId } = useSelectedElement();
     const isCanvasMouseDown = useSelector((state: IStoreState) => state.canvas.isMouseDown);
 
@@ -39,7 +46,21 @@ const RelationshipSegment = (props: { segment: IRelationshipSegment, relationId:
     };
 
     const segmentJoint = () => {
-        let cx, cy = 0;
+        let cx = 0;
+        let cy = 0;
+        let fixX = 0;
+        if (segment.isEnd) {
+            if (
+                type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
+                type === ClassDiagramRelationshipTypesEnum.COMPOSITION
+            ) {
+                fixX = -30;
+            } else if (
+                type === ClassDiagramRelationshipTypesEnum.EXTENSION
+            ) {
+                fixX = -20;
+            }
+        }
         if (segment.isEnd) {
             cx = segment.x + segment.lineToX;
             cy = segment.y + segment.lineToY;
@@ -50,7 +71,7 @@ const RelationshipSegment = (props: { segment: IRelationshipSegment, relationId:
 
         return (segment.isEnd || segment.isStart) && selectedElementId === relationId && !isCanvasMouseDown ? (
             <g cursor='pointer' onMouseDown={() => { segment.isStart ? moveTail() : moveHead();}}>
-                <circle stroke='black' cx={cx} cy={cy} r='5'/>
+                <circle stroke='black' cx={cx - fixX} cy={cy} r='5'/>
             </g>
         ) : <g/>;
     };

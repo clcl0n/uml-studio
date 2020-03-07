@@ -44,6 +44,12 @@
         <method modifier="public" property="text..."/>
         <transition head="Start" value="value..." tail="1" target="utility"/>
     </utility>
+    <utility id="utility8">
+        <property modifier="public" property="text..."/>
+        <method modifier="public" property="text..."/>
+        <transition head="kk" value="kk..." tail="1" target="utility"/>
+        <transition head="kk" value="kk..." tail="1" target="utility3"/>
+    </utility>
     <!-- <primitive id="primitive">
         <transition head="Start" value="value..." tail="1" target="object"/>
     </primitive>

@@ -52,7 +52,17 @@ const elementsToAdd = (
         return toFilter.filter((element) => ccxmlExistingElements.indexOf(element.$.id) === -1);
     };
 
-    return [
+    const all = [
+        ...ccxmlClass,
+        ...ccxmlDatatype,
+        ...ccxmlEnumeration,
+        ...ccxmlInterface,
+        ...ccxmlObject,
+        ...ccxmlPrimitive,
+        ...ccxmlUtility
+    ];
+
+    const result = [
         ...filter(ccxmlClass),
         ...filter(ccxmlDatatype),
         ...filter(ccxmlEnumeration),
@@ -61,6 +71,12 @@ const elementsToAdd = (
         ...filter(ccxmlPrimitive),
         ...filter(ccxmlUtility)
     ];
+
+    const depending = result.filter(ccxmlElement => all.some(e => e.transition.some(t => t.$.target === ccxmlElement.$.id)));
+    return {
+        alone: result.filter(e => !depending.some(de => de.$.id === e.$.id)),
+        depending
+    };
 };
 
 const createNewElement = (
@@ -191,7 +207,7 @@ export const parseClassDiagram = async (ccxml: ICCXML, canvasDimensions: ICoordi
             ccxmlExistingElements
         );
 
-        const initialElement = ccxml.$.initialclass ? toAdd.find((e) => e.$.id === ccxml.$.initialclass) : toAdd[0];
+        const initialElement = ccxml.$.initialclass ? toAdd.depending.find((e) => e.$.id === ccxml.$.initialclass) : toAdd.depending[0];
         const {element, entries} = createTargetedElement(
             ccxmlClass,
             ccxmlDatatype,
@@ -228,10 +244,10 @@ export const parseClassDiagram = async (ccxml: ICCXML, canvasDimensions: ICoordi
             ccxmlUtility,
             ccxmlExistingElements
         );
-
+        const existingAlone: Array<string> = [];
         let previousLayer: Array<ICCXMLBaseElement> = [initialElement];
         let currentLayer: Array<ICCXMLBaseElement> = [];
-        while (toAdd.length > 0) {
+        while (toAdd.depending.length > 0) {
             currentLayer = [];
             coordinates.x += layerDistance;
             let transitions: Array<ICCXMLTransition> = [];
@@ -242,7 +258,7 @@ export const parseClassDiagram = async (ccxml: ICCXML, canvasDimensions: ICoordi
 
             previousLayer.forEach((ccxmlElement) => {
                 if (ccxmlElement.transition && ccxmlElement.transition.length > 0) {
-                    const transitionDependentElements = ccxmlElement.transition.filter((transition) => toAdd.findIndex((t) => t.$.id === transition.$.target) !== -1);
+                    const transitionDependentElements = ccxmlElement.transition.filter((transition) => toAdd.depending.findIndex((t) => t.$.id === transition.$.target) !== -1);
                     transitions.push(...transitionDependentElements);
                     transitionToAdd.push(
                         ...ccxmlElement.transition.map((t) => {
@@ -285,16 +301,43 @@ export const parseClassDiagram = async (ccxml: ICCXML, canvasDimensions: ICoordi
                     coordinates
                 );
                 coordinates.y += elementDistance;
+                const alone = toAdd.alone.find(e => e.transition.some(t => t.$.target === element.data.elementName));
                 newEntries.push(...entries);
                 newElements.push(element);
                 currentLayer.push(target);
+                if (alone && !existingAlone.includes(alone.$.id)) {
+                    existingAlone.push(alone.$.id);
+                    const {element: e, target: t, entries: en} = createTargetedElement(
+                        ccxmlClass,
+                        ccxmlDatatype,
+                        ccxmlEnumeration,
+                        ccxmlInterface,
+                        ccxmlObject,
+                        ccxmlPrimitive,
+                        ccxmlUtility,
+                        {
+                            $: {
+                                head: '',
+                                tail: '',
+                                target: alone.$.id,
+                                type: '',
+                                value: ''
+                            }
+                        },
+                        coordinates
+                    );
+                    coordinates.y += elementDistance;
+                    newEntries.push(...en);
+                    newElements.push(e);
+                    currentLayer.push(t);
+                }
             });
 
             coordinates.y = canvasMiddle.y;
             previousLayer = currentLayer;
         }
 
-        const allElements = elementsToAdd(
+        toAdd = elementsToAdd(
             ccxmlClass,
             ccxmlDatatype,
             ccxmlEnumeration,
@@ -303,14 +346,26 @@ export const parseClassDiagram = async (ccxml: ICCXML, canvasDimensions: ICoordi
             ccxmlPrimitive,
             ccxmlUtility,
             []
-        ).map((a) => {
-            return {
-                name: a.$.id,
-                upOffset: 0,
-                downOffset: 0,
-                transition: a.transition
-            };
-        });
+        );
+        
+        const allElements = [
+            ...toAdd.depending.map((a) => {
+                return {
+                    name: a.$.id,
+                    upOffset: 0,
+                    downOffset: 0,
+                    transition: a.transition
+                };
+            }),
+            ...toAdd.alone.map(a => {
+                return {
+                    name: a.$.id,
+                    upOffset: 0,
+                    downOffset: 0,
+                    transition: a.transition
+                };
+            })
+        ];
         allElements.forEach((ccxmlElement) => {
             let relationshipCenterOffsetUp = 0;
             let relationshipCenterOffsetDown = 0;
