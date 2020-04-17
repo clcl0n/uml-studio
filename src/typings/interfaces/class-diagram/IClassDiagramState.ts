@@ -12,4 +12,6 @@ export default interface IClassDiagramState {
     relationships: IReduxEntity<IRelationship>;
     relationshipSegments: IReduxEntity<IRelationshipSegment>;
     newRelationship: INewRelationship;
+    elementsHistory: Array<{ elements: IBaseElement<any>, entries: Array<IEntry> }>;
+    redoElementsHistory: Array<{ elements: IBaseElement<any>, entries: Array<IEntry> }>;
 }

@@ -8,6 +8,16 @@ import INewRelationship from '@interfaces/class-diagram/INewRelationship';
 import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
 
+const redoElementsHistoryState: Array<{ 
+    elements: IBaseElement<any>,
+    entries: Array<IEntry>
+}> = [];
+
+const removedElementsHistoryState: Array<{ 
+    elements: IBaseElement<any>,
+    entries: Array<IEntry>
+}> = [];
+
 const elementsState: IReduxEntity<IBaseElement<any>> = {
     byId: {},
     allIds: []
@@ -32,6 +42,26 @@ const newRelationshipState: INewRelationship = {
     relationship: null,
     relationshipSegments: []
 };
+
+export const redoElementsHistoryReducer = (state = redoElementsHistoryState, payload: IReducerPayload<ClassDiagramActionEnum, any>) => {
+    switch(payload.type) {
+        case ClassDiagramActionEnum.ADD_REDO_ELEMENT_TO_HISTORY:
+            return [...state, { elements: payload.data.elements, entries: payload.data.entries }];
+        case ClassDiagramActionEnum.SET_REMOVED_ELEMENT_TO_HISTORY:
+            return [...payload.data];
+        default:
+            return state;
+    }
+}
+
+export const elementsHistoryReducer = (state = removedElementsHistoryState, payload: IReducerPayload<ClassDiagramActionEnum, any>) => {
+    switch(payload.type) {
+        case ClassDiagramActionEnum.ADD_ELEMENT_TO_HISTORY:
+            return [...state, { elements: payload.data.elements, entries: payload.data.entries }];
+        default:
+            return state;
+    }
+}
 
 export const relationshipsReducer = (state = relationshipsState, payload: IReducerPayload<ClassDiagramActionEnum, IRelationship>) => {
     let newElement: IDictionary<IRelationship> = {};

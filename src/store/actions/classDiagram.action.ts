@@ -6,6 +6,27 @@ import INewRelationship from '@interfaces/class-diagram/INewRelationship';
 import IBaseElement from '@interfaces/class-diagram/common/IBaseElement';
 import IEntry from '@interfaces/class-diagram/common/IEntry';
 
+export const addRedoElementToHistory = (data: any): IReducerPayload<ClassDiagramActionEnum, any> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_REDO_ELEMENT_TO_HISTORY,
+        data
+    };
+};
+
+export const setRemovedElementToHistory = (data: any): IReducerPayload<ClassDiagramActionEnum, any> => {
+    return {
+        type: ClassDiagramActionEnum.SET_REMOVED_ELEMENT_TO_HISTORY,
+        data
+    };
+};
+
+export const addElementToHistory = (data: any): IReducerPayload<ClassDiagramActionEnum, any> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_ELEMENT_TO_HISTORY,
+        data
+    };
+};
+
 export const addNewElement = (data: IBaseElement<any>): IReducerPayload<ClassDiagramActionEnum, IBaseElement<any>> => {
     return {
         type: ClassDiagramActionEnum.ADD_NEW_ELEMENT,

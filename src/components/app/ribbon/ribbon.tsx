@@ -28,9 +28,13 @@ import { addNewStateElement, addNewFinalStateElement, addNewInitialStateElement,
 import { addNewRelationshipSegment, addNewRelationship, addNewElementEntry, addNewElement, clearRelationshipSegments, clearRelationships, clearElementEntries, clearElements } from '@store/actions/classDiagram.action';
 import { setDiagramType } from '@store/actions/canvas.action';
 import { parseClassDiagram } from '@utils/ccxmlParser';
+import { useCanvasUndo } from 'hooks/useCanvasUndo';
+import { useCanvasRedo } from 'hooks/useCanvasRedo';
 
 const Ribbon = () => {  
     const dispatch = useDispatch();
+    const { isEnabled: isUndoEnabled, undo } = useCanvasUndo();
+    const { isEnabled: isRedoEnabled, redo } = useCanvasRedo();
     const [isActive, setIsActive] = useState(true);
     const { x: canvasWidth, y: canvasHeight } = useSelector((store: IStoreState) => store.canvas.canvasDimensions);
     const canvasZoom: number = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
@@ -206,18 +210,15 @@ const Ribbon = () => {
             <NavTools/>
             <div id='controlls'>
                 <div id='tools'>
-                    <a className='button is-small is-text'>
-                        <FontAwesomeIcon size='lg' icon='print'/>
-                    </a>  
                     <a onClick={() => save()} className='button is-small is-text'>
                         <FontAwesomeIcon icon='save'/>
                     </a>
-                    <a className='button is-small is-text'>
+                    <button onClick={() => undo()} className='button is-small is-text' disabled={!isUndoEnabled}>
                         <FontAwesomeIcon icon='undo'/>
-                    </a>
-                    <a className='button is-small is-text'>
+                    </button>
+                    <button onClick={() => redo()} className='button is-small is-text' disabled={!isRedoEnabled}>
                         <FontAwesomeIcon icon='redo'/>
-                    </a>
+                    </button>
                     <a onClick={(ev) => dispatch(canvasZoomIn(zoomStep))} className='button is-small is-text'>
                         <FontAwesomeIcon icon='search-plus'/>
                     </a>

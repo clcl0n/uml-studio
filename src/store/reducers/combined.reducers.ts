@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { canvasZoomReducer } from './ribbon.reducers';
 import { canvasOperationReducer, isMouseDownReducer, selectedElementIdReducer, defaultRelationshipTypeReducer, diagramTypeReducer, canvasDimensionsReducer } from './canvas.reducers';
-import { elementsReducer, elementEntriesReducer, newRelationshipReducer, relationshipsReducer, relationshipSegmentsReducer } from './classDiagram.reducers';
+import { elementsReducer, elementEntriesReducer, newRelationshipReducer, relationshipsReducer, relationshipSegmentsReducer, redoElementsHistoryReducer, elementsHistoryReducer } from './classDiagram.reducers';
 import { stateElementsReducer, initialStateElementsReducer, finalStateElementsReducer, forkJoinElementsReducer, choiceElementsReducer } from './stateDiagram.reducers';
 
 const combinedReducers = combineReducers({
@@ -10,7 +10,9 @@ const combinedReducers = combineReducers({
         elementEntries: elementEntriesReducer,
         relationships: relationshipsReducer,
         relationshipSegments: relationshipSegmentsReducer,
-        newRelationship: newRelationshipReducer
+        newRelationship: newRelationshipReducer,
+        elementsHistory: elementsHistoryReducer,
+        redoElementsHistory: redoElementsHistoryReducer
     }),
     stateDiagram: combineReducers({
         elements: stateElementsReducer,
