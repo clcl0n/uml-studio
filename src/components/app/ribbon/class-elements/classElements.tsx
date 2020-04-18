@@ -68,7 +68,7 @@ const ClassElements = () => {
 
     const allElements = allElementsData.map((elementData, index) => {
         return (
-            <div key={index} className='element'>
+            <div key={index} className='element is-unselectable '>
                 <img
                     draggable='true'
                     onDragStart={(ev) => onElementDragStart(ev, elementData.ribbonOperation)}

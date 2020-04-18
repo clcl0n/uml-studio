@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './ribbon.scss';
-import NavTools from './nav-tools';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
@@ -52,26 +51,30 @@ const Ribbon = () => {
             switch (relationshipType) {
                 case ClassDiagramRelationshipTypesEnum.AGGREGATION:
                 return (
-                    <svg key={index} height='20' width='30'>
-                        <Aggregation direction={Direction.RIGHT} coordinates={{ x: 0, y: 10 }}/>
+                    <svg key={index} height='20' width='35'>
+                        <line x1='0' y1='10' x2='5' y2='10' stroke='black'/>
+                        <Aggregation direction={Direction.RIGHT} coordinates={{ x: 5, y: 10 }}/>
                     </svg>
                 );
             case ClassDiagramRelationshipTypesEnum.COMPOSITION:
                 return (
-                    <svg key={index} height='20' width='30'>
-                        <Composition direction={Direction.RIGHT} coordinates={{ x: 0, y: 10 }}/>;
+                    <svg key={index} height='20' width='35'>
+                        <line x1='0' y1='10' x2='5' y2='10' stroke='black'/>
+                        <Composition direction={Direction.RIGHT} coordinates={{ x: 5, y: 10 }}/>;
                     </svg>
                 );
             case ClassDiagramRelationshipTypesEnum.EXTENSION:
                 return (
-                    <svg key={index} height='20' width='30'>
-                        <Extension direction={Direction.RIGHT} coordinates={{ x: 0, y: 10 }}/>;
+                    <svg key={index} height='20' width='35'>
+                        <line x1='0' y1='10' x2='15' y2='10' stroke='black'/>
+                        <Extension direction={Direction.RIGHT} coordinates={{ x: 15, y: 10 }}/>;
                     </svg>
                 );
             case ClassDiagramRelationshipTypesEnum.ASSOCIATION:
                 return (
-                    <svg key={index} height='20' width='30'>
-                        <Association direction={Direction.RIGHT} coordinates={{ x: 10, y: 10 }}/>;
+                    <svg key={index} height='20' width='35'>
+                        <line x1='0' y1='10' x2='35' y2='10' stroke='black'/>
+                        <Association direction={Direction.RIGHT} coordinates={{ x: 35, y: 10 }}/>;
                     </svg>
                 );
             }
@@ -99,6 +102,7 @@ const Ribbon = () => {
             <Options
                 defaultSelectedOptionIndex={relationshipTypes.findIndex((type) => type === canvasDefaultRelationshipType)}
                 onSelectNewOption={(optionIndex) => onRelationshipHeadSelect(optionIndex)}
+                width={83}
             >
                 {relationshipOptions()}
             </Options>
@@ -207,7 +211,6 @@ const Ribbon = () => {
 
     return (
         <div id='ribbon'>
-            <NavTools/>
             <div id='controlls'>
                 <div id='tools'>
                     <a onClick={() => save()} className='button is-small is-text'>
@@ -228,6 +231,7 @@ const Ribbon = () => {
                     <a onClick={(ev) => dispatch(canvasZoomOut(zoomStep))} className='button is-small is-text'>
                         <FontAwesomeIcon icon='search-minus'/>
                     </a>
+                    {getRelationsipOptions()}
                     <div className='file is-small'>
                         <label className='file-label'>
                             <input onClick={(ev) => clearFileInput(ev)} onChange={(ev) => onFileUpload(ev)} className='file-input' type='file' name='resume' accept='.xml'/>
@@ -239,7 +243,6 @@ const Ribbon = () => {
                             </span>
                         </label>
                     </div>  
-                    {getRelationsipOptions()}
                 </div>
                 {getDiagramElements()}
             </div>
