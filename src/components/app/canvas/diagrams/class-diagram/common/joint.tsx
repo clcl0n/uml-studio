@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ICoordinates from '@interfaces/ICoordinates';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment, updateRelationshipSegment, updateRelationship } from '@store/actions/classDiagram.action';
+import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment, updateRelationshipSegment, updateRelationship, addUndoRelationship } from '@store/actions/classDiagram.action';
 import { newCanvasOperation } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import { createNewRelationship, updateRelationshipEndingHelper, updateRelationshipStartingHelper } from '@utils/elements/relationship';
@@ -59,12 +59,17 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
             );
             
             dispatch(addNewRelationship(relationship));
-            [
+            const segments = [
                 ...relationshipSegments,
                 ...newRelationship.relationshipSegments.filter((segment) => relationshipSegments.findIndex((s) => s.id === segment.id) === -1)
-            ].forEach((segment) => {
+            ];
+            segments.forEach((segment) => {
                 dispatch(addNewRelationshipSegment(segment));
             });
+            dispatch(addUndoRelationship({
+                relationship,
+                relationshipSegments: segments
+            }));
             dispatch(clearNewRelationship());
         } else if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD) {
             let fixX = 0;

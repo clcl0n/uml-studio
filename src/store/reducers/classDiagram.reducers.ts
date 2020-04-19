@@ -7,16 +7,25 @@ import IEntry from '@interfaces/class-diagram/common/IEntry';
 import INewRelationship from '@interfaces/class-diagram/INewRelationship';
 import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
+import HistoryTypeEnum from '@enums/historyTypeEnum';
+import IElementHistory from '@interfaces/IElementHistory';
+import IRelationshipHistory from '@interfaces/IRelationshipHistory';
 
-const redoElementsHistoryState: Array<{ 
-    elements: IBaseElement<any>,
-    entries: Array<IEntry>
-}> = [];
+const undoHistoryState: IReduxEntity<{
+    type: HistoryTypeEnum,
+    data: IElementHistory | IRelationshipHistory
+}> = {
+    byId: {},
+    allIds: []
+};
 
-const removedElementsHistoryState: Array<{ 
-    elements: IBaseElement<any>,
-    entries: Array<IEntry>
-}> = [];
+const redoHistoryState: IReduxEntity<{
+    type: HistoryTypeEnum,
+    data: IElementHistory | IRelationshipHistory
+}> = {
+    byId: {},
+    allIds: []
+};
 
 const elementsState: IReduxEntity<IBaseElement<any>> = {
     byId: {},
@@ -43,25 +52,77 @@ const newRelationshipState: INewRelationship = {
     relationshipSegments: []
 };
 
-export const redoElementsHistoryReducer = (state = redoElementsHistoryState, payload: IReducerPayload<ClassDiagramActionEnum, any>) => {
+export const redoHistoryReducer = (state = redoHistoryState, payload: IReducerPayload<ClassDiagramActionEnum, IElementHistory | IRelationshipHistory>): IReduxEntity<{
+    type: HistoryTypeEnum,
+    data: IElementHistory | IRelationshipHistory
+}>  => {
     switch(payload.type) {
-        case ClassDiagramActionEnum.ADD_REDO_ELEMENT_TO_HISTORY:
-            return [...state, { elements: payload.data.elements, entries: payload.data.entries }];
-        case ClassDiagramActionEnum.SET_REMOVED_ELEMENT_TO_HISTORY:
-            return [...payload.data];
+        case ClassDiagramActionEnum.ADD_REDO_RELATIONSHIP:
+            state.byId[(payload.data as IRelationshipHistory).relationship.id] = {
+                type: HistoryTypeEnum.RELATIONSHIP,
+                data: payload.data as IRelationshipHistory
+            };
+            return {
+                ...state,
+                allIds: [...state.allIds, (payload.data as IRelationshipHistory).relationship.id]
+            };
+        case ClassDiagramActionEnum.ADD_REDO_ELEMENT:
+            state.byId[(payload.data as IElementHistory).element.id] = {
+                type: HistoryTypeEnum.ELEMNET,
+                data: payload.data as IElementHistory
+            };
+            return {
+                ...state,
+                allIds: [...state.allIds, (payload.data as IElementHistory).element.id]
+            };
+        case ClassDiagramActionEnum.REMOVE_REDO_RELATIONSHIP:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IRelationshipHistory).relationship.id), 1);
+            delete state.byId[(payload.data as IRelationshipHistory).relationship.id];
+            return {...state};
+        case ClassDiagramActionEnum.REMOVE_REDO_ELEMENT:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IElementHistory).element.id), 1);
+            delete state.byId[(payload.data as IElementHistory).element.id];
+            return {...state};
         default:
             return state;
     }
-}
+};
 
-export const elementsHistoryReducer = (state = removedElementsHistoryState, payload: IReducerPayload<ClassDiagramActionEnum, any>) => {
+export const undoHistoryReducer = (state = undoHistoryState, payload: IReducerPayload<ClassDiagramActionEnum, IElementHistory | IRelationshipHistory>): IReduxEntity<{
+    type: HistoryTypeEnum,
+    data: IElementHistory | IRelationshipHistory
+}>  => {
     switch(payload.type) {
-        case ClassDiagramActionEnum.ADD_ELEMENT_TO_HISTORY:
-            return [...state, { elements: payload.data.elements, entries: payload.data.entries }];
+        case ClassDiagramActionEnum.ADD_UNDO_RELATIONSHIP:
+            state.byId[(payload.data as IRelationshipHistory).relationship.id] = {
+                type: HistoryTypeEnum.RELATIONSHIP,
+                data: payload.data as IRelationshipHistory
+            };
+            return {
+                ...state,
+                allIds: [...state.allIds, (payload.data as IRelationshipHistory).relationship.id]
+            };
+        case ClassDiagramActionEnum.ADD_UNDO_ELEMENT:
+            state.byId[(payload.data as IElementHistory).element.id] = {
+                type: HistoryTypeEnum.ELEMNET,
+                data: payload.data as IElementHistory
+            };
+            return {
+                ...state,
+                allIds: [...state.allIds, (payload.data as IElementHistory).element.id]
+            };
+        case ClassDiagramActionEnum.REMOVE_UNDO_RELATIONSHIP:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IRelationshipHistory).relationship.id), 1);
+            delete state.byId[(payload.data as IRelationshipHistory).relationship.id];
+            return {...state};
+        case ClassDiagramActionEnum.REMOVE_UNDO_ELEMENT:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IElementHistory).element.id), 1);
+            delete state.byId[(payload.data as IElementHistory).element.id];
+            return {...state};
         default:
             return state;
     }
-}
+};
 
 export const relationshipsReducer = (state = relationshipsState, payload: IReducerPayload<ClassDiagramActionEnum, IRelationship>) => {
     let newElement: IDictionary<IRelationship> = {};

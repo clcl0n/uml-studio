@@ -1,6 +1,6 @@
 import useSelectedElement from './useSelectedElement';
 import { useDispatch } from 'react-redux';
-import { removeRelationship, removeRelationshipSegment, removeElement, removeElementEntry, addElementToHistory } from '@store/actions/classDiagram.action';
+import { removeRelationship, removeRelationshipSegment, removeElement, removeElementEntry, addUndoElement, addUndoRelationship } from '@store/actions/classDiagram.action';
 import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
 import IBaseElement from '@interfaces/class-diagram/common/IBaseElement';
 import useDiagram from './useDiagram';
@@ -22,6 +22,10 @@ const useRemoveSelectedElement = () => {
  
     const removeSelectedElement = () => {
         if (selectedRelationship) {
+            dispatch(addUndoRelationship({
+                relationship: selectedRelationship,
+                relationshipSegments: selectedRelationshipSegments
+            }));
             dispatch(removeRelationship(selectedRelationship));
             selectedRelationshipSegments.forEach((segment) => dispatch(removeRelationshipSegment(segment)));
         } else if (
@@ -30,15 +34,8 @@ const useRemoveSelectedElement = () => {
             selectedElement.type !== StateDiagramElementsEnum.INITIAL_STATE &&
             selectedElement.type !== StateDiagramElementsEnum.FINAL_STATE
         ) {
-            // classDiagram.relationships.allIds.forEach(id => {
-            //     if (classDiagram.relationships.byId[id].fromElementId === selectedElement.id) {
-            //         classDiagram.relationships.byId[id].fromElementId = '';
-            //     } else if (classDiagram.relationships.byId[id].toElementId === selectedElement.id) {
-            //         classDiagram.relationships.byId[id].toElementId = '';
-            //     }
-            // });
-            dispatch(addElementToHistory({
-                elements: selectedElement,
+            dispatch(addUndoElement({
+                element: selectedElement as IBaseElement<any>,
                 entries: selectedElementEntries
             }))
             dispatch(removeElement(selectedElement as IBaseElement<any>));
@@ -47,13 +44,6 @@ const useRemoveSelectedElement = () => {
             selectedElement &&
             selectedElement.type === StateDiagramElementsEnum.STATE
         ) {
-            classDiagram.relationships.allIds.forEach(id => {
-                if (classDiagram.relationships.byId[id].fromElementId === selectedElement.id) {
-                    classDiagram.relationships.byId[id].fromElementId = '';
-                } else if (classDiagram.relationships.byId[id].toElementId === selectedElement.id) {
-                    classDiagram.relationships.byId[id].toElementId = '';
-                }
-            });
             dispatch(removeElement(selectedElement as any));
             selectedElementEntries?.forEach(entry => dispatch(removeElementEntry(entry)));
         }

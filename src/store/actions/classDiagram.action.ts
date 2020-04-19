@@ -5,24 +5,61 @@ import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelat
 import INewRelationship from '@interfaces/class-diagram/INewRelationship';
 import IBaseElement from '@interfaces/class-diagram/common/IBaseElement';
 import IEntry from '@interfaces/class-diagram/common/IEntry';
+import IRelationshipHistory from '@interfaces/IRelationshipHistory';
+import IElementHistory from '@interfaces/IElementHistory';
 
-export const addRedoElementToHistory = (data: any): IReducerPayload<ClassDiagramActionEnum, any> => {
+export const removeRedoRelationship = (data: IRelationshipHistory): IReducerPayload<ClassDiagramActionEnum, IRelationshipHistory> => {
     return {
-        type: ClassDiagramActionEnum.ADD_REDO_ELEMENT_TO_HISTORY,
+        type: ClassDiagramActionEnum.REMOVE_REDO_RELATIONSHIP,
         data
     };
 };
 
-export const setRemovedElementToHistory = (data: any): IReducerPayload<ClassDiagramActionEnum, any> => {
+export const removeRedoElement = (data: IElementHistory): IReducerPayload<ClassDiagramActionEnum, IElementHistory> => {
     return {
-        type: ClassDiagramActionEnum.SET_REMOVED_ELEMENT_TO_HISTORY,
+        type: ClassDiagramActionEnum.REMOVE_REDO_ELEMENT,
         data
     };
 };
 
-export const addElementToHistory = (data: any): IReducerPayload<ClassDiagramActionEnum, any> => {
+export const addRedoRelationship = (data: IRelationshipHistory): IReducerPayload<ClassDiagramActionEnum, IRelationshipHistory> => {
     return {
-        type: ClassDiagramActionEnum.ADD_ELEMENT_TO_HISTORY,
+        type: ClassDiagramActionEnum.ADD_REDO_RELATIONSHIP,
+        data
+    };
+};
+
+export const addRedoElement = (data: IElementHistory): IReducerPayload<ClassDiagramActionEnum, IElementHistory> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_REDO_ELEMENT,
+        data
+    };
+};
+
+export const removeUndoRelationship = (data: IRelationshipHistory): IReducerPayload<ClassDiagramActionEnum, IRelationshipHistory> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_UNDO_RELATIONSHIP,
+        data
+    };
+};
+
+export const removeUndoElement = (data: IElementHistory): IReducerPayload<ClassDiagramActionEnum, IElementHistory> => {
+    return {
+        type: ClassDiagramActionEnum.REMOVE_UNDO_ELEMENT,
+        data
+    };
+};
+
+export const addUndoRelationship = (data: IRelationshipHistory): IReducerPayload<ClassDiagramActionEnum, IRelationshipHistory> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_UNDO_RELATIONSHIP,
+        data
+    };
+};
+
+export const addUndoElement = (data: IElementHistory): IReducerPayload<ClassDiagramActionEnum, IElementHistory> => {
+    return {
+        type: ClassDiagramActionEnum.ADD_UNDO_ELEMENT,
         data
     };
 };

@@ -20,10 +20,6 @@ const useSelectedElement = (selectedElementId: string = '') => {
             return state.stateDiagram.initialStateElements.byId[selectedElementId];
         } else if (state.stateDiagram.finalStateElements.byId[selectedElementId]) {
             return state.stateDiagram.finalStateElements.byId[selectedElementId];
-        } else if (state.stateDiagram.forkJoinElements.byId[selectedElementId]) {
-            return state.stateDiagram.forkJoinElements.byId[selectedElementId];
-        } else if (state.stateDiagram.choiceElements.byId[selectedElementId]) {
-            return state.stateDiagram.choiceElements.byId[selectedElementId];
         }
     });
     const selectedElementEntries = useSelector((state: IStoreState) => {

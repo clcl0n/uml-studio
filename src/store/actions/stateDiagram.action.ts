@@ -5,9 +5,140 @@ import IInitialStateElement from '@interfaces/state-diagram/initial-state/IIniti
 import IFinalStateElement from '@interfaces/state-diagram/final-state/IFinalStateElement';
 import IForkJoinElement from '@interfaces/state-diagram/IForkJoinElement';
 import IChoiceElement from '@interfaces/state-diagram/IChoiceElement';
-import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
-import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
-import INewRelationship from '@interfaces/class-diagram/INewRelationship';
+import IRelationshipHistory from '@interfaces/IRelationshipHistory';
+
+export const removeRedoFinalStateElement = (element: IFinalStateElement): IReducerPayload<StateDiagramActionEnum, IFinalStateElement> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_REDO_FINAL_STATE,
+        data: element
+    };
+};
+
+export const removeRedoInitialStateElement = (element: IInitialStateElement): IReducerPayload<StateDiagramActionEnum, IInitialStateElement> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_REDO_FINAL_STATE,
+        data: element
+    };
+};
+
+export const removeRedoStateElement = (element: IStateElement): IReducerPayload<StateDiagramActionEnum, IStateElement> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_REDO_STATE,
+        data: element
+    };
+};
+
+export const removeStateRedoRelationship = (relationship: IRelationshipHistory): IReducerPayload<StateDiagramActionEnum, IRelationshipHistory> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_REDO_RELATIONSHIP,
+        data: relationship
+    };
+};
+
+export const addRedoFinalStateElement = (element: IFinalStateElement): IReducerPayload<StateDiagramActionEnum, IFinalStateElement> => {
+    return {
+        type: StateDiagramActionEnum.ADD_REDO_FINAL_STATE,
+        data: element
+    };
+};
+
+export const addRedoInitialStateElement = (element: IInitialStateElement): IReducerPayload<StateDiagramActionEnum, IInitialStateElement> => {
+    return {
+        type: StateDiagramActionEnum.ADD_REDO_INITIAL_STATE,
+        data: element
+    };
+};
+
+export const addRedoStateElement = (element: IStateElement): IReducerPayload<StateDiagramActionEnum, IStateElement> => {
+    return {
+        type: StateDiagramActionEnum.ADD_REDO_STATE,
+        data: element
+    };
+};
+
+export const addRedoStateRelationship = (relationship: IRelationshipHistory): IReducerPayload<StateDiagramActionEnum, IRelationshipHistory> => {
+    return {
+        type: StateDiagramActionEnum.ADD_REDO_RELATIONSHIP,
+        data: relationship
+    };
+};
+
+export const removeUndoFinalStateElement = (element: IFinalStateElement): IReducerPayload<StateDiagramActionEnum, IFinalStateElement> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_UNDO_FINAL_STATE,
+        data: element
+    };
+};
+
+export const removeUndoInitialStateElement = (element: IInitialStateElement): IReducerPayload<StateDiagramActionEnum, IInitialStateElement> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_UNDO_FINAL_STATE,
+        data: element
+    };
+};
+
+export const removeUndoStateElement = (element: IStateElement): IReducerPayload<StateDiagramActionEnum, IStateElement> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_UNDO_STATE,
+        data: element
+    };
+};
+
+export const removeUndoStateRelationship = (relationship: IRelationshipHistory): IReducerPayload<StateDiagramActionEnum, IRelationshipHistory> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_UNDO_RELATIONSHIP,
+        data: relationship
+    };
+};
+
+export const addUndoFinalStateElement = (element: IFinalStateElement): IReducerPayload<StateDiagramActionEnum, IFinalStateElement> => {
+    return {
+        type: StateDiagramActionEnum.ADD_UNDO_FINAL_STATE,
+        data: element
+    };
+};
+
+export const addUndoInitialStateElement = (element: IInitialStateElement): IReducerPayload<StateDiagramActionEnum, IInitialStateElement> => {
+    return {
+        type: StateDiagramActionEnum.ADD_UNDO_INITIAL_STATE,
+        data: element
+    };
+};
+
+export const addUndoStateElement = (element: IStateElement): IReducerPayload<StateDiagramActionEnum, IStateElement> => {
+    return {
+        type: StateDiagramActionEnum.ADD_UNDO_STATE,
+        data: element
+    };
+};
+
+export const addUndoStateRelationship = (relationship: IRelationshipHistory): IReducerPayload<StateDiagramActionEnum, IRelationshipHistory> => {
+    return {
+        type: StateDiagramActionEnum.ADD_UNDO_RELATIONSHIP,
+        data: relationship
+    };
+};
+
+export const removeInitialStateElement = (element: IInitialStateElement): IReducerPayload<StateDiagramActionEnum, IInitialStateElement> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_INITIAL_STATE_ELEMENTS,
+        data: element
+    };
+};
+
+export const removeStateElement = (element: IStateElement): IReducerPayload<StateDiagramActionEnum, IStateElement> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_STATE_ELEMENTS,
+        data: element
+    };
+};
+
+export const removeFinalStateElement = (element: IFinalStateElement): IReducerPayload<StateDiagramActionEnum, IFinalStateElement> => {
+    return {
+        type: StateDiagramActionEnum.REMOVE_FINAL_STATE_ELEMENTS,
+        data: element
+    };
+};
 
 export const addNewStateElement = (element: IStateElement): IReducerPayload<StateDiagramActionEnum, IStateElement> => {
     return {
