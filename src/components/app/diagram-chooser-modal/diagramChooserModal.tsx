@@ -14,6 +14,7 @@ import { parseClassDiagram } from '@utils/ccxmlParser';
 const DiagramChooserModal = () => {
     const dispatch = useDispatch();
     const [isActive, setIsActive] = useState(true);
+    const [filename, setFilename] = useState<string>('');
     const { x: canvasWidth, y: canvasHeight } = useSelector((store: IStoreState) => store.canvas.canvasDimensions);
 
     const createNewClassDiagram = () => {
@@ -93,6 +94,7 @@ const DiagramChooserModal = () => {
         event.persist();
         const file = (event.target as any).files[0];
         const reader = new FileReader();
+        setFilename(file.name);
         reader.onload = (e) => {
             openExistingDiagram(e.target.result.toString());
         };
@@ -101,6 +103,7 @@ const DiagramChooserModal = () => {
     
     const clearFileInput = (ev: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
         (ev.target as any).value = null;
+        setFilename('');
     };
 
     return (
@@ -108,32 +111,40 @@ const DiagramChooserModal = () => {
             <div className='modal-background'/>
             <div className='modal-card'>
                 <section className='modal-card-body'>
-                    <a
-                        className='button'
-                        onClick={() => createNewClassDiagram()} 
-                    >
-                        Create New Class Diagram
-                    </a>
-                    <a
-                        className='button'
-                        onClick={() => createNewStateDiagram()}
-                    >
-                        Create New State Diagram
-                    </a>
-                    <div className='file'>
-                        <label className='file-label'>
-                            <input onClick={(ev) => clearFileInput(ev)} onChange={(ev) => onFileUpload(ev)} className='file-input' type='file' name='resume' accept='.xml'/>
-                            <span className='file-cta'>
-                                <span className='file-icon'>
-                                    <FontAwesomeIcon icon='upload'/>
+                    <div className="content">
+                        <h2>Create new diagram</h2>
+                        <div className='buttons is-centered'>
+                            <button
+                                className='button is-rounded'
+                                onClick={() => createNewClassDiagram()} 
+                            >
+                                Class Diagram
+                            </button>
+                            <button
+                                className='button is-rounded'
+                                onClick={() => createNewStateDiagram()}
+                            >
+                                State Diagram
+                            </button>
+                        </div>
+                        <h2>Load existing diagram</h2>
+                        <div className='file is-centered'>
+                            <label className='file-label'>
+                                <input onClick={(ev) => clearFileInput(ev)} onChange={(ev) => onFileUpload(ev)} className='file-input' type='file' name='resume' accept='.xml'/>
+                                <span className='file-cta'>
+                                    <span className='file-icon'>
+                                        <FontAwesomeIcon icon='upload'/>
+                                    </span>
+                                    <span className='file-label'>Choose a file...</span>
                                 </span>
-                                <span className='file-label'>Choose a file...</span>
-                            </span>
-                        </label>
+                                <span className='file-name' style={{ width: '300px' }}>
+                                    {filename}
+                                </span>
+                            </label>
+                        </div>
                     </div>
                 </section>
             </div>
-            <button className='modal-close is-large' aria-label='close'/>
         </div>
     );
 };
