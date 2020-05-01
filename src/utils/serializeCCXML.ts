@@ -51,8 +51,8 @@ const convertEntriesToCCXMLProperties = (entries: Array<IEntry>) => {
     return entries.filter((entry) => entry.type === EntryTypeEnum.PROPERTY).map((entry): ICCXMLProperty => {
         return {
             $: {
-                modifier: entry.accessModifier.toLowerCase(),
-                property: entry.value
+                accessModifier: entry.accessModifier.toLowerCase(),
+                name: entry.value
             }
         };
     });
@@ -62,8 +62,8 @@ const convertEntriesToCCXMLMethods = (entries: Array<IEntry>) => {
     return entries.filter((entry) => entry.type === EntryTypeEnum.METHOD).map((entry): ICCXMLMethod => {
         return {
             $: {
-                modifier: entry.accessModifier.toLowerCase(),
-                property: entry.value
+                accessModifier: entry.accessModifier.toLowerCase(),
+                name: entry.value
             }
         };
     });
@@ -111,9 +111,21 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
                 x: classElement.graphicData.frame.xCenter,
                 y: classElement.graphicData.frame.yCenter
             },
-            method: convertEntriesToCCXMLMethods(entries),
-            property: convertEntriesToCCXMLProperties(entries),
-            transition: getElementsTransitions(classDiagram, classElement)
+            methods: [
+                {
+                    method: convertEntriesToCCXMLMethods(entries)
+                }
+            ],
+            properties: [
+                {
+                    property: convertEntriesToCCXMLProperties(entries)
+                }
+            ],
+            transitions: [
+                {
+                    transition: getElementsTransitions(classDiagram, classElement)
+                }
+            ]
         };
     });
 
@@ -126,8 +138,16 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
                 x: dataTypeElement.graphicData.frame.xCenter,
                 y: dataTypeElement.graphicData.frame.yCenter
             },
-            entry: convertEntriesToCCXMLEntries(entries),
-            transition: getElementsTransitions(classDiagram, dataTypeElement)
+            entries: [
+                {
+                   entry: convertEntriesToCCXMLEntries(entries) 
+                }
+            ],
+            transitions: [
+                {
+                    transition: getElementsTransitions(classDiagram, dataTypeElement)
+                }
+            ]
         }; 
     });
 
@@ -140,8 +160,16 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
                 x: element.graphicData.frame.xCenter,
                 y: element.graphicData.frame.yCenter
             },
-            entry: convertEntriesToCCXMLEntries(entries),
-            transition: getElementsTransitions(classDiagram, element)
+            entries: [
+                {
+                    entry: convertEntriesToCCXMLEntries(entries)
+                }
+            ],
+            transitions: [
+                {
+                    transition: getElementsTransitions(classDiagram, element)
+                }
+            ]
         };
     });
 
@@ -154,9 +182,19 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
                 x: element.graphicData.frame.xCenter,
                 y: element.graphicData.frame.yCenter
             },
-            method: convertEntriesToCCXMLMethods(entries),
-            property: convertEntriesToCCXMLProperties(entries),
-            transition: getElementsTransitions(classDiagram, element)
+            methods: [
+                {
+                    method: convertEntriesToCCXMLMethods(entries)
+                }
+            ],
+            properties: [{
+                property: convertEntriesToCCXMLProperties(entries)
+            }],
+            transitions: [
+                {
+                    transition: getElementsTransitions(classDiagram, element)
+                }
+            ] 
         };
     });
     
@@ -169,8 +207,16 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
                 x: element.graphicData.frame.xCenter,
                 y: element.graphicData.frame.yCenter
             },
-            slot: convertEntriesToCCXMLSlot(entries),
-            transition: getElementsTransitions(classDiagram, element)
+            slots: [
+                {
+                    slot: convertEntriesToCCXMLSlot(entries)
+                }
+            ],
+            transitions: [
+                {
+                    transition: getElementsTransitions(classDiagram, element)
+                }
+            ] 
         };
     }); 
 
@@ -181,7 +227,11 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
                 x: element.graphicData.frame.xCenter,
                 y: element.graphicData.frame.yCenter
             },
-            transition: getElementsTransitions(classDiagram, element)
+            transitions: [
+                {
+                    transition: getElementsTransitions(classDiagram, element)
+                }
+            ] 
         };
     });
 
@@ -194,9 +244,21 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
                 x: element.graphicData.frame.xCenter,
                 y: element.graphicData.frame.yCenter
             },
-            method: convertEntriesToCCXMLMethods(entries),
-            property: convertEntriesToCCXMLProperties(entries),
-            transition: getElementsTransitions(classDiagram, element)
+            methods: [
+                {
+                    method: convertEntriesToCCXMLMethods(entries)
+                }
+            ],
+            properties: [
+                {
+                    property: convertEntriesToCCXMLProperties(entries)
+                }
+            ],
+            transitions: [
+                {
+                    transition: getElementsTransitions(classDiagram, element)
+                }
+            ]
         };
     });
 
@@ -207,13 +269,41 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
             version: '1.0',
             coordinates: 'true'
         },
-        class: ccxmlClasses,
-        datatype: ccxmlDataType,
-        enumeration: ccxmlEnumeration,
-        interface: ccxmlInterface,
-        object: ccxmlObject,
-        primitive: ccxmlPrimitive,
-        utility: ccxmlUtility
+        classes: [
+            {
+                class: ccxmlClasses
+            }
+        ],
+        dataTypes: [
+            {
+                dataType: ccxmlDataType
+            }
+        ],
+        enumerations: [
+            {
+                enumeration: ccxmlEnumeration
+            }
+        ],
+        interfaces: [
+            {
+                interface: ccxmlInterface
+            }
+        ],
+        objects: [
+            {
+                object: ccxmlObject
+            }
+        ],
+        primitives: [
+            {
+                 primitive: ccxmlPrimitive
+            }
+        ],
+        utilities: [
+            {
+                utility: ccxmlUtility
+            }
+        ] 
     };
 
     const builder = new Builder({

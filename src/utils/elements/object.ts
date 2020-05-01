@@ -8,9 +8,10 @@ import EntryTypeEnum from '@enums/EntryTypeEnum';
 import ICCXMLObject from '@interfaces/ccxml/ICCXMLObject';
 
 export const createNewObjectFromCCXML = (coordinates: ICoordinates, ccxmlObject: ICCXMLObject) => {
-    const frame = createFrame(coordinates, ccxmlObject.slot.length + 1);
+    const slots = ccxmlObject.slots?.[0]?.slot ?? [];
+    const frame = createFrame(coordinates, slots.length + 1);
     const entryIds: Array<string> = [];
-    const entries: Array<IObjectSlot> = ccxmlObject.slot.map((ccxmlSlot): IObjectSlot => {
+    const entries: Array<IObjectSlot> = slots.map((ccxmlSlot): IObjectSlot => {
         const newSlotId = v4();
         entryIds.push(newSlotId);
 

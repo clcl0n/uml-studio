@@ -8,18 +8,19 @@ import EntryTypeEnum from '@enums/EntryTypeEnum';
 import ICCXMLEnumeration from '@interfaces/ccxml/ICCXMLEnumeration';
 
 export const createNewEnumerationFromCCXML = (coordinates: ICoordinates, ccxmlEnumeration: ICCXMLEnumeration) => {
-    const frame = createFrame(coordinates, ccxmlEnumeration.entry.length + 1);
+    const dataEntries = ccxmlEnumeration.entries?.[0]?.entry ?? [];
+    const frame = createFrame(coordinates, dataEntries.length + 1);
     frame.height += (frame.rowHeight / 2);
 
     const entryIds: Array<string> = [];
-    const entries: Array<IEnumerationEntry> = ccxmlEnumeration.entry.map((ccxmlEntry): IEnumerationEntry => {
+    const entries: Array<IEnumerationEntry> = dataEntries.map((ccxmlEntry): IEnumerationEntry => {
         const newEntryId = v4();
         entryIds.push(newEntryId);
 
         return {
             id: newEntryId,
             type: EntryTypeEnum.BASE,
-            value: ccxmlEntry.$.value
+            value: ccxmlEntry.$.value ?? ''
         };
     });
 

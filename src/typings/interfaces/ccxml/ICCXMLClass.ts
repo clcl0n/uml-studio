@@ -3,6 +3,6 @@ import ICCXMLProperty from './ICCXMLProperty';
 import ICCXMLMethod from './ICCXMLMethod';
 
 export default interface ICCXMLClass extends ICCXMLBaseElement {
-    property: Array<ICCXMLProperty>;
-    method: Array<ICCXMLMethod>;
+    properties: Array<{property: Array<ICCXMLProperty>}>;
+    methods: Array<{ method: Array<ICCXMLMethod> }>;
 }

@@ -12,30 +12,32 @@ import IInterfaceProperty from '@interfaces/class-diagram/interface/IInterfacePr
 import IInterfaceMethod from '@interfaces/class-diagram/interface/IInterfaceMethod';
 
 export const createNewInterfaceFromCCXML = (coordinates: ICoordinates, ccxmlInterface: ICCXMLInterface, width: number = 100) => {
-    const frame = createFrame(coordinates, ccxmlInterface.method.length + ccxmlInterface.property.length + 1, width);
+    const methods = ccxmlInterface.methods?.[0]?.method ?? [];
+    const properties = ccxmlInterface.properties?.[0]?.property ?? [];
+    const frame = createFrame(coordinates, methods.length + properties.length + 1, width);
     frame.height += (frame.rowHeight / 2);
 
     const entryIds: Array<string> = [];
     const entries: Array<IInterfaceProperty | IInterfaceMethod> = [
-        ...ccxmlInterface.method.map((ccxmlMethod): IInterfaceMethod => {
+        ...methods.map((ccxmlMethod): IInterfaceMethod => {
             const newMethodId = v4();
             entryIds.push(newMethodId);
             return {
                 id: newMethodId,
-                accessModifier: ccxmlMethod.$.modifier.toUpperCase() as AccessModifierEnum,
+                accessModifier: ccxmlMethod.$.accessModifier.toUpperCase() as AccessModifierEnum,
                 type: EntryTypeEnum.METHOD,
-                value: ccxmlMethod.$.property
+                value: ccxmlMethod.$.name
             };
         }),
-        ...ccxmlInterface.property.map((ccxmProperty): IInterfaceProperty => {
+        ...properties.map((ccxmProperty): IInterfaceProperty => {
             const newPropertyId = v4();
             entryIds.push(newPropertyId);
 
             return {
                 id: newPropertyId,
-                accessModifier: ccxmProperty.$.modifier.toUpperCase() as AccessModifierEnum,
+                accessModifier: ccxmProperty.$.accessModifier.toUpperCase() as AccessModifierEnum,
                 type: EntryTypeEnum.PROPERTY,
-                value: ccxmProperty.$.property
+                value: ccxmProperty.$.name
             };
         })
     ];
@@ -57,7 +59,7 @@ export const createNewInterfaceFromCCXML = (coordinates: ICoordinates, ccxmlInte
                     y: frame.y + frame.rowHeight + (frame.rowHeight / 2)
                 },
                 methods: {
-                    y: frame.y + (2 * frame.rowHeight) + (frame.rowHeight / 2)
+                    y: frame.y + ((1 + properties.length) * frame.rowHeight)+ (frame.rowHeight / 2)
                 }
             }
         }

@@ -66,13 +66,13 @@ const DiagramChooserModal = () => {
             } else {
                 error !== '' ? alert(error) : alert(warning);
             }
-        } else if (parsedXml.ccxml) {
+        } else if (parsedXml.classxml) {
             const {
                 newElements,
                 newRelationShipSegments,
                 newRelationShips,
                 newEntries
-            } = await parseClassDiagram(parsedXml.ccxml, { x: canvasWidth, y: canvasHeight });
+            } = await parseClassDiagram(parsedXml.classxml, { x: canvasWidth, y: canvasHeight });
             newEntries.forEach((newEntry) => {
                 dispatch(addNewElementEntry(newEntry));
             });

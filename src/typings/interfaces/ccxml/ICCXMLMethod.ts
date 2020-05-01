@@ -1,6 +1,6 @@
 export default interface ICCXMLMethod {
     $: {
-        modifier: string;
-        property: string;
+        accessModifier: string;
+        name: string;
     };
 }

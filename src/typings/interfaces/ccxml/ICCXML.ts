@@ -13,11 +13,11 @@ export default interface ICCXML {
         initialclass?: string;
         coordinates?: string;
     };
-    class: Array<ICCXMLClass>;
-    utility: Array<ICCXMLUtility>;
-    primitive: Array<ICCXMLPrimitive>;
-    object: Array<ICCXMLObject>;
-    interface: Array<ICCXMLInterface>;
-    enumeration: Array<ICCXMLEnumeration>;
-    datatype: Array<ICCXMLDataType>;
+    classes: Array<{ class: Array<ICCXMLClass> }>;
+    utilities: Array<{ utility: Array<ICCXMLUtility> }>;
+    primitives: Array<{ primitive: Array<ICCXMLPrimitive> }>;
+    objects: Array<{ object: Array<ICCXMLObject> }>;
+    interfaces: Array<{ interface: Array<ICCXMLInterface> }>;
+    enumerations: Array<{ enumeration: Array<ICCXMLEnumeration> }>;
+    dataTypes: Array<{ dataType: Array<ICCXMLDataType> }>;
 }

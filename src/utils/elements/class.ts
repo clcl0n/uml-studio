@@ -10,29 +10,30 @@ import EntryTypeEnum from '@enums/EntryTypeEnum';
 import ICCXMLClass from '@interfaces/ccxml/ICCXMLClass';
 
 export const createNewClassFromCCXML = (coordinates: ICoordinates, ccxmlClass: ICCXMLClass) => {
-    const frame = createFrame(coordinates, ccxmlClass.property.length + ccxmlClass.method.length + 1);
-
+    const properties = ccxmlClass.properties?.[0]?.property ?? [];
+    const methods = ccxmlClass.methods?.[0]?.method ?? [];
+    const frame = createFrame(coordinates, properties.length + methods.length + 1);
     const entryIds: Array<string> = [];
     const entries: Array<IClassProperty | IClassMethod> = [
-        ...ccxmlClass.method.map((ccxmlMethod): IClassMethod => {
+        ...methods.map((ccxmlMethod): IClassMethod => {
             const newMethodId = v4();
             entryIds.push(newMethodId);
             return {
                 id: newMethodId,
-                accessModifier: ccxmlMethod.$.modifier.toUpperCase() as AccessModifierEnum,
+                accessModifier: ccxmlMethod.$.accessModifier.toUpperCase() as AccessModifierEnum,
                 type: EntryTypeEnum.METHOD,
-                value: ccxmlMethod.$.property
+                value: ccxmlMethod.$.name
             };
         }),
-        ...ccxmlClass.property.map((ccxmProperty): IClassProperty => {
+        ...properties.map((ccxmProperty): IClassProperty => {
             const newPropertyId = v4();
             entryIds.push(newPropertyId);
 
             return {
                 id: newPropertyId,
-                accessModifier: ccxmProperty.$.modifier.toUpperCase() as AccessModifierEnum,
+                accessModifier: ccxmProperty.$.accessModifier.toUpperCase() as AccessModifierEnum,
                 type: EntryTypeEnum.PROPERTY,
-                value: ccxmProperty.$.property
+                value: ccxmProperty.$.name
             };
         })
     ];
@@ -54,7 +55,7 @@ export const createNewClassFromCCXML = (coordinates: ICoordinates, ccxmlClass: I
                     y: frame.y + frame.rowHeight
                 },
                 methods: {
-                    y: frame.y + (2 * frame.rowHeight)
+                    y: frame.y + ((1 + properties.length) * frame.rowHeight)
                 }
             }
         }

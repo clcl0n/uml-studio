@@ -177,7 +177,7 @@ const Ribbon = () => {
                 newRelationShipSegments,
                 newRelationShips,
                 newEntries
-            } = await parseClassDiagram(parsedXml.ccxml, { x: canvasWidth, y: canvasHeight });
+            } = await parseClassDiagram(parsedXml.classDiagram, { x: canvasWidth, y: canvasHeight });
             newEntries.forEach((newEntry) => {
                 dispatch(addNewElementEntry(newEntry));
             });

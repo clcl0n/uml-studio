@@ -6,5 +6,5 @@ export default interface ICCXMLBaseElement {
         x: string;
         y: string;
     };
-    transition: Array<ICCXMLTransition>;
+    transitions: Array<{ transition: Array<ICCXMLTransition> }>;
 }
