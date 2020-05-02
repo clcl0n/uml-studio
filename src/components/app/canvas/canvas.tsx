@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './canvas.scss';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,6 +18,14 @@ const Canvas = () => {
     const classDiagram = useSelector((state: IStoreState) => state.classDiagram);
     const stateDiagram = useSelector((state: IStoreState) => state.stateDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
+    const canvasRef = useRef(null);
+
+    useEffect(() => {
+        const current = canvasRef.current as HTMLDivElement;
+        current.scrollTop = (current.scrollHeight - current.clientHeight) / 2;
+        current.scrollLeft = (current.scrollWidth - current.clientWidth) / 2;
+    }, []);
+
     const { x: paperWidth, y: paperHeight} = useSelector((state: IStoreState) => state.canvas.canvasDimensions);
     const [canvasDimensions, setCanvasDimensions] = useState({
         canvasWidth: paperWidth,
@@ -60,7 +68,7 @@ const Canvas = () => {
     };
 
     return (
-        <div id='canvas'>
+        <div ref={canvasRef} id='canvas'>
             <div style={{width: 400 + (canvasDimensions.canvasWidth * (canvasZoom/100)), height: 400 + (canvasDimensions.canvasHeight * (canvasZoom/100))}} className='canvas-wrapper'>
                 <svg
                     id='svg-canvas'

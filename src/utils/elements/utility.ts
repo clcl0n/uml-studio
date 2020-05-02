@@ -7,6 +7,68 @@ import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import IUtility from '@interfaces/class-diagram/utility/IUtility';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
+import ICCXMLUtility from '@interfaces/ccxml/ICCXMLUtility';
+
+export const createNewUtilityFromCCXML = (coordinates: ICoordinates, ccxmlUtility: ICCXMLUtility) => {
+    const methods = ccxmlUtility.methods?.[0]?.method ?? [];
+    const properties = ccxmlUtility.properties?.[0]?.property ?? [];
+    const frame = createFrame(coordinates, methods.length + properties.length + 1);
+
+    const entryIds: Array<string> = [];
+    const entries: Array<IClassProperty | IClassMethod> = [
+        ...methods.map((ccxmlMethod): IClassMethod => {
+            const newMethodId = v4();
+            entryIds.push(newMethodId);
+            return {
+                id: newMethodId,
+                accessModifier: ccxmlMethod.$.accessModifier.toUpperCase() as AccessModifierEnum,
+                type: EntryTypeEnum.METHOD,
+                value: ccxmlMethod.$.name
+            };
+        }),
+        ...properties.map((ccxmProperty): IClassProperty => {
+            const newPropertyId = v4();
+            entryIds.push(newPropertyId);
+
+            return {
+                id: newPropertyId,
+                accessModifier: ccxmProperty.$.accessModifier.toUpperCase() as AccessModifierEnum,
+                type: EntryTypeEnum.PROPERTY,
+                value: ccxmProperty.$.name
+            };
+        })
+    ];
+
+    frame.height += (frame.rowHeight / 2);
+
+    const newUtility: IUtility = {
+        id: v4(),
+        type: ClassDiagramElementsEnum.UTILITY,
+        data: {
+            elementName: ccxmlUtility.$.id,
+            entryIds
+        },
+        graphicData: {
+            frame,
+            sections: {
+                head: {
+                    y: frame.y
+                },
+                properties: {
+                    y: frame.y + frame.rowHeight + (frame.rowHeight / 2)
+                },
+                methods: {
+                    y: frame.y + ((1 + properties.length) * frame.rowHeight) + (frame.rowHeight / 2)
+                }
+            }
+        }
+    };
+
+    return {
+        newUtility,
+        entries
+    };
+};
 
 export const createNewUtility = (coordinates: ICoordinates) => {
     const frame = createFrame(coordinates, 3);

@@ -1,0 +1,80 @@
+{
+    "definitions": {
+        "actions": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "actionType": {
+                                "type": "string",
+                                "enum": ["if", "elseif"]
+                            },
+                            "cond": {
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": ["actionType", "cond"]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "actionType": {
+                                "type": "string",
+                                "enum": ["raise"]
+                            },
+                            "event": {
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": ["actionType", "event"]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "actionType": {
+                                "type": "string",
+                                "enum": ["else"]
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": ["actionType"]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "actionType": {
+                                "type": "string",
+                                "enum": ["foreach"]
+                            },
+                            "array": {
+                                "type": "string"
+                            },
+                            "item": {
+                                "type": "string"
+                            },
+                            "index": {
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": ["actionType", "array", "item"]
+                    }
+                ]
+            }
+        }
+    },
+    "type": "object",
+    "properties": {
+        "onEntry": {
+            "$ref": "#/definitions/actions"
+        },
+        "onExit": {
+            "$ref": "#/definitions/actions"
+        }
+    },
+    "required": ["onEntry", "onExit"]
+}

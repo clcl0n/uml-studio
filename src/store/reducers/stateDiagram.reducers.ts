@@ -4,15 +4,21 @@ import IReducerPayload from '@interfaces/IReducerPayload';
 import StateDiagramActionEnum from '@enums/stateDiagramActionEnum';
 import IInitialStateElement from '@interfaces/state-diagram/initial-state/IInitialStateElement';
 import IFinalStateElement from '@interfaces/state-diagram/final-state/IFinalStateElement';
-import IForkJoinElement from '@interfaces/state-diagram/IForkJoinElement';
-import IChoiceElement from '@interfaces/state-diagram/IChoiceElement';
+import StateHistoryTypeEnum from '@enums/stateHistoryTypeEnum';
+import IRelationshipHistory from '@interfaces/IRelationshipHistory';
 
-const choiceElementsState: IReduxEntity<IChoiceElement> = {
+const undoHistoryState: IReduxEntity<{
+    type: StateHistoryTypeEnum,
+    data: IInitialStateElement | IFinalStateElement | IStateElement | IRelationshipHistory
+}> = {
     byId: {},
     allIds: []
 };
 
-const forkJoinElementsState: IReduxEntity<IForkJoinElement> = {
+const redoHistoryState: IReduxEntity<{
+    type: StateHistoryTypeEnum,
+    data: IInitialStateElement | IFinalStateElement | IStateElement | IRelationshipHistory
+}> = {
     byId: {},
     allIds: []
 };
@@ -32,47 +38,125 @@ const finalStateElementsState: IReduxEntity<IFinalStateElement> = {
     allIds: []
 };
 
-export const choiceElementsReducer = (state = choiceElementsState, payload: IReducerPayload<StateDiagramActionEnum, IChoiceElement>) => {
+export const redoStateHistoryReducer = (state = redoHistoryState, payload: IReducerPayload<StateDiagramActionEnum, IInitialStateElement | IFinalStateElement | IStateElement | IRelationshipHistory>): IReduxEntity<{
+    type: StateHistoryTypeEnum,
+    data: IInitialStateElement | IFinalStateElement | IStateElement | IRelationshipHistory
+}>  => {
     switch(payload.type) {
-        case StateDiagramActionEnum.ADD_NEW_CHOICE:
-            return {
-                byId: {
-                    ...state.byId,
-                    [payload.data.id]: payload.data
-                },
-                allIds: [...state.allIds, payload.data.id]
+        case StateDiagramActionEnum.ADD_REDO_RELATIONSHIP:
+            state.byId[(payload.data as IRelationshipHistory).relationship.id] = {
+                type: StateHistoryTypeEnum.RELATIONSHIP,
+                data: payload.data as IRelationshipHistory
             };
-        case StateDiagramActionEnum.UPDATE_CHOICE:
             return {
-                byId: {
-                    ...state.byId,
-                    [payload.data.id]: payload.data
-                },
-                allIds: [...state.allIds]
+                ...state,
+                allIds: [...state.allIds, (payload.data as IRelationshipHistory).relationship.id]
             };
+        case StateDiagramActionEnum.ADD_REDO_INITIAL_STATE:
+            state.byId[(payload.data as IInitialStateElement).id] = {
+                type: StateHistoryTypeEnum.INITIAL_STATE,
+                data: payload.data as IInitialStateElement
+            };
+            return {
+                ...state,
+                allIds: [...state.allIds, (payload.data as IInitialStateElement).id]
+            };
+        case StateDiagramActionEnum.ADD_REDO_FINAL_STATE:
+            state.byId[(payload.data as IFinalStateElement).id] = {
+                type: StateHistoryTypeEnum.FINAL_STATE,
+                data: payload.data as IFinalStateElement
+            };
+            return {
+                ...state,
+                allIds: [...state.allIds, (payload.data as IFinalStateElement).id]
+            };
+        case StateDiagramActionEnum.ADD_REDO_STATE:
+            state.byId[(payload.data as IStateElement).id] = {
+                type: StateHistoryTypeEnum.STATE,
+                data: payload.data as IStateElement
+            };
+            return {
+                ...state,
+                allIds: [...state.allIds, (payload.data as IStateElement).id]
+            };
+        case StateDiagramActionEnum.REMOVE_REDO_RELATIONSHIP:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IRelationshipHistory).relationship.id), 1);
+            delete state.byId[(payload.data as IRelationshipHistory).relationship.id];
+            return {...state};
+        case StateDiagramActionEnum.REMOVE_REDO_INITIAL_STATE:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IInitialStateElement).id), 1);
+            delete state.byId[(payload.data as IInitialStateElement).id];
+            return {...state};
+        case StateDiagramActionEnum.REMOVE_REDO_FINAL_STATE:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IFinalStateElement).id), 1);
+            delete state.byId[(payload.data as IFinalStateElement).id];
+            return {...state};
+        case StateDiagramActionEnum.REMOVE_REDO_STATE:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IStateElement).id), 1);
+            delete state.byId[(payload.data as IStateElement).id];
+            return {...state};
         default:
             return state;
     }
 };
 
-export const forkJoinElementsReducer = (state = forkJoinElementsState, payload: IReducerPayload<StateDiagramActionEnum, IForkJoinElement>) => {
+export const undoStateHistoryReducer = (state = undoHistoryState, payload: IReducerPayload<StateDiagramActionEnum, IInitialStateElement | IFinalStateElement | IStateElement | IRelationshipHistory>): IReduxEntity<{
+    type: StateHistoryTypeEnum,
+    data: IInitialStateElement | IFinalStateElement | IStateElement | IRelationshipHistory
+}>  => {
     switch(payload.type) {
-        case StateDiagramActionEnum.ADD_NEW_FORK_JOIN:
-            return {
-                byId: {
-                    ...state.byId,
-                    [payload.data.id]: payload.data
-                },
-                allIds: [...state.allIds, payload.data.id]
+        case StateDiagramActionEnum.ADD_UNDO_RELATIONSHIP:
+            state.byId[(payload.data as IRelationshipHistory).relationship.id] = {
+                type: StateHistoryTypeEnum.RELATIONSHIP,
+                data: payload.data as IRelationshipHistory
             };
-        case StateDiagramActionEnum.UPDATE_FORK_JOIN:
             return {
-                byId: {
-                    ...state.byId,
-                    [payload.data.id]: payload.data
-                },
-                allIds: [...state.allIds]
+                ...state,
+                allIds: [...state.allIds, (payload.data as IRelationshipHistory).relationship.id]
             };
+        case StateDiagramActionEnum.ADD_UNDO_INITIAL_STATE:
+            state.byId[(payload.data as IInitialStateElement).id] = {
+                type: StateHistoryTypeEnum.INITIAL_STATE,
+                data: payload.data as IInitialStateElement
+            };
+            return {
+                ...state,
+                allIds: [...state.allIds, (payload.data as IInitialStateElement).id]
+            };
+        case StateDiagramActionEnum.ADD_UNDO_FINAL_STATE:
+            state.byId[(payload.data as IFinalStateElement).id] = {
+                type: StateHistoryTypeEnum.FINAL_STATE,
+                data: payload.data as IFinalStateElement
+            };
+            return {
+                ...state,
+                allIds: [...state.allIds, (payload.data as IFinalStateElement).id]
+            };
+        case StateDiagramActionEnum.ADD_UNDO_STATE:
+            state.byId[(payload.data as IStateElement).id] = {
+                type: StateHistoryTypeEnum.STATE,
+                data: payload.data as IStateElement
+            };
+            return {
+                ...state,
+                allIds: [...state.allIds, (payload.data as IStateElement).id]
+            };
+        case StateDiagramActionEnum.REMOVE_UNDO_RELATIONSHIP:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IRelationshipHistory).relationship.id), 1);
+            delete state.byId[(payload.data as IRelationshipHistory).relationship.id];
+            return {...state};
+        case StateDiagramActionEnum.REMOVE_UNDO_INITIAL_STATE:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IInitialStateElement).id), 1);
+            delete state.byId[(payload.data as IInitialStateElement).id];
+            return {...state};
+        case StateDiagramActionEnum.REMOVE_UNDO_FINAL_STATE:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IFinalStateElement).id), 1);
+            delete state.byId[(payload.data as IFinalStateElement).id];
+            return {...state};
+        case StateDiagramActionEnum.REMOVE_UNDO_STATE:
+            state.allIds.splice(state.allIds.indexOf((payload.data as IStateElement).id), 1);
+            delete state.byId[(payload.data as IStateElement).id];
+            return {...state};
         default:
             return state;
     }
@@ -96,6 +180,16 @@ export const finalStateElementsReducer = (state = finalStateElementsState, paylo
                 },
                 allIds: [...state.allIds]
             };
+        case StateDiagramActionEnum.CLEAR_FINAL_STATE_ELEMENTS:
+            return {
+                byId: {},
+                allIds: []
+            };
+        case StateDiagramActionEnum.REMOVE_FINAL_STATE_ELEMENTS:
+            state.allIds.splice(state.allIds.indexOf(payload.data.id), 1);
+            delete state.byId[payload.data.id];
+
+            return {...state};
         default:
             return state;
     }
@@ -119,6 +213,16 @@ export const initialStateElementsReducer = (state = initialStateElementsState, p
                 },
                 allIds: [...state.allIds]
             };
+        case StateDiagramActionEnum.CLEAR_INITIAL_STATE_ELEMENTS:
+            return {
+                byId: {},
+                allIds: []
+            };
+        case StateDiagramActionEnum.REMOVE_INITIAL_STATE_ELEMENTS:
+            state.allIds.splice(state.allIds.indexOf(payload.data.id), 1);
+            delete state.byId[payload.data.id];
+
+            return {...state};
         default:
             return state;
     }
@@ -142,6 +246,16 @@ export const stateElementsReducer = (state = stateElementsState, payload: IReduc
                 },
                 allIds: [...state.allIds]
             };
+        case StateDiagramActionEnum.CLEAR_STATE_ELEMENTS:
+            return {
+                byId: {},
+                allIds: []
+            };
+        case StateDiagramActionEnum.REMOVE_STATE_ELEMENTS:
+            state.allIds.splice(state.allIds.indexOf(payload.data.id), 1);
+            delete state.byId[payload.data.id];
+
+            return {...state};
         default:
             return state;
     }

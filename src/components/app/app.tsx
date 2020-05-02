@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import './app.scss';
 import 'bulma';
@@ -11,9 +11,10 @@ import DiagramChooserModal from './diagram-chooser-modal/diagramChooserModal';
 
 const app = () => {
     const { removeSelectedElement } = useRemoveSelectedElement();
+    const [keyPressed, setKeyPressed] = useState(0);
     const onGlobalKeyPress = (event: KeyboardEvent) => {
         if (event.keyCode === 127) {
-            removeSelectedElement();
+            setKeyPressed(127);
         }
     };
     useEffect(() => {
@@ -22,8 +23,12 @@ const app = () => {
         return () => {
             window.removeEventListener('keypress',(ev) => onGlobalKeyPress(ev));
         };
-    });
+    }, []);
 
+    if (keyPressed === 127) {
+        removeSelectedElement();
+        setKeyPressed(0);
+    }
 
     return (
         <div id='uml-editor-studio'>

@@ -7,6 +7,65 @@ import IClassProperty from '@interfaces/class-diagram/class/IClassProperty';
 import AccessModifierEnum from '@enums/accessModifierEnum';
 import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
+import ICCXMLClass from '@interfaces/ccxml/ICCXMLClass';
+
+export const createNewClassFromCCXML = (coordinates: ICoordinates, ccxmlClass: ICCXMLClass) => {
+    const properties = ccxmlClass.properties?.[0]?.property ?? [];
+    const methods = ccxmlClass.methods?.[0]?.method ?? [];
+    const frame = createFrame(coordinates, properties.length + methods.length + 1);
+    const entryIds: Array<string> = [];
+    const entries: Array<IClassProperty | IClassMethod> = [
+        ...methods.map((ccxmlMethod): IClassMethod => {
+            const newMethodId = v4();
+            entryIds.push(newMethodId);
+            return {
+                id: newMethodId,
+                accessModifier: ccxmlMethod.$.accessModifier.toUpperCase() as AccessModifierEnum,
+                type: EntryTypeEnum.METHOD,
+                value: ccxmlMethod.$.name
+            };
+        }),
+        ...properties.map((ccxmProperty): IClassProperty => {
+            const newPropertyId = v4();
+            entryIds.push(newPropertyId);
+
+            return {
+                id: newPropertyId,
+                accessModifier: ccxmProperty.$.accessModifier.toUpperCase() as AccessModifierEnum,
+                type: EntryTypeEnum.PROPERTY,
+                value: ccxmProperty.$.name
+            };
+        })
+    ];
+
+    const newClass: IClass = {
+        id: v4(),
+        type: ClassDiagramElementsEnum.CLASS,
+        data: {
+            elementName: ccxmlClass.$.id,
+            entryIds
+        },
+        graphicData: {
+            frame,
+            sections: {
+                head: {
+                    y: frame.y
+                },
+                properties: {
+                    y: frame.y + frame.rowHeight
+                },
+                methods: {
+                    y: frame.y + ((1 + properties.length) * frame.rowHeight)
+                }
+            }
+        }
+    };
+
+    return {
+        newClass,
+        entries
+    }
+};
 
 export const createNewBaseClass = (coordinates: ICoordinates, frameRows = 2) => {
     const frame = createFrame(coordinates, frameRows);

@@ -39,7 +39,7 @@ const Relationship = (props: { relationship: IRelationship, relationshipSegments
             return (
                 <g key={index}>
                     <text style={{ textAnchor }} className='class="svg-text svg-text-center' x={textX} y={textY}>{relationship.tailValue}</text>
-                    <RelationshipSegment segment={relationshipSegment} relationId={relationship.id}/>
+                    <RelationshipSegment type={relationship.type} segment={relationshipSegment} relationId={relationship.id}/>
                 </g>
             );
         } else if (relationshipSegment.isEnd) {
@@ -72,7 +72,7 @@ const Relationship = (props: { relationship: IRelationship, relationshipSegments
             return (
                 <g key={index}>
                     <text style={{ textAnchor: textAnchor }} className='class="svg-text svg-text-center' x={textX} y={textY}>{relationship.headValue}</text>
-                    <RelationshipSegment segment={relationshipSegment} relationId={relationship.id}/>
+                    <RelationshipSegment type={relationship.type} segment={relationshipSegment} relationId={relationship.id}/>
                 </g>
             );
         } else {
@@ -89,7 +89,7 @@ const Relationship = (props: { relationship: IRelationship, relationshipSegments
             return (
                 <g key={index}>
                     {index === 1 && <text className='svg-text svg-text-center' writingMode={Math.abs(relationshipSegment.lineToY) < 30 ? 'lr' : 'tb'} x={textX} y={textY}>{relationship.relationshipValue}</text>}
-                    <RelationshipSegment segment={relationshipSegment} relationId={relationship.id}/>
+                    <RelationshipSegment type={relationship.type} segment={relationshipSegment} relationId={relationship.id}/>
                 </g>
             );
         }

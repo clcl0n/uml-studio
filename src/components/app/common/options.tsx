@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const Options = (props: {
     children: Array<React.ReactNode>,
     defaultSelectedOptionIndex: number,
+    width: number,
     onSelectNewOption: (selectedOptionIndex: number) => void
 }) => {
     const { children, onSelectNewOption, defaultSelectedOptionIndex } = props;
@@ -43,7 +44,7 @@ const Options = (props: {
                 </button>
             </div>
             <div className='dropdown-menu' role='menu'>
-                <div className='dropdown-content'>
+                <div style={{ width: `${props.width}px` }} className='dropdown-content'>
                     {createOption()}
                 </div>
             </div>

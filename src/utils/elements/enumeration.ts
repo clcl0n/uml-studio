@@ -5,6 +5,43 @@ import { v4 } from 'uuid';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ICoordinates from '@interfaces/ICoordinates';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
+import ICCXMLEnumeration from '@interfaces/ccxml/ICCXMLEnumeration';
+
+export const createNewEnumerationFromCCXML = (coordinates: ICoordinates, ccxmlEnumeration: ICCXMLEnumeration) => {
+    const dataEntries = ccxmlEnumeration.entries?.[0]?.entry ?? [];
+    const frame = createFrame(coordinates, dataEntries.length + 1);
+    frame.height += (frame.rowHeight / 2);
+
+    const entryIds: Array<string> = [];
+    const entries: Array<IEnumerationEntry> = dataEntries.map((ccxmlEntry): IEnumerationEntry => {
+        const newEntryId = v4();
+        entryIds.push(newEntryId);
+
+        return {
+            id: newEntryId,
+            type: EntryTypeEnum.BASE,
+            value: ccxmlEntry.$.value ?? ''
+        };
+    });
+
+    const newEnumeration: IEnumeration = {
+        id: v4(),
+        type: ClassDiagramElementsEnum.ENUMERATION,
+        data: {
+            elementName: ccxmlEnumeration.$.id,
+            entryIds
+        },
+        graphicData: {
+            frame,
+            sections: {}
+        }
+    };
+
+    return {
+        newEnumeration,
+        entries
+    };
+};
 
 export const createNewEnumeration = (coordinates: ICoordinates) => {
     const frame = createFrame(coordinates, 2);

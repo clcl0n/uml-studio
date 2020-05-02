@@ -128,10 +128,11 @@ export const moveInitialStateElement = (element: IInitialStateElement, coordinat
     };
 };
 
-export const createNewInitialStateElement = (coordinates: ICoordinates) => {
+export const createNewInitialStateElement = (coordinates: ICoordinates, name: string = '') => {
     const initialStateElement: IInitialStateElement = {
         id: v4(),
         type: StateDiagramElementsEnum.INITIAL_STATE,
+        name,
         graphicData: {
             x: coordinates.x,
             y: coordinates.y,

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ICoordinates from '@interfaces/ICoordinates';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment, updateRelationshipSegment, updateRelationship } from '@store/actions/classDiagram.action';
+import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment, updateRelationshipSegment, updateRelationship, addUndoRelationship } from '@store/actions/classDiagram.action';
 import { newCanvasOperation } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import { createNewRelationship, updateRelationshipEndingHelper, updateRelationshipStartingHelper } from '@utils/elements/relationship';
@@ -32,6 +32,14 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
     const stopDrawingNewRelationship = () => {
         if (canvasOperationState.type === CanvasOperationEnum.DRAWING_NEW_RELATION) {
             let fixX = 0;
+            if (
+                newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
+                newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
+            ) {
+                fixX = 30;
+            } else if (newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.EXTENSION) {
+                fixX = 20;
+            }
             // if (newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION) {
             //     fixX += newRelationship.relationship.tail.x > props.x ? -30 : 30;
             // }
@@ -51,16 +59,30 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
             );
             
             dispatch(addNewRelationship(relationship));
-            [
+            const segments = [
                 ...relationshipSegments,
                 ...newRelationship.relationshipSegments.filter((segment) => relationshipSegments.findIndex((s) => s.id === segment.id) === -1)
-            ].forEach((segment) => {
+            ];
+            segments.forEach((segment) => {
                 dispatch(addNewRelationshipSegment(segment));
             });
+            dispatch(addUndoRelationship({
+                relationship,
+                relationshipSegments: segments
+            }));
             dispatch(clearNewRelationship());
         } else if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD) {
+            let fixX = 0;
+            if (
+                newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
+                newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
+            ) {
+                fixX = 30;
+            } else if (newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.EXTENSION) {
+                fixX = 25;
+            }
             selectedRelationship.toElementId = props.fromElementId;
-            selectedRelationship.head.x = props.x;
+            selectedRelationship.head.x = props.x - fixX;
             selectedRelationship.head.y = props.y;
             const movingRelationshipSegment = selectedRelationshipSegments.filter((segment) => segment.isEnd)[0];
             const dependentSegments = selectedRelationshipSegments.filter((segment) => {
@@ -68,7 +90,7 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
             });
 
             const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
-                { x: props.x, y: props.y },
+                { x: props.x - fixX, y: props.y },
                 selectedRelationship,
                 movingRelationshipSegment,
                 dependentSegments
@@ -82,7 +104,7 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
                 dispatch(updateRelationshipSegment(segment));
             });
         } else if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_TAIL) {
-            // selectedRelationship.toElementId = props.fromElementId;
+            selectedRelationship.fromElementId = props.fromElementId;
             selectedRelationship.tail.x = props.x;
             selectedRelationship.tail.y = props.y;
             const movingRelationshipSegment = selectedRelationshipSegments.filter((segment) => segment.isEnd)[0];

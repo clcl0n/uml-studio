@@ -185,24 +185,22 @@ const useCanvasMouseMove = (
                             moveDependingRelationships();
                             dispatch(updateFinalStateElement(moveFinalStateElement(selectedElement as IFinalStateElement, coordinates, previousMousePosition)));
                             break;
-                        case StateDiagramElementsEnum.FORK:
-                            dispatch(updateForkJoinElement(moveForkJoinElement(selectedElement as IForkJoinElement, coordinates, previousMousePosition)));
-                            break;
-                        case StateDiagramElementsEnum.JOIN:
-                            dispatch(updateForkJoinElement(moveForkJoinElement(selectedElement as IForkJoinElement, coordinates, previousMousePosition)));
-                            break;
-                        case StateDiagramElementsEnum.CHOICE:
-                            dispatch(updateChoiceElement(moveChoiceElement(selectedElement as IChoiceElement, coordinates, previousMousePosition)));
-                            break;
                     }
                     break;
             }
         } else if (isMouseDown) {
             switch (canvasOperation.type) {
                 case CanvasOperationEnum.DRAWING_NEW_RELATION:
-                    let fixX = newRelationship.relationship.tail.x > coordinates.x ? -0.5 : 0.5;
-                    if (newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION) {
+                    let fixX = newRelationship.relationship.tail.x > coordinates.x ? -1 : 1;
+                    if (
+                        newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
+                        newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
+                    ) {
                         fixX += newRelationship.relationship.tail.x > coordinates.x ? -30 : 30;
+                    } else if (
+                        newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.EXTENSION
+                    ) {
+                        fixX += newRelationship.relationship.tail.x > coordinates.x ? -20 : 20;
                     }
                     const updatedRelationship = createNewRelationship(
                         canvasDefaultRelationshipType,
@@ -223,16 +221,37 @@ const useCanvasMouseMove = (
                     }));
                     break;
                 case CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD:
-                    coordinates.x -= movingRelationship.relationship.head.x > coordinates.x ? -0.5 : 0.5;
-                    coordinates.y -= movingRelationship.relationshipSegments.find((segment) => segment.isEnd).y > coordinates.y ? -0.5 : 0.5;
-                    // if (movingRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION) {
-                    //     coordinates.x -= movingRelationship.relationship.tail.x > coordinates.x ? -30 : 30;
-                    // }
+                    const endSegment = movingRelationship.relationshipSegments.find((segment) => segment.isEnd);
+                    const dependentEndSegments = movingRelationship.relationshipSegments.find(segment => segment.toSegmentId === endSegment.id);
+                    let direction = movingRelationship.relationship.direction;
+                    if (endSegment.y < movingRelationship.relationship.head.y) {
+                        direction = Direction.DOWN;
+                        coordinates.y -= 5;
+                    } else if (endSegment.y > movingRelationship.relationship.head.y) {
+                        direction = Direction.UP;
+                        coordinates.y -= -5;
+                    } else if (endSegment.x > movingRelationship.relationship.head.x) {
+                        direction = Direction.LEFT;
+                        coordinates.x -= -5;
+                    } else {
+                        coordinates.x -= 5;
+                    }
+                    let fixXx = 0;
+                    if (
+                        movingRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
+                        movingRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
+                    ) {
+                        fixXx += dependentEndSegments.x < coordinates.x ? 30 : -30 ;
+                    }
+
                     const dependentSegments = movingRelationship.relationshipSegments.filter((segment) => {
                         return segment.id === movingRelationshipSegment.toSegmentId || segment.id === movingRelationshipSegment.fromSegmentId;
                     });
                     const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
-                        coordinates,
+                        {
+                            x: coordinates.x - fixXx,
+                            y: coordinates.y
+                        },
                         movingRelationship.relationship,
                         movingRelationshipSegment,
                         dependentSegments

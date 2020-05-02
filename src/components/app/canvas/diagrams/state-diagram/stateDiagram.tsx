@@ -36,26 +36,6 @@ const StateDiagram = (props: { stateDiagram: IStateDiagramState, classDiagram: I
         );
     });
 
-    stateDiagram.forkJoinElements.allIds.forEach((elementId) => {
-        const forkJoinElement = stateDiagram.forkJoinElements.byId[elementId];
-        if (forkJoinElement.type === StateDiagramElementsEnum.FORK) {
-            elements.push(
-                <ForkElement key={elementId} forkElement={forkJoinElement}/>
-            );
-        } else {
-            elements.push(
-                <JoinElement key={elementId} joinElement={forkJoinElement}/>
-            );
-        }
-    });
-
-    stateDiagram.choiceElements.allIds.forEach((elementId) => {
-        const choiceElement = stateDiagram.choiceElements.byId[elementId];
-        elements.push(
-            <ChoiceElement key={elementId} choiceElement={choiceElement}/>
-        );
-    });
-
     classDiagram.relationships.allIds.forEach((relationshipId) => {
         const relationship = classDiagram.relationships.byId[relationshipId];
         const relationshipSegments = relationship.segmentIds.map((segmentId) => classDiagram.relationshipSegments.byId[segmentId]);
