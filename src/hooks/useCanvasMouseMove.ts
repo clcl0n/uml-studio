@@ -39,6 +39,7 @@ import { moveForkJoinElement } from '@utils/elements/forkJoin';
 import IForkJoinElement from '@interfaces/state-diagram/IForkJoinElement';
 import { moveChoiceElement } from '@utils/elements/choice';
 import IChoiceElement from '@interfaces/state-diagram/IChoiceElement';
+import SegmentDirection from '@enums/segmentDirection';
 
 const useCanvasMouseMove = (
     classDiagram: IClassDiagramState,
@@ -242,6 +243,10 @@ const useCanvasMouseMove = (
                         movingRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
                     ) {
                         fixXx += dependentEndSegments.x < coordinates.x ? 30 : -30 ;
+                    } else if (
+                        movingRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.EXTENSION
+                    ) {
+                        fixXx += dependentEndSegments.x < coordinates.x ? 30 : -20 ;
                     }
 
                     const dependentSegments = movingRelationship.relationshipSegments.filter((segment) => {
@@ -268,8 +273,13 @@ const useCanvasMouseMove = (
                     dispatch(updateRelationship(relationship));
                     break;
                 case CanvasOperationEnum.MOVE_RELATIONSHIP_TAIL:
-                    coordinates.x -= movingRelationship.relationship.tail.x > coordinates.x ? -0.5 : 0.5;
-                    coordinates.y -= movingRelationship.relationshipSegments.find((segment) => segment.isStart).y > coordinates.y ? -0.5 : 0.5;
+                    const fixVal = 5;
+                    const dependent = movingRelationship.relationshipSegments.find(rs => rs.fromSegmentId === movingRelationship.relationshipSegments.find(s => s.isStart).id);
+                    if (dependent.direction === SegmentDirection.VERTICAL) {
+                        coordinates.x -= dependent.x > coordinates.x ? -fixVal : fixVal;
+                    } else {
+                        coordinates.y -= dependent.y > coordinates.y ? -fixVal : fixVal;
+                    }
                     const tailDependentSegments = movingRelationship.relationshipSegments.filter((segment) => {
                         return segment.id === movingRelationshipSegment.toSegmentId || segment.id === movingRelationshipSegment.fromSegmentId;
                     });
