@@ -14,7 +14,7 @@ import IInterfaceMethod from '@interfaces/class-diagram/interface/IInterfaceMeth
 export const createNewInterfaceFromCCXML = (coordinates: ICoordinates, ccxmlInterface: ICCXMLInterface, width: number = 100) => {
     const methods = ccxmlInterface.methods?.[0]?.method ?? [];
     const properties = ccxmlInterface.properties?.[0]?.property ?? [];
-    const frame = createFrame(coordinates, methods.length + properties.length + 1, width);
+    const frame = createFrame(coordinates, methods.length + properties.length + 1, 25, 100, false);
     frame.height += (frame.rowHeight / 2);
 
     const entryIds: Array<string> = [];

@@ -95,7 +95,7 @@ const getElementsTransitions = (classDiagram: IClassDiagramState, element: IBase
                     segments: segmentsCoord.join(';'),
                     value: relationship.relationshipValue,
                     direction: relationship.direction.toLowerCase(),
-                    type: relationship.type.toLowerCase()
+                    relationType: relationship.type.toLowerCase()
                 }
             };
         });

@@ -9,7 +9,7 @@ import ICCXMLEnumeration from '@interfaces/ccxml/ICCXMLEnumeration';
 
 export const createNewEnumerationFromCCXML = (coordinates: ICoordinates, ccxmlEnumeration: ICCXMLEnumeration) => {
     const dataEntries = ccxmlEnumeration.entries?.[0]?.entry ?? [];
-    const frame = createFrame(coordinates, dataEntries.length + 1);
+    const frame = createFrame(coordinates, dataEntries.length + 1, 25, 100, false);
     frame.height += (frame.rowHeight / 2);
 
     const entryIds: Array<string> = [];

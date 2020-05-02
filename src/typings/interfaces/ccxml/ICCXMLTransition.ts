@@ -8,6 +8,6 @@ export default interface ICCXMLTransition {
         tailCoord?: string; // "x:y"
         segments?: string; // "x:y:lineToX:lineToY:isStart:isEnd:direction:segmentId:fromSegmentId:toSegmentId;"
         direction?: string;
-        type: string;
+        relationType: string;
     };
 }

@@ -6,7 +6,7 @@ import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ICCXMLPrimitive from '@interfaces/ccxml/ICCXMLPrimitive';
 
 export const createNewPrimitiveTypeFromCCXML = (coordinates: ICoordinates, ccxmlPrimitive: ICCXMLPrimitive) => {
-    const frame = createFrame(coordinates, 1);
+    const frame = createFrame(coordinates, 1, 25, 100, false);
     frame.height += frame.rowHeight / 2;
 
     const newPrimitiveType: IPrimitiveType = {

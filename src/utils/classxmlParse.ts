@@ -20,9 +20,12 @@ import IEntry from '@interfaces/class-diagram/common/IEntry';
 import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
+import IBaseElementGraphicData from '@interfaces/class-diagram/common/IBaseElementGraphicData';
+import { createNewRelationship } from './elements/relationship';
+import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 
 export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoordinates) => {
-    const elementsToReturn: Array<IBaseElement<any>> = [];
+    const elementsToReturn: Array<IBaseElement<IBaseElementGraphicData<any>>> = [];
     const entriesToReturn: Array<IEntry> = [];
     const newRelationShips: Array<IRelationship> = [];
     const newRelationShipSegments: Array<IRelationshipSegment> = [];
@@ -37,10 +40,10 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
 
     const allElements: Array<ICCXMLBaseElement> = [...classes, ...dataTypes, ...enumerations, ...interfaces, ...objects, ...primitiveTypes, ...utilities];
 
-    const canvasMiddle: ICoordinates = { x: canvasDimensions.x / 2, y: canvasDimensions.y / 2 };
+    const canvasMiddle: ICoordinates = { x: canvasDimensions.x / 2, y: canvasDimensions.x / 2 };
     const coordinates: ICoordinates = { x: canvasMiddle.x, y: canvasMiddle.y };
 
-    const layerDistance = 200;
+    const layerDistance = 400;
     const elementsDistance = 50;
 
     const { diagrams } = analizeClassDiagram([...allElements]);
@@ -93,24 +96,34 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
             }
         });
 
-        const diagramAllElements = [...diagramClasses, ...diagramDataTypes, ...diagramEnumerations, ...diagramInterfaces, ...diagramObjects, ...diagramPrimitiveTypes, ...diagramUtilities];
-
-        
-
+        const diagramAllElementsOrigin = [...diagramClasses, ...diagramDataTypes, ...diagramEnumerations, ...diagramInterfaces, ...diagramObjects, ...diagramPrimitiveTypes, ...diagramUtilities];        
+        const diagramAllElements = [...diagramAllElementsOrigin];
         // pociatocni element je element ktory ma najviac transitions
-        const initialElement = diagramAllElements.filter(all => !diagramAllElements
+        let initialElement = diagramAllElements.filter(all => !diagramAllElements
             .some(a => getElementTransitions(a.element)
             .some(t => t.$.target === all.element.$.id)))
             .sort((a, b) => {
                 return getElementTransitions(a.element).length > getElementTransitions(b.element).length ? -1 : 0;
         })[0];
+
+        initialElement = initialElement ?? diagramAllElements.sort((a, b) => getElementTransitions(a.element).length > getElementTransitions(b.element).length ? -1 : 0)[0];
+
         diagramAllElements.splice(diagramAllElements.findIndex(e => e.element.$.id === initialElement.element.$.id), 1);
         let currentLayer: Array<{ element: ICCXMLBaseElement, type: ClassDiagramElementsEnum }> = [initialElement];
         let nextLayer: Array<{ element: ICCXMLBaseElement, type: ClassDiagramElementsEnum }> = [];
 
+        // draw element
         while (currentLayer.length > 0) {
             nextLayer = [];
-            currentLayer.forEach(elementToProcess => {
+            if (currentLayer.length > 1) {
+                const currentLayerHeight = currentLayer.map((e) => {
+                    let { element: newElement, entries, target } = addNewElement(e, coordinates);
+                    return newElement.graphicData.frame.height;
+                }).reduce((p, c) => p + c);
+                coordinates.y -= currentLayerHeight / 2;
+                console.warn(currentLayerHeight);
+            }
+            currentLayer.forEach((elementToProcess, index) => {
                 let { element: newElement, entries, target } = addNewElement(elementToProcess, coordinates);
                 elementsToReturn.push(newElement);
                 entriesToReturn.push(...entries);
@@ -129,14 +142,98 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
                             }
                         });
                     }
-                } else {
-                    // ???
                 }
             });
             coordinates.y = canvasMiddle.y;
             coordinates.x += layerDistance;
             currentLayer = nextLayer;
         }
+
+        const offsetStep = 15;
+        // draw relationships
+        elementsToReturn.forEach(elementsToProcess => {
+            const transitions = getElementTransitions((diagramAllElementsOrigin.find(all => all.element.$.id === elementsToProcess.data.elementName).element));
+            let offsetUp1 = offsetStep;
+            let offsetDown1 = offsetStep;
+            let offsetUp2 = offsetStep;
+            let offsetDown2 = offsetStep;
+            let offsetUp3 = offsetStep;
+            let offsetDown3 = offsetStep;
+            transitions.forEach(transition => {
+                const transitionTail: ICoordinates = { x: 0, y: 0 };
+                const transitionHead: ICoordinates = { x: 0, y: 0 };
+                const targetElement = elementsToReturn.find(e => e.data.elementName === transition.$.target);
+                let currentOffset = 0;
+                if (elementsToProcess.graphicData.frame.x < targetElement.graphicData.frame.x) {
+                    // targetElement je v nasledujucej vrstve
+                    transitionTail.x = elementsToProcess.graphicData.frame.x + elementsToProcess.graphicData.frame.width;
+                    transitionHead.x = targetElement.graphicData.frame.x;
+                    transitionHead.y = targetElement.graphicData.frame.y;
+                    if (elementsToProcess.graphicData.frame.y >= targetElement.graphicData.frame.y) {
+                        // nad y urovnou
+                        transitionTail.y = elementsToProcess.graphicData.frame.y;
+                        offsetUp1 -= offsetStep;
+                        currentOffset = offsetUp1;
+                    } else {
+                        // pod y
+                        transitionTail.y = elementsToProcess.graphicData.frame.y + elementsToProcess.graphicData.frame.height;
+                        offsetDown1 -= offsetStep;
+                        currentOffset = offsetDown1;
+                    }
+                    transitionHead.x -= calculateHeadOffset(transition.$.relationType.toUpperCase());
+                } else if (elementsToProcess.graphicData.frame.x === targetElement.graphicData.frame.x) {
+                    // targetElement je v rovnakej vrstve
+                    transitionTail.x = elementsToProcess.graphicData.frame.x + elementsToProcess.graphicData.frame.width;
+                    transitionHead.x = targetElement.graphicData.frame.x + targetElement.graphicData.frame.width;
+                    if (elementsToProcess.graphicData.frame.y >= targetElement.graphicData.frame.y) {
+                        // nad y urovnou
+                        transitionTail.y = elementsToProcess.graphicData.frame.y + elementsToProcess.graphicData.frame.height;
+                        transitionHead.y = targetElement.graphicData.frame.y + targetElement.graphicData.frame.height;
+                        offsetUp1 -= offsetStep;
+                        currentOffset = offsetUp1;
+                    } else {
+                        // pod y
+                        transitionTail.y = elementsToProcess.graphicData.frame.y;
+                        transitionHead.y = targetElement.graphicData.frame.y;
+                        offsetDown1 -= offsetStep;
+                        currentOffset = offsetDown1;
+                    }
+                    transitionHead.x += calculateHeadOffset(transition.$.relationType.toUpperCase());
+                } else {
+                    // targetElement je v predchadzajucej vrstve
+                    transitionTail.x = elementsToProcess.graphicData.frame.x;
+                    transitionHead.x = targetElement.graphicData.frame.x + targetElement.graphicData.frame.width;
+                    transitionHead.y = targetElement.graphicData.frame.y;
+
+                    if (elementsToProcess.graphicData.frame.y >= targetElement.graphicData.frame.y) {
+                        // nad y urovnou
+                        transitionTail.y = (elementsToProcess.graphicData.frame.height / 3) + elementsToProcess.graphicData.frame.y;
+                        offsetUp1 -= offsetStep;
+                        currentOffset = offsetUp1;
+                    } else {
+                        // pod y
+                        transitionTail.y = ((elementsToProcess.graphicData.frame.height / 3) * 2) + elementsToProcess.graphicData.frame.y;
+                        offsetDown1 -= offsetStep;
+                        currentOffset = offsetDown1;
+                    }
+                    transitionHead.x += calculateHeadOffset(transition.$.relationType.toUpperCase());
+                }
+                const { relationship, relationshipSegments } = createNewRelationship(
+                    transition.$.relationType.toUpperCase() as ClassDiagramRelationshipTypesEnum,
+                    {
+                        x1: transitionTail.x,
+                        y1: transitionTail.y,
+                        x2: transitionHead.x,
+                        y2: transitionHead.y
+                    },
+                    elementsToProcess.id,
+                    targetElement.id,
+                    currentOffset
+                );
+                newRelationShips.push(relationship);
+                newRelationShipSegments.push(...relationshipSegments);
+            });
+        });
     });
 
     return {
@@ -144,6 +241,20 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
         newEntries: entriesToReturn,
         newRelationShips,
         newRelationShipSegments
+    }
+}
+
+const calculateHeadOffset = (type: string) => {
+    switch (type as ClassDiagramRelationshipTypesEnum) {
+        case ClassDiagramRelationshipTypesEnum.AGGREGATION:
+        case ClassDiagramRelationshipTypesEnum.COMPOSITION:
+            // 30
+            return 30; 
+        case ClassDiagramRelationshipTypesEnum.EXTENSION:
+            // 20
+            return 20;
+        default:
+            return 0;
     }
 }
 

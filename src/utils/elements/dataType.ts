@@ -9,7 +9,7 @@ import ICCXMLDataType from '@interfaces/ccxml/ICCXMLDataType';
 
 export const createNewDataTypeFromCCXML = (coordinates: ICoordinates, ccxmlDataType: ICCXMLDataType) => {
     const dataEntries = ccxmlDataType.entries?.[0]?.entry ?? [];
-    const frame = createFrame(coordinates, dataEntries.length + 1);
+    const frame = createFrame(coordinates, dataEntries.length + 1, 25, 100, false);
     frame.height += (frame.rowHeight / 2);
 
     const entryIds: Array<string> = [];

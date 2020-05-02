@@ -12,7 +12,7 @@ import ICCXMLUtility from '@interfaces/ccxml/ICCXMLUtility';
 export const createNewUtilityFromCCXML = (coordinates: ICoordinates, ccxmlUtility: ICCXMLUtility) => {
     const methods = ccxmlUtility.methods?.[0]?.method ?? [];
     const properties = ccxmlUtility.properties?.[0]?.property ?? [];
-    const frame = createFrame(coordinates, methods.length + properties.length + 1);
+    const frame = createFrame(coordinates, methods.length + properties.length + 1, 25, 100, false);
 
     const entryIds: Array<string> = [];
     const entries: Array<IClassProperty | IClassMethod> = [

@@ -9,7 +9,7 @@ import ICCXMLObject from '@interfaces/ccxml/ICCXMLObject';
 
 export const createNewObjectFromCCXML = (coordinates: ICoordinates, ccxmlObject: ICCXMLObject) => {
     const slots = ccxmlObject.slots?.[0]?.slot ?? [];
-    const frame = createFrame(coordinates, slots.length + 1);
+    const frame = createFrame(coordinates, slots.length + 1, 25, 100, false);
     const entryIds: Array<string> = [];
     const entries: Array<IObjectSlot> = slots.map((ccxmlSlot): IObjectSlot => {
         const newSlotId = v4();
