@@ -115,7 +115,7 @@ const Ribbon = () => {
             const xmlBlob = new Blob([xml], {
                 type: 'text/plain;charset=utf-8'
             });
-            saveAs(xmlBlob, 'ccxml.xml');
+            saveAs(xmlBlob, 'classcxml.xml');
         } else {
             const xml = serializeSCXML(stateDiagram, classDiagram);
             const xmlBlob = new Blob([xml], {
@@ -171,13 +171,13 @@ const Ribbon = () => {
             } else {
                 error !== '' ? alert(error) : alert(warning);
             }
-        } else if (parsedXml.ccxml) {
+        } else if (parsedXml.classxml) {
             const {
                 newElements,
                 newRelationShipSegments,
                 newRelationShips,
                 newEntries
-            } = await parseClassDiagram(parsedXml.classDiagram, { x: canvasWidth, y: canvasHeight });
+            } = await parseClassDiagram(parsedXml.classxml, { x: canvasWidth, y: canvasHeight });
             newEntries.forEach((newEntry) => {
                 dispatch(addNewElementEntry(newEntry));
             });

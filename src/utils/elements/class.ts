@@ -8,11 +8,17 @@ import AccessModifierEnum from '@enums/accessModifierEnum';
 import IClassMethod from '@interfaces/class-diagram/class/IClassMethod';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
 import ICCXMLClass from '@interfaces/ccxml/ICCXMLClass';
+import IFrame from '@interfaces/class-diagram/common/IFrame';
 
-export const createNewClassFromCCXML = (coordinates: ICoordinates, ccxmlClass: ICCXMLClass) => {
+export const createNewClassFromCCXML = (coordinates: ICoordinates, ccxmlClass: ICCXMLClass, isCoordinatesCenter: boolean = false) => {
     const properties = ccxmlClass.properties?.[0]?.property ?? [];
     const methods = ccxmlClass.methods?.[0]?.method ?? [];
-    const frame = createFrame(coordinates, properties.length + methods.length + 1, 25, 100, false);
+    let frame: IFrame;
+    if (properties.length + methods.length === 0) {
+        frame = createFrame(coordinates, 2, 25, 100, isCoordinatesCenter);
+    } else {
+        frame = createFrame(coordinates, properties.length + methods.length + 1, 25, 100, isCoordinatesCenter);
+    }
     const entryIds: Array<string> = [];
     const entries: Array<IClassProperty | IClassMethod> = [
         ...methods.map((ccxmlMethod): IClassMethod => {

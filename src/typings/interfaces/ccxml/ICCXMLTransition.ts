@@ -1,6 +1,6 @@
 export default interface ICCXMLTransition {
     $: {
-        head: string;
+        multiplicity: string;
         tail: string;
         value: string;
         target: string;

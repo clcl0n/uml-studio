@@ -9,10 +9,10 @@ import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
 import ICCXMLUtility from '@interfaces/ccxml/ICCXMLUtility';
 
-export const createNewUtilityFromCCXML = (coordinates: ICoordinates, ccxmlUtility: ICCXMLUtility) => {
+export const createNewUtilityFromCCXML = (coordinates: ICoordinates, ccxmlUtility: ICCXMLUtility, isCoordinatesCenter: boolean = true) => {
     const methods = ccxmlUtility.methods?.[0]?.method ?? [];
     const properties = ccxmlUtility.properties?.[0]?.property ?? [];
-    const frame = createFrame(coordinates, methods.length + properties.length + 1, 25, 100, false);
+    const frame = createFrame(coordinates, methods.length + properties.length + 1, 25, 100, isCoordinatesCenter);
 
     const entryIds: Array<string> = [];
     const entries: Array<IClassProperty | IClassMethod> = [

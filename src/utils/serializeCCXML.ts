@@ -38,7 +38,7 @@ const convertEntriesToCCXMLSlot = (entries: Array<IEntry>) => {
 };
 
 const convertEntriesToCCXMLEntries = (entries: Array<IEntry>) => {
-    return entries.filter((entry) => entry.type === EntryTypeEnum.PROPERTY).map((entry): ICCXMLEntry => {
+    return entries.filter((entry) => entry.type === EntryTypeEnum.BASE).map((entry): ICCXMLEntry => {
         return {
             $: {
                 value: entry.value
@@ -87,7 +87,7 @@ const getElementsTransitions = (classDiagram: IClassDiagramState, element: IBase
 
             return {
                 $: {
-                    head: relationship.headValue,
+                    multiplicity: relationship.headValue,
                     tail: relationship.tailValue,
                     target: getElementName(classDiagram, relationship.toElementId),
                     headCoord: `${relationship.head.x}:${relationship.head.y}`,
@@ -265,7 +265,6 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
     const newCCXML: ICCXML = {
         $: {
             initialclass: '',
-            name: 'Ccxml',
             version: '1.0',
             coordinates: 'true'
         },
@@ -307,7 +306,7 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
     };
 
     const builder = new Builder({
-        rootName: 'ccxml'
+        rootName: 'classxml'
     });
     return builder.buildObject(newCCXML);
 };

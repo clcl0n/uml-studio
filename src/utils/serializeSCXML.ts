@@ -98,9 +98,11 @@ export const serializeSCXML = (stateDiagram: IStateDiagramState, classDiagram: I
         };
     });
 
+    const initialElement = stateDiagram.initialStateElements.byId[stateDiagram.initialStateElements.allIds[0]];
+
     const newSCXML: ISCXML = {
         $: {
-            initial: stateDiagram.initialStateElements.byId[stateDiagram.initialStateElements.allIds[0]].name,
+            initial: initialElement ? initialElement.name : '',
             name: 'Scxml',
             version: '1.0',
             xmlns: 'http://www.w3.org/2005/07/scxml',

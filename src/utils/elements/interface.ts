@@ -11,10 +11,10 @@ import ICCXMLInterface from '@interfaces/ccxml/ICCXMLInterface';
 import IInterfaceProperty from '@interfaces/class-diagram/interface/IInterfaceProperty';
 import IInterfaceMethod from '@interfaces/class-diagram/interface/IInterfaceMethod';
 
-export const createNewInterfaceFromCCXML = (coordinates: ICoordinates, ccxmlInterface: ICCXMLInterface, width: number = 100) => {
+export const createNewInterfaceFromCCXML = (coordinates: ICoordinates, ccxmlInterface: ICCXMLInterface, isCoordinatesCenter: boolean = true) => {
     const methods = ccxmlInterface.methods?.[0]?.method ?? [];
     const properties = ccxmlInterface.properties?.[0]?.property ?? [];
-    const frame = createFrame(coordinates, methods.length + properties.length + 1, 25, 100, false);
+    const frame = createFrame(coordinates, methods.length + properties.length + 1, 25, 100, isCoordinatesCenter);
     frame.height += (frame.rowHeight / 2);
 
     const entryIds: Array<string> = [];

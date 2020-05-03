@@ -117,7 +117,7 @@ export const createNewRelationshipSameLayerSCXML = (type: ClassDiagramRelationsh
      };
 };
 
-export const createNewRelationship = (type: ClassDiagramRelationshipTypesEnum, coordinates: {x1: number, y1: number, x2: number, y2: number}, fromElementId: string = '', toElementId: string = '', centerOffset = 0, relationshipValue = '') => {
+export const createNewRelationship = (type: ClassDiagramRelationshipTypesEnum, coordinates: {x1: number, y1: number, x2: number, y2: number}, fromElementId: string = '', toElementId: string = '', centerOffset = 0, relationshipValue = '', headValue = '', tailValue = '') => {
     const {x1, y1, x2, y2} = coordinates;
     const relationshipId = v4();
     const direction = x1 > x2 ? Direction.LEFT : Direction.RIGHT;
@@ -211,9 +211,9 @@ export const createNewRelationship = (type: ClassDiagramRelationshipTypesEnum, c
        type,
        fromElementId,
        toElementId,
-       headValue: '',
+       headValue,
        relationshipValue,
-       tailValue: '',
+       tailValue,
        head: {
            x: x2,
            y: y2

@@ -5,8 +5,8 @@ import { v4 } from 'uuid';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import ICCXMLPrimitive from '@interfaces/ccxml/ICCXMLPrimitive';
 
-export const createNewPrimitiveTypeFromCCXML = (coordinates: ICoordinates, ccxmlPrimitive: ICCXMLPrimitive) => {
-    const frame = createFrame(coordinates, 1, 25, 100, false);
+export const createNewPrimitiveTypeFromCCXML = (coordinates: ICoordinates, ccxmlPrimitive: ICCXMLPrimitive, isCoordinatesCenter: boolean = true) => {
+    const frame = createFrame(coordinates, 1, 25, 100, isCoordinatesCenter);
     frame.height += frame.rowHeight / 2;
 
     const newPrimitiveType: IPrimitiveType = {

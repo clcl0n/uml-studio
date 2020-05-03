@@ -14,10 +14,10 @@ export const createFrame = (coordinates: ICoordinates, numerOfRows: number, rowH
     let yElementCenter: number = coordinates.y;
     let x: number = xElementCenter - (width / 2);
     let y: number = yElementCenter - (height / 2);
-    if (!isCoordinatesCenter) {
-        yElementCenter = y;
-        y = coordinates.y
-    }
+    // if (!isCoordinatesCenter) {
+    //     yElementCenter = y;
+    //     y = coordinates.y
+    // }
     const fontPixelSize: number = 12;
     const fontMargin: number = 5;
 
