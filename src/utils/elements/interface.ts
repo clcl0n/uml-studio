@@ -26,7 +26,7 @@ export const createNewInterfaceFromCCXML = (coordinates: ICoordinates, ccxmlInte
                 id: newMethodId,
                 accessModifier: ccxmlMethod.$.accessModifier.toUpperCase() as AccessModifierEnum,
                 type: EntryTypeEnum.METHOD,
-                value: ccxmlMethod.$.name
+                value: `${ccxmlMethod.$.name}${ccxmlMethod.$.dataType ? ': ' + ccxmlMethod.$.dataType : ''}`
             };
         }),
         ...properties.map((ccxmProperty): IInterfaceProperty => {
@@ -37,7 +37,7 @@ export const createNewInterfaceFromCCXML = (coordinates: ICoordinates, ccxmlInte
                 id: newPropertyId,
                 accessModifier: ccxmProperty.$.accessModifier.toUpperCase() as AccessModifierEnum,
                 type: EntryTypeEnum.PROPERTY,
-                value: ccxmProperty.$.name
+                value: `${ccxmProperty.$.name}${ccxmProperty.$.dataType ? ': ' + ccxmProperty.$.dataType : ''}`
             };
         })
     ];

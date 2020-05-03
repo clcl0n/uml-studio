@@ -23,7 +23,7 @@ export const createNewUtilityFromCCXML = (coordinates: ICoordinates, ccxmlUtilit
                 id: newMethodId,
                 accessModifier: ccxmlMethod.$.accessModifier.toUpperCase() as AccessModifierEnum,
                 type: EntryTypeEnum.METHOD,
-                value: ccxmlMethod.$.name
+                value: `${ccxmlMethod.$.name}${ccxmlMethod.$.dataType ? ': ' + ccxmlMethod.$.dataType : ''}`
             };
         }),
         ...properties.map((ccxmProperty): IClassProperty => {
@@ -34,7 +34,7 @@ export const createNewUtilityFromCCXML = (coordinates: ICoordinates, ccxmlUtilit
                 id: newPropertyId,
                 accessModifier: ccxmProperty.$.accessModifier.toUpperCase() as AccessModifierEnum,
                 type: EntryTypeEnum.PROPERTY,
-                value: ccxmProperty.$.name
+                value: `${ccxmProperty.$.name}${ccxmProperty.$.dataType ? ': ' + ccxmProperty.$.dataType : ''}`
             };
         })
     ];

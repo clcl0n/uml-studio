@@ -41,13 +41,13 @@ export const moveFrame = (
 ): IFrame => {
     const { frame } = element.graphicData;
 
-    const xShift = coordinates.x - oldCursorPosition.x;
-    const yShift = coordinates.y - oldCursorPosition.y;
+    const xShift = coordinates.x + (element.graphicData.frame.x - oldCursorPosition.x);
+    const yShift = coordinates.y + (element.graphicData.frame.y - oldCursorPosition.y);
 
-    const xElementCenter: number = frame.xCenter + xShift;
-    const yElementCenter: number = frame.yCenter + yShift;
-    const x: number = xElementCenter - (frame.width / 2);
-    const y: number = yElementCenter - (frame.height / 2);
+    const xElementCenter: number = xShift + (element.graphicData.frame.width / 2);
+    const yElementCenter: number = yShift + (element.graphicData.frame.height / 2);
+    const x: number = xShift;
+    const y: number = yShift;
 
     return {
         ...frame,

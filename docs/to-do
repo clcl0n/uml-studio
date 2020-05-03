@@ -4,10 +4,8 @@ pridavanie entries neposuva ciaru
 
 // fixnutie ciar konkretne v class 
 zvacsit kresliacu plochu ak ide obrazok cez
-pri posune sa ciary obcas posunu
 
 class diagram ak je viac diagramou treba ich oddelit // posunut
 
-class diagram prejst format a ci sa vsetko pridava
 
-tahanie novej ciari z pravo do lava nejde dropnut
+joint na hlavach co niesu asociacie

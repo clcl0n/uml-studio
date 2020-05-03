@@ -143,23 +143,20 @@ const useCanvasMouseMove = (
         const moveDependingRelationships = () => {
             const toElementRelationshipsIds = classDiagram.relationships.allIds.filter((id) => classDiagram.relationships.byId[id].toElementId === selectedElement.id);
             const toElementRelationships = toElementRelationshipsIds.map((id) => classDiagram.relationships.byId[id]);
-            let fixX = 0;
             toElementRelationships.forEach((toRelationship) => {
                 const xShift = toRelationship.head.x - previousMousePosition.x;
                 const yShift = toRelationship.head.y - previousMousePosition.y;
                 const segments = toRelationship.segmentIds.map((id) => classDiagram.relationshipSegments.byId[id]);
                 const endingSegment = segments.filter((segment) => segment.isEnd)[0];
                 // if (toRelationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION) {
-                //     fixX = endingSegment.lineToX < 0 ? 30 : 0;
-                // }
-                toRelationship.head.x -= fixX;
+                    //     fixX = endingSegment.lineToX < 0 ? 30 : 0;
+                    // }
                 const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
                     { x: coordinates.x + xShift, y: coordinates.y + yShift },
                     toRelationship,
                     segments.filter((segment) => segment.toSegmentId === endingSegment.id),
                     endingSegment
                 );
-                relationshipSegments.find((segment) => segment.isEnd).lineToX += fixX;
                 dispatch(updateRelationship(relationship));
                 relationshipSegments.forEach((segment) => dispatch(updateRelationshipSegment(segment)));
             });
