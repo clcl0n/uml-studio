@@ -52,7 +52,8 @@ const convertEntriesToCCXMLProperties = (entries: Array<IEntry>) => {
         return {
             $: {
                 accessModifier: entry.accessModifier.toLowerCase(),
-                name: entry.value
+                name: entry.value.split(': ')[0],
+                dataType: entry.value.split(': ')[1]
             }
         };
     });
@@ -63,7 +64,8 @@ const convertEntriesToCCXMLMethods = (entries: Array<IEntry>) => {
         return {
             $: {
                 accessModifier: entry.accessModifier.toLowerCase(),
-                name: entry.value
+                name: entry.value.split(': ')[0],
+                dataType: entry.value.split(': ')[1]
             }
         };
     });
