@@ -54,8 +54,8 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
             const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
                 { x: props.x - fixX, y: props.y },
                 newRelationship.relationship,
-                movingRelationshipSegment,
-                dependentSegments
+                dependentSegments,
+                movingRelationshipSegment
             );
             
             dispatch(addNewRelationship(relationship));
@@ -92,8 +92,8 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
             const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
                 { x: props.x - fixX, y: props.y },
                 selectedRelationship,
-                movingRelationshipSegment,
-                dependentSegments
+                dependentSegments,
+                movingRelationshipSegment
             );
             
             dispatch(updateRelationship(relationship));

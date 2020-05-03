@@ -60,9 +60,7 @@ const StateElement = (props: { stateElement: IStateElement }) => {
         } else if (direction === Direction.RIGHT) {
             dir = CanvasOperationEnum.RESIZE_ELEMENT_RIGHT;
         } else if (direction === Direction.UP) {
-            dir = CanvasOperationEnum.RESIZE_ELEMENT_UP;
         } else {
-            dir = CanvasOperationEnum.RESIZE_ELEMENT_DOWN;
         }
         dispatch(newCanvasOperation({
             type: dir,
@@ -128,16 +126,12 @@ const StateElement = (props: { stateElement: IStateElement }) => {
             <path
                 pointerEvents='stroke'
                 strokeWidth='10'
-                cursor='ns-resize'
                 d={`M ${graphicData.frame.x + (rx/2)} ${graphicData.frame.y} l ${graphicData.frame.width - rx} 0`}
-                onMouseDown={() => onFrameResize(Direction.UP)}
             />
             <path
                 pointerEvents='stroke'
                 strokeWidth='10'
-                cursor='ns-resize'
                 d={`M ${graphicData.frame.x + (rx/2)} ${graphicData.frame.y + graphicData.frame.height} l ${graphicData.frame.width - rx} 0`}
-                onMouseDown={() => onFrameResize(Direction.DOWN)}
             />
             <rect
                 fill='transparent'

@@ -4,7 +4,6 @@ import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import Direction from '@enums/direction';
 import IObject from '@interfaces/class-diagram/object/IObject';
-import IClass from '@interfaces/class-diagram/class/IClass';
 import IUtility from '@interfaces/class-diagram/utility/IUtility';
 import IPrimitiveType from '@interfaces/class-diagram/primitive-type/IPrimitiveType';
 import IInterface from '@interfaces/class-diagram/interface/IInterface';
@@ -29,17 +28,14 @@ import useCanvasOperation from './useCanvasOperation';
 import useCanvasDefaultRelationshipType from './useCanvasDefaultRelationshipType';
 import IStateDiagramState from '@interfaces/state-diagram/IStateDiagramState';
 import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
-import { updateStateElement, updateInitialStateElement, updateFinalStateElement, updateForkJoinElement, updateChoiceElement } from '@store/actions/stateDiagram.action';
+import { updateStateElement, updateInitialStateElement, updateFinalStateElement } from '@store/actions/stateDiagram.action';
 import IStateElement from '@interfaces/state-diagram/state/IStateElement';
 import { moveStateElement, moveInitialStateElement, moveFinalStateElement } from '@utils/elements/stateElement';
 import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 import IInitialStateElement from '@interfaces/state-diagram/initial-state/IInitialStateElement';
 import IFinalStateElement from '@interfaces/state-diagram/final-state/IFinalStateElement';
-import { moveForkJoinElement } from '@utils/elements/forkJoin';
-import IForkJoinElement from '@interfaces/state-diagram/IForkJoinElement';
-import { moveChoiceElement } from '@utils/elements/choice';
-import IChoiceElement from '@interfaces/state-diagram/IChoiceElement';
 import SegmentDirection from '@enums/segmentDirection';
+import IBaseElementGraphicData from '@interfaces/class-diagram/common/IBaseElementGraphicData';
 
 const useCanvasMouseMove = (
     classDiagram: IClassDiagramState,
@@ -74,6 +70,76 @@ const useCanvasMouseMove = (
 
     
     const onMouseMove = (coordinates: ICoordinates, previousMousePosition: ICoordinates) => {
+        const updateRelationshipsAfterResizeElementHorizont = (xShift: number, direction: Direction, resized: IBaseElement<IBaseElementGraphicData<any>> | IStateElement) => {
+            const toElementRelationshipsIds = classDiagram.relationships.allIds.filter((id) => classDiagram.relationships.byId[id].toElementId === selectedElement.id);
+            const toElementRelationships = toElementRelationshipsIds.map((id) => classDiagram.relationships.byId[id]);
+            toElementRelationships.forEach((toRelationship) => {
+                const segments = toRelationship.segmentIds.map((id) => classDiagram.relationshipSegments.byId[id]);
+                const endingSegment = segments.filter((segment) => segment.isEnd)[0];
+                if (direction === Direction.RIGHT) {
+                    if (resized.graphicData.frame.x < endingSegment.x + endingSegment.lineToX) {
+                        // idu z prava do elementu
+                        toRelationship.head.x += xShift;
+                        if (endingSegment.direction === SegmentDirection.VERTICAL) {
+                            endingSegment.x += xShift;
+                            const dependent = segments.find(s => s.toSegmentId === endingSegment.id);
+                            dependent.lineToX += xShift;
+                        } else {
+                            endingSegment.lineToX += xShift;
+                        }
+                    }
+                } else if (direction === Direction.LEFT) {
+                    if (resized.graphicData.frame.x + resized.graphicData.frame.width !== endingSegment.x + endingSegment.lineToX) {
+                        // ide z lava
+                        toRelationship.head.x -= xShift; 
+                        if (endingSegment.direction === SegmentDirection.VERTICAL) {
+                            endingSegment.x -= xShift;
+                            const dependent = segments.find(s => s.toSegmentId === endingSegment.id);
+                            dependent.lineToX -= xShift;
+                        } else {
+                            endingSegment.lineToX -= xShift;
+                        }
+                    }
+                }
+                dispatch(updateRelationship(toRelationship));
+                [...segments.filter((segment) => segment.toSegmentId === endingSegment.id), endingSegment].forEach((segment) => dispatch(updateRelationshipSegment(segment)));
+            });
+            const fromElementRelationshipsIds = classDiagram.relationships.allIds.filter(id =>  classDiagram.relationships.byId[id].fromElementId === selectedElement.id);
+            const fromElementRelationships = fromElementRelationshipsIds.map((id) => classDiagram.relationships.byId[id]);
+            fromElementRelationships.forEach(fromRelationship => {
+                const segments = fromRelationship.segmentIds.map((id) => classDiagram.relationshipSegments.byId[id]);
+                const startingSegment = segments.filter((segment) => segment.isStart)[0];
+                if (direction === Direction.RIGHT) {
+                    if (resized.graphicData.frame.x < startingSegment.x) {
+                        // idu z prava do elementu
+                        startingSegment.x += xShift;
+                        if (startingSegment.direction === SegmentDirection.VERTICAL) {
+                            fromRelationship.tail.x += xShift;
+                            const dependent = segments.find(s => s.fromSegmentId === startingSegment.id);
+                            dependent.lineToX -= xShift;
+                            dependent.x += xShift;
+                        } else {
+                            startingSegment.lineToX -= xShift;
+                        }
+                    }
+                } else if (direction === Direction.LEFT) {
+                    if (resized.graphicData.frame.x + resized.graphicData.frame.width !== startingSegment.x) {
+                        // ide z lava
+                        fromRelationship.tail.x -= xShift; 
+                        startingSegment.x -= xShift;
+                        if (startingSegment.direction === SegmentDirection.VERTICAL) {
+                            const dependent = segments.find(s => s.fromSegmentId === startingSegment.id);
+                            dependent.lineToX += xShift;
+                            dependent.x -= xShift;
+                        } else {
+                            startingSegment.lineToX += xShift;
+                        }
+                    }
+                }
+                dispatch(updateRelationship(fromRelationship));
+                [...segments.filter((segment) => segment.toSegmentId === startingSegment.id), startingSegment].forEach((segment) => dispatch(updateRelationshipSegment(segment)));
+            });
+        }
         const moveDependingRelationships = () => {
             const toElementRelationshipsIds = classDiagram.relationships.allIds.filter((id) => classDiagram.relationships.byId[id].toElementId === selectedElement.id);
             const toElementRelationships = toElementRelationshipsIds.map((id) => classDiagram.relationships.byId[id]);
@@ -90,8 +156,8 @@ const useCanvasMouseMove = (
                 const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
                     { x: coordinates.x + xShift, y: coordinates.y + yShift },
                     toRelationship,
-                    endingSegment,
-                    segments.filter((segment) => segment.toSegmentId === endingSegment.id)
+                    segments.filter((segment) => segment.toSegmentId === endingSegment.id),
+                    endingSegment
                 );
                 relationshipSegments.find((segment) => segment.isEnd).lineToX += fixX;
                 dispatch(updateRelationship(relationship));
@@ -118,30 +184,44 @@ const useCanvasMouseMove = (
             switch(canvasOperation.type) {
                 case CanvasOperationEnum.RESIZE_ELEMENT_UP:
                     if (selectedElement.type === StateDiagramElementsEnum.STATE) {
-                        dispatch(updateStateElement(resizeFrame(selectedElement as IStateElement, coordinates, Direction.UP) as IStateElement));
+                        const resized = resizeFrame(selectedElement as IStateElement, coordinates, Direction.UP) as IStateElement;
+                        dispatch(updateStateElement(resized));
                     } else {
                         dispatch(updateElement(resizeFrame(selectedElement as IStateElement, coordinates, Direction.UP) as IBaseElement<any>));
                     }
                     break;
                 case CanvasOperationEnum.RESIZE_ELEMENT_DOWN:
                     if (selectedElement.type === StateDiagramElementsEnum.STATE) {
-                        dispatch(updateStateElement(resizeFrame(selectedElement as IStateElement, coordinates, Direction.DOWN) as IStateElement));
+                        const resized = resizeFrame(selectedElement as IStateElement, coordinates, Direction.DOWN) as IStateElement;
+                        dispatch(updateStateElement(resized));
                     } else {
                         dispatch(updateElement(resizeFrame(selectedElement as IStateElement, coordinates, Direction.DOWN) as IBaseElement<any>));
                     }
                     break;
                 case CanvasOperationEnum.RESIZE_ELEMENT_LEFT:
                     if (selectedElement.type === StateDiagramElementsEnum.STATE) {
-                        dispatch(updateStateElement(resizeFrame(selectedElement as IStateElement, coordinates, Direction.LEFT) as IStateElement));
+                        const lastWidth = (selectedElement as IStateElement).graphicData.frame.width;
+                        const resized = resizeFrame(selectedElement as IStateElement, coordinates, Direction.LEFT) as IStateElement;
+                        updateRelationshipsAfterResizeElementHorizont(resized.graphicData.frame.width - lastWidth, Direction.LEFT, resized);
+                        dispatch(updateStateElement(resized));
                     } else {
-                        dispatch(updateElement(resizeFrame(selectedElement as IStateElement, coordinates, Direction.LEFT) as IBaseElement<any>));
+                        const lastWidth = (selectedElement as IBaseElement<IBaseElementGraphicData<any>>).graphicData.frame.width;
+                        const resized = resizeFrame(selectedElement as IStateElement, coordinates, Direction.LEFT) as IBaseElement<IBaseElementGraphicData<any>>;
+                        updateRelationshipsAfterResizeElementHorizont(resized.graphicData.frame.width - lastWidth, Direction.LEFT, resized);
+                        dispatch(updateElement(resized));
                     }
                     break;
                 case CanvasOperationEnum.RESIZE_ELEMENT_RIGHT:
                     if (selectedElement.type === StateDiagramElementsEnum.STATE) {
-                        dispatch(updateStateElement(resizeFrame(selectedElement as IStateElement, coordinates, Direction.RIGHT) as IStateElement));
+                        const lastWidth = (selectedElement as IStateElement).graphicData.frame.width;
+                        const resized = resizeFrame(selectedElement as IStateElement, coordinates, Direction.RIGHT) as IStateElement;
+                        updateRelationshipsAfterResizeElementHorizont(resized.graphicData.frame.width - lastWidth, Direction.RIGHT, resized);
+                        dispatch(updateStateElement(resized));
                     } else {
-                        dispatch(updateElement(resizeFrame(selectedElement as IStateElement, coordinates, Direction.RIGHT) as IBaseElement<any>));
+                        const lastWidth = (selectedElement as IBaseElement<IBaseElementGraphicData<any>>).graphicData.frame.width;
+                        const resized = resizeFrame(selectedElement as IStateElement, coordinates, Direction.RIGHT) as IBaseElement<IBaseElementGraphicData<any>>;
+                        updateRelationshipsAfterResizeElementHorizont(resized.graphicData.frame.width - lastWidth, Direction.RIGHT, resized);
+                        dispatch(updateElement(resized));
                     }
                     break;
                 case CanvasOperationEnum.MOVE_ELEMENT:
@@ -258,8 +338,8 @@ const useCanvasMouseMove = (
                             y: coordinates.y
                         },
                         movingRelationship.relationship,
-                        movingRelationshipSegment,
-                        dependentSegments
+                        dependentSegments,
+                        movingRelationshipSegment
                     );
                     relationship.fromElementId = movingRelationship.relationship.fromElementId;
                     relationship.toElementId = movingRelationship.relationship.toElementId;

@@ -484,7 +484,7 @@ export const updateRelationshipStartingHelper = (cooridates: ICoordinates, relat
     };
 };
 
-export const updateRelationshipEndingHelper = (cooridates: ICoordinates, relationship: IRelationship, movingSegment: IRelationshipSegment, dependentSegments: Array<IRelationshipSegment>) => {
+export const updateRelationshipEndingHelper = (cooridates: ICoordinates, relationship: IRelationship, dependentSegments: Array<IRelationshipSegment>, movingSegment?: IRelationshipSegment) => {
     const { direction } = movingSegment;
     let movingDirection = Direction.NONE;
     let yLength = 0;
