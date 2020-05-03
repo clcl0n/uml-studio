@@ -8,7 +8,6 @@ pri posune sa ciary obcas posunu
 
 class diagram ak je viac diagramou treba ich oddelit // posunut
 
-dropovanie ciar druhy krat na snappoint
-limitovat offset pre vztahy
+class diagram prejst format a ci sa vsetko pridava
 
 tahanie novej ciari z pravo do lava nejde dropnut

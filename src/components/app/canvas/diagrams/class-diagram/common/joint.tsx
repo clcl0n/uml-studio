@@ -74,11 +74,11 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
         } else if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD) {
             let fixX = 0;
             if (
-                newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
-                newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
+                selectedRelationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
+                selectedRelationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
             ) {
                 fixX = 30;
-            } else if (newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.EXTENSION) {
+            } else if (selectedRelationship.type === ClassDiagramRelationshipTypesEnum.EXTENSION) {
                 fixX = 25;
             }
             selectedRelationship.toElementId = props.fromElementId;

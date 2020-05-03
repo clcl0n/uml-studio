@@ -9,15 +9,18 @@ import useCanvasMouseMove from 'hooks/useCanvasMouseMove';
 import useCanvasAddNewElement from 'hooks/useCanvasAddNewElement';
 import useCanvasOperation from 'hooks/useCanvasOperation';
 import usePreviousMousePosition from 'hooks/usePreviousMousePosition';
-import { clearNewRelationship } from '@store/actions/classDiagram.action';
+import { clearNewRelationship, updateRelationship } from '@store/actions/classDiagram.action';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
 import Diagram from './diagrams/diagram';
+import useSelectedElement from 'hooks/useSelectedElement';
 
 const Canvas = () => {
     const dispatch = useDispatch();
     const classDiagram = useSelector((state: IStoreState) => state.classDiagram);
     const stateDiagram = useSelector((state: IStoreState) => state.stateDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
+    const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
+    const { selectedRelationship, selectedRelationshipSegments } = useSelectedElement();
     const canvasRef = useRef(null);
 
     useEffect(() => {
@@ -41,6 +44,14 @@ const Canvas = () => {
     };
 
     const resetCanvasOperation = (event: React.MouseEvent) => {
+        event.persist();
+        if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD && (event.nativeEvent.target as any).tagName === 'svg') {
+            selectedRelationship.toElementId = '';
+            dispatch(updateRelationship(selectedRelationship));
+        } else if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_TAIL && (event.nativeEvent.target as any).tagName === 'svg') {
+            selectedRelationship.fromElementId = '';
+            dispatch(updateRelationship(selectedRelationship));
+        }
         dispatch(isMouseDown(false));
         dispatch(clearNewRelationship());
         dispatch(newCanvasOperation({
