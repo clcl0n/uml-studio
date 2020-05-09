@@ -10,7 +10,7 @@ import IInterface from '@interfaces/class-diagram/interface/IInterface';
 import IEnumeration from '@interfaces/class-diagram/enumeration/IEnumeration';
 import IDataType from '@interfaces/class-diagram/data-type/IDataType';
 import { isMouseDown } from '@store/actions/canvas.action';
-import { updateRelationshipEndingHelper, updateRelationshipHelper, createNewRelationship, updateRelationshipStartingHelper } from '@utils/elements/relationship';
+import { updateRelationshipEndingHelper, updateRelationshipHelper, createNewRelationship, updateRelationshipStartingHelper, getClassHeadOffset } from '@utils/elements/relationship';
 import IStoreState from '@interfaces/IStoreState';
 import IClassDiagramState from '@interfaces/class-diagram/IClassDiagramState';
 import IBaseElement from '@interfaces/class-diagram/common/IBaseElement';
@@ -314,24 +314,14 @@ const useCanvasMouseMove = (
                     } else {
                         coordinates.x -= 5;
                     }
-                    let fixXx = 0;
-                    if (
-                        movingRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
-                        movingRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
-                    ) {
-                        fixXx += dependentEndSegments.x < coordinates.x ? 30 : -30 ;
-                    } else if (
-                        movingRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.EXTENSION
-                    ) {
-                        fixXx += dependentEndSegments.x < coordinates.x ? 30 : -20 ;
-                    }
+                    let fixXx = getClassHeadOffset(movingRelationship.relationship.type);
 
                     const dependentSegments = movingRelationship.relationshipSegments.filter((segment) => {
                         return segment.id === movingRelationshipSegment.toSegmentId || segment.id === movingRelationshipSegment.fromSegmentId;
                     });
                     const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
                         {
-                            x: coordinates.x - fixXx,
+                            x: coordinates.x + (endSegment.lineToX > 0 ? -fixXx : fixXx),
                             y: coordinates.y
                         },
                         movingRelationship.relationship,
