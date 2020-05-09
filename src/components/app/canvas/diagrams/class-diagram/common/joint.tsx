@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addNewNewRelationship, clearNewRelationship, addNewRelationship, addNewRelationshipSegment, updateRelationshipSegment, updateRelationship, addUndoRelationship } from '@store/actions/classDiagram.action';
 import { newCanvasOperation } from '@store/actions/canvas.action';
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
-import { createNewRelationship, updateRelationshipEndingHelper, updateRelationshipStartingHelper } from '@utils/elements/relationship';
+import { createNewRelationship, updateRelationshipEndingHelper, updateRelationshipStartingHelper, getClassHeadOffset } from '@utils/elements/relationship';
 import useCanvasDefaultRelationshipType from 'hooks/useCanvasDefaultRelationshipType';
 import IStoreState from '@interfaces/IStoreState';
 import SegmentDirection from '@enums/segmentDirection';
@@ -31,18 +31,8 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
 
     const stopDrawingNewRelationship = () => {
         if (canvasOperationState.type === CanvasOperationEnum.DRAWING_NEW_RELATION) {
-            let fixX = 0;
-            if (
-                newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
-                newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
-            ) {
-                fixX = 30;
-            } else if (newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.EXTENSION) {
-                fixX = 20;
-            }
-            // if (newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION) {
-            //     fixX += newRelationship.relationship.tail.x > props.x ? -30 : 30;
-            // }
+            const fixX = getClassHeadOffset(newRelationship.relationship.type);
+            
             newRelationship.relationship.toElementId = props.fromElementId;
             newRelationship.relationship.head.x = props.x - fixX;
             newRelationship.relationship.head.y = props.y;
@@ -52,7 +42,7 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
             });
 
             const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
-                { x: props.x - fixX, y: props.y },
+                { x: props.x + (movingRelationshipSegment.lineToX > 0 ? -fixX : fixX) , y: props.y },
                 newRelationship.relationship,
                 dependentSegments,
                 movingRelationshipSegment
@@ -72,15 +62,8 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
             }));
             dispatch(clearNewRelationship());
         } else if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD) {
-            let fixX = 0;
-            if (
-                selectedRelationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
-                selectedRelationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
-            ) {
-                fixX = 30;
-            } else if (selectedRelationship.type === ClassDiagramRelationshipTypesEnum.EXTENSION) {
-                fixX = 25;
-            }
+            let fixX = getClassHeadOffset(selectedRelationship.type);
+
             selectedRelationship.toElementId = props.fromElementId;
             selectedRelationship.head.x = props.x - fixX;
             selectedRelationship.head.y = props.y;
@@ -90,7 +73,7 @@ const Joint = (props: ICoordinates & { radius: number, fromElementId: string }) 
             });
 
             const { relationship, relationshipSegments } = updateRelationshipEndingHelper(
-                { x: props.x - fixX, y: props.y },
+                { x: props.x + (movingRelationshipSegment.lineToX > 0 ? -fixX : fixX), y: props.y },
                 selectedRelationship,
                 dependentSegments,
                 movingRelationshipSegment

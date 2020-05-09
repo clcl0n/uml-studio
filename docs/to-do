@@ -1,11 +1,19 @@
 to-do
 
-pridavanie entries neposuva ciaru
-
 // fixnutie ciar konkretne v class 
 zvacsit kresliacu plochu ak ide obrazok cez
 
-class diagram ak je viac diagramou treba ich oddelit // posunut
+skontrolovat posledny krat ci sedia formatz scxml a classxml
 
+doriesit onentry a on exit (nika zda sa mi ze to nebudeme podporovat)
+premenovavanie z anglickeho do slovenskeho
 
-joint na hlavach co niesu asociacie
+mozno upravit layout algo pri class diagram
++ validacia chyb
+popup pred odchodom z stranky ci naozaj chceme opustit
+skontrolovat undo, redo
+chyba pri resize a naslednom premiestneni
+v class diagrame zmenit polohu joints
+
+pridavanie entries neposuva ciaru - dnes
+class diagram ak je viac diagramou treba ich oddelit // posunut - mozno dnes

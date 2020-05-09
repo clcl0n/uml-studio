@@ -275,6 +275,20 @@ const pushNewRelationshipSegment = (newRelationshipSegment: IRelationshipSegment
     relationshipSegments.push(newRelationshipSegment);
 };
 
+export const getClassHeadOffset = (type: ClassDiagramRelationshipTypesEnum): number => {
+    switch (type) {
+        case ClassDiagramRelationshipTypesEnum.ASSOCIATION:
+            return 0;
+        case ClassDiagramRelationshipTypesEnum.EXTENSION:
+            return 20;
+        case ClassDiagramRelationshipTypesEnum.AGGREGATION:
+        case ClassDiagramRelationshipTypesEnum.COMPOSITION:
+            return 30;
+        default:
+            return 0;
+    }
+};
+
 const pushNewStartingSegment = (
     lineToX: number,
     lineToY: number,
@@ -352,7 +366,7 @@ const updateDependentSegment = (direction: SegmentDirection, dependentSegments: 
 export const updateRelationshipHelper = (cooridates: ICoordinates, relationship: IRelationship, movingSegment: IRelationshipSegment, dependentSegments: Array<IRelationshipSegment>) => {
     const { direction } = movingSegment;
     let movingDirection = Direction.NONE;
-
+    
     switch (direction) {
         case SegmentDirection.HORIZONTAL:
             movingDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
