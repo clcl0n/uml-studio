@@ -22,4 +22,8 @@ skontrolovat undo, redo //done
 chyba pri resize a naslednom premiestneni // done
 
 skontrolovat spajanie ciar v class diagrame // done
-pridavanie entries neposuva ciaru - dnes (hotovo uz len posuvanie from hotove je to)
+pridavanie entries neposuva ciaru - dnes (hotovo uz len posuvanie from hotove je to) // done
+
+
+
+on drop zase nefunguje po druhz krat ked chcem dat na ibz element

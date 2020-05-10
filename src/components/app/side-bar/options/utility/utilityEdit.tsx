@@ -63,6 +63,37 @@ const UtilityEdit = (props: { utility: IUtility, properties: Array<IUtilityPrope
                 dispatch(updateRelationship(rel));
             }
         });
+
+        const fromElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].fromElementId === updatedElement.id);
+        const fromElementRelationships = fromElementRelationshipsIds.map((id) => relationships.byId[id]);
+        fromElementRelationships.forEach(rel => {
+            if (rel.tail.y !== props.utility.graphicData.frame.y) {
+                rel.tail.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const start = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isStart)];
+                const startDependent = relationshipsSegments.byId[start.toSegmentId];
+                let yDiff = -25;
+                start.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                if (start.direction === SegmentDirection.HORIZONTAL) {
+                    startDependent.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                    startDependent.lineToY -= yDiff;
+                } 
+                else {
+                    if (start.y + start.lineToY < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        start.lineToY -= yDiff;
+                    } 
+                    else {
+                        startDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[startDependent.toSegmentId];
+                        dependentToEndDependent.y += yDiff
+                        dependentToEndDependent.lineToY -= yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                }
+                dispatch(updateRelationshipSegment(start));
+                dispatch(updateRelationshipSegment(startDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
         
         dispatch(updateElement(updatedElement));
         dispatch(removeElementEntry(entry));
@@ -159,7 +190,36 @@ const UtilityEdit = (props: { utility: IUtility, properties: Array<IUtilityPrope
                 dispatch(updateRelationship(rel));
             }
         });
-
+        const fromElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].fromElementId === updatedElement.id);
+        const fromElementRelationships = fromElementRelationshipsIds.map((id) => relationships.byId[id]);
+        fromElementRelationships.forEach(rel => {
+            if (rel.tail.y !== props.utility.graphicData.frame.y) {
+                rel.tail.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const start = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isStart)];
+                const startDependent = relationshipsSegments.byId[start.toSegmentId];
+                let yDiff = 25;
+                start.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                if (start.direction === SegmentDirection.HORIZONTAL) {
+                    startDependent.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                    startDependent.lineToY -= yDiff;
+                } 
+                else {
+                    if (start.y + start.lineToY < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        start.lineToY -= yDiff;
+                    } 
+                    else {
+                        startDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[startDependent.toSegmentId];
+                        dependentToEndDependent.y += yDiff
+                        dependentToEndDependent.lineToY -= yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                }
+                dispatch(updateRelationshipSegment(start));
+                dispatch(updateRelationshipSegment(startDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
         dispatch(updateElement(updateGraphic(updatedClass, propertiesLength, methodsLength)));
     };
 

@@ -269,7 +269,7 @@ const useCanvasMouseMove = (
         } else if (isMouseDown) {
             switch (canvasOperation.type) {
                 case CanvasOperationEnum.DRAWING_NEW_RELATION:
-                    let fixX = newRelationship.relationship.tail.x > coordinates.x ? -1 : 1;
+                    let fixX = newRelationship.relationship.tail.x > coordinates.x ? -2 : 2;
                     if (
                         newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
                         newRelationship.relationship.type === ClassDiagramRelationshipTypesEnum.COMPOSITION
