@@ -19,8 +19,7 @@ v class diagrame zmenit polohu joints - kaslat
 + validacia chyb // done
 popup pred odchodom z stranky ci naozaj chceme opustit  // done
 skontrolovat undo, redo //done
+chyba pri resize a naslednom premiestneni // done
 
-skontrolovat spajanie ciar v class diagrame
-chyba pri resize a naslednom premiestneni
-
+skontrolovat spajanie ciar v class diagrame // done
 pridavanie entries neposuva ciaru - dnes (hotovo uz len posuvanie from hotove je to)

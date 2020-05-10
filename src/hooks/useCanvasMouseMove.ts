@@ -164,7 +164,6 @@ const useCanvasMouseMove = (
             const fromElementRelationships = fromElementRelationshipsIds.map((id) => classDiagram.relationships.byId[id]);
             fromElementRelationships.forEach((fromRelationship) => {
                 const xShift = fromRelationship.tail.x - previousMousePosition.x;
-                console.warn(fromRelationship.tail.x);
                 const yShift = fromRelationship.tail.y - previousMousePosition.y;
                 const segments = fromRelationship.segmentIds.map((id) => classDiagram.relationshipSegments.byId[id]);
                 const startingSegment = segments.filter((segment) => segment.isStart)[0];
