@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import IObject from '@interfaces/class-diagram/object/IObject';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IObjectSlot from '@interfaces/class-diagram/object/IObjectSlot';
 import SlotEdit from './slotEdit';
 import { v4 } from 'uuid';
@@ -9,19 +9,53 @@ import log = require('loglevel');
 import FrameEdit from '../common/frameEdit';
 import SlotTableEdit from './slotTableEdit';
 import { updateObjectGraphicData } from '@utils/elements/object';
-import { updateElement, removeElementEntry, updateElementEntry, addNewElementEntry } from '@store/actions/classDiagram.action';
+import { updateElement, removeElementEntry, updateElementEntry, addNewElementEntry, updateRelationshipSegment, updateRelationship } from '@store/actions/classDiagram.action';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
+import SegmentDirection from '@enums/segmentDirection';
+import IStoreState from '@interfaces/IStoreState';
 
 const ObjectEdit = (props: { object: IObject, slots: Array<IObjectSlot> }) => {
     const dispatch = useDispatch();
     const { data } = props.object;
     const { slots } = props;
+    const relationshipsSegments = useSelector((store: IStoreState) => store.classDiagram.relationshipSegments);
+    const relationships = useSelector((store: IStoreState) => store.classDiagram.relationships);
 
     const updateGraphic = (element: IObject): IObject => updateObjectGraphicData(element);
     const removeSlot = (slot: IObjectSlot) => {
         const updated = {...props.object};
         updated.data.entryIds.splice(updated.data.entryIds.indexOf(slot.id), 1);
-        dispatch(updateElement(updateGraphic(updated)));
+
+        const updatedElement = updateGraphic(updated);
+        const toElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].toElementId === updatedElement.id);
+        const toElementRelationships = toElementRelationshipsIds.map((id) => relationships.byId[id]);
+        toElementRelationships.forEach(rel => {
+            if (rel.head.y !== props.object.graphicData.frame.y) {
+                rel.head.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const end = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isEnd)];
+                const endDependent = relationshipsSegments.byId[end.fromSegmentId];
+                let yDiff = -25;
+                end.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height; 
+                if (end.direction === SegmentDirection.HORIZONTAL) {
+                    endDependent.lineToY += yDiff;
+                } else {
+                    if (end.y < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        end.lineToY += yDiff;
+                    } else {
+                        end.y -= end.lineToY;
+                        endDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[endDependent.fromSegmentId];
+                        dependentToEndDependent.lineToY += yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                }
+                dispatch(updateRelationshipSegment(end));
+                dispatch(updateRelationshipSegment(endDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
+        
+        dispatch(updateElement(updatedElement));
         dispatch(removeElementEntry(slot));
     };
     const updateSlot= (newFeature: string, newValue: string, slot: IObjectSlot) => {
@@ -54,7 +88,37 @@ const ObjectEdit = (props: { object: IObject, slots: Array<IObjectSlot> }) => {
         }));
         const updated = {...props.object};
         updated.data.entryIds.push(newSlotId);
-        dispatch(updateElement(updateGraphic(updated)));
+
+        const updatedElement = updateGraphic(updated);
+        const toElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].toElementId === updatedElement.id);
+        const toElementRelationships = toElementRelationshipsIds.map((id) => relationships.byId[id]);
+        toElementRelationships.forEach(rel => {
+            if (rel.head.y !== props.object.graphicData.frame.y) {
+                rel.head.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const end = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isEnd)];
+                const endDependent = relationshipsSegments.byId[end.fromSegmentId];
+                let yDiff = 25;
+                end.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height; 
+                if (end.direction === SegmentDirection.HORIZONTAL) {
+                    endDependent.lineToY += yDiff;
+                } else {
+                    if (end.y < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        end.lineToY += yDiff;
+                    } else {
+                        end.y -= end.lineToY;
+                        endDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[endDependent.fromSegmentId];
+                        dependentToEndDependent.lineToY += yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                }
+                dispatch(updateRelationshipSegment(end));
+                dispatch(updateRelationshipSegment(endDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
+
+        dispatch(updateElement(updatedElement));
     };
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const updated = {...props.object};

@@ -2,18 +2,25 @@ to-do
 
 // fixnutie ciar konkretne v class 
 zvacsit kresliacu plochu ak ide obrazok cez
-
+class diagram ak je viac diagramou treba ich oddelit // posunut - mozno dnes
 skontrolovat posledny krat ci sedia formatz scxml a classxml
-
-doriesit onentry a on exit (nika zda sa mi ze to nebudeme podporovat)
 premenovavanie z anglickeho do slovenskeho
 
-mozno upravit layout algo pri class diagram
-+ validacia chyb
-popup pred odchodom z stranky ci naozaj chceme opustit
-skontrolovat undo, redo
-chyba pri resize a naslednom premiestneni
-v class diagrame zmenit polohu joints
 
-pridavanie entries neposuva ciaru - dnes
-class diagram ak je viac diagramou treba ich oddelit // posunut - mozno dnes
+doriesit onentry a on exit (nika zda sa mi ze to nebudeme podporovat) ----> nebude to tam
+
+//////////////////////////////////////////////////////
+
+mozno upravit layout algo pri class diagram - kaslat
+v class diagrame zmenit polohu joints - kaslat
+
+//////////////////////////////////////////////////////
+
++ validacia chyb // done
+popup pred odchodom z stranky ci naozaj chceme opustit  // done
+skontrolovat undo, redo //done
+
+skontrolovat spajanie ciar v class diagrame
+chyba pri resize a naslednom premiestneni
+
+pridavanie entries neposuva ciaru - dnes (hotovo uz len posuvanie from hotove je to)

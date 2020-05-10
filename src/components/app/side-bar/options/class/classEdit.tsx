@@ -12,15 +12,19 @@ import './class-edit.scss';
 import FrameEdit from '../common/frameEdit';
 import ClassAttributeRow from './classAttributeRow';
 import { updateClassGraphicData } from '@utils/elements/class';
-import { addNewElementEntry, updateElement, removeElementEntry, updateElementEntry } from '@store/actions/classDiagram.action';
+import { addNewElementEntry, updateElement, removeElementEntry, updateElementEntry, updateRelationshipSegment, updateRelationship } from '@store/actions/classDiagram.action';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
 import ClassPropertyEdit from './classPropertyEdit';
 import ClassMethodEdit from './classMethodEdit';
+import { update } from 'lodash-es';
+import SegmentDirection from '@enums/segmentDirection';
 
 const ClassEditOptions = (props: { class: IClass, properties: Array<IClassProperty>, methods: Array<IClassMethod> }) => {
     const dispatch = useDispatch();
     const { data } = props.class;
     const { methods, properties } = props;
+    const relationships = useSelector((store: IStoreState) => store.classDiagram.relationships);
+    const relationshipsSegments = useSelector((store: IStoreState) => store.classDiagram.relationshipSegments);
 
     const updateGraphic = (classElement: IClass, propertiesLength: number, methodsLength: number): IClass =>  {
         return updateClassGraphicData(classElement, propertiesLength, methodsLength);
@@ -32,7 +36,38 @@ const ClassEditOptions = (props: { class: IClass, properties: Array<IClassProper
         let methodsLength = methods.length;
         classEntry.type === EntryTypeEnum.PROPERTY ? propertiesLength-- : methodsLength--;
         updatedClass.data.entryIds.splice(updatedClass.data.entryIds.indexOf(classEntry.id), 1);
-        dispatch(updateElement(updateGraphic(updatedClass, propertiesLength, methodsLength)));
+
+        const updatedElement = updateGraphic(updatedClass, propertiesLength, methodsLength);
+        const toElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].toElementId === updatedElement.id);
+        const toElementRelationships = toElementRelationshipsIds.map((id) => relationships.byId[id]);
+        toElementRelationships.forEach(rel => {
+            if (rel.head.y !== props.class.graphicData.frame.y) {
+                rel.head.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const end = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isEnd)];
+                const endDependent = relationshipsSegments.byId[end.fromSegmentId];
+                let yDiff = -25;
+                end.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height; 
+                if (end.direction === SegmentDirection.HORIZONTAL) {
+                    endDependent.lineToY += yDiff;
+                } else {
+                    if (end.y < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        end.lineToY += yDiff;
+                    } else {
+                        end.y -= end.lineToY;
+                        endDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[endDependent.fromSegmentId];
+                        dependentToEndDependent.lineToY += yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                    // end.lineToY += yDiff;
+                }
+                dispatch(updateRelationshipSegment(end));
+                dispatch(updateRelationshipSegment(endDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
+
+        dispatch(updateElement(updatedClass));
         dispatch(removeElementEntry(classEntry));
     };
     
@@ -106,7 +141,39 @@ const ClassEditOptions = (props: { class: IClass, properties: Array<IClassProper
         entryType === EntryTypeEnum.PROPERTY ? propertiesLength++ : methodsLength++;
         const updatedClass: IClass = {...props.class};
         updatedClass.data.entryIds.push(newPropertyId);
-        dispatch(updateElement(updateGraphic(updatedClass, propertiesLength, methodsLength)));
+
+        const updatedElement = updateGraphic(updatedClass, propertiesLength, methodsLength);
+        const toElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].toElementId === updatedElement.id);
+        const toElementRelationships = toElementRelationshipsIds.map((id) => relationships.byId[id]);
+        toElementRelationships.forEach(rel => {
+            if (rel.head.y !== props.class.graphicData.frame.y) {
+                rel.head.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const end = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isEnd)];
+                const endDependent = relationshipsSegments.byId[end.fromSegmentId];
+                let yDiff = 25;
+                end.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height; 
+                if (end.direction === SegmentDirection.HORIZONTAL) {
+                    endDependent.lineToY += yDiff;
+                } else {
+                    if (end.y < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        end.lineToY += yDiff;
+                    } else {
+                        end.y -= end.lineToY;
+                        endDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[endDependent.fromSegmentId];
+                        dependentToEndDependent.lineToY += yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                    // end.lineToY += yDiff;
+                }
+                dispatch(updateRelationshipSegment(end));
+                dispatch(updateRelationshipSegment(endDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
+
+
+        dispatch(updateElement(updatedElement));
     };
 
     const onClassNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {

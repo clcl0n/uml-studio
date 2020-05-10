@@ -113,8 +113,8 @@ const useCanvasMouseMove = (
                     if (resized.graphicData.frame.x < startingSegment.x) {
                         // idu z prava do elementu
                         startingSegment.x += xShift;
+                        fromRelationship.tail.x += xShift;
                         if (startingSegment.direction === SegmentDirection.VERTICAL) {
-                            fromRelationship.tail.x += xShift;
                             const dependent = segments.find(s => s.fromSegmentId === startingSegment.id);
                             dependent.lineToX -= xShift;
                             dependent.x += xShift;
@@ -164,6 +164,7 @@ const useCanvasMouseMove = (
             const fromElementRelationships = fromElementRelationshipsIds.map((id) => classDiagram.relationships.byId[id]);
             fromElementRelationships.forEach((fromRelationship) => {
                 const xShift = fromRelationship.tail.x - previousMousePosition.x;
+                console.warn(fromRelationship.tail.x);
                 const yShift = fromRelationship.tail.y - previousMousePosition.y;
                 const segments = fromRelationship.segmentIds.map((id) => classDiagram.relationshipSegments.byId[id]);
                 const startingSegment = segments.filter((segment) => segment.isStart)[0];

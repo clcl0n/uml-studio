@@ -26,9 +26,10 @@ import { parseStateDiagram } from '@utils/scxmlParser';
 import { addNewStateElement, addNewFinalStateElement, addNewInitialStateElement, clearFinalStateElements, clearInitialStateElements, clearStateElements } from '@store/actions/stateDiagram.action';
 import { addNewRelationshipSegment, addNewRelationship, addNewElementEntry, addNewElement, clearRelationshipSegments, clearRelationships, clearElementEntries, clearElements } from '@store/actions/classDiagram.action';
 import { setDiagramType } from '@store/actions/canvas.action';
-import { parseClassDiagram } from '@utils/ccxmlParser';
+import { parseClassDiagram } from '@utils/classxmlParse';
 import { useCanvasUndo } from 'hooks/useCanvasUndo';
 import { useCanvasRedo } from 'hooks/useCanvasRedo';
+import { browserAlert } from '@utils/browserAlert';
 
 const Ribbon = () => {  
     const dispatch = useDispatch();
@@ -144,8 +145,7 @@ const Ribbon = () => {
                 newInitialStateElement,
                 newInitialStateElements,
                 isValid,
-                error,
-                warning
+                error
             } = await parseStateDiagram(parsedXml.scxml, { x: canvasWidth, y: canvasHeight });
             if (isValid) {
                 newStateElements.forEach((newStateElement) => {
@@ -169,29 +169,37 @@ const Ribbon = () => {
                 dispatch(setDiagramType(DiagramTypeEnum.STATE));
                 setIsActive(false);
             } else {
-                error !== '' ? alert(error) : alert(warning);
+                browserAlert(error);
             }
         } else if (parsedXml.classxml) {
             const {
                 newElements,
                 newRelationShipSegments,
                 newRelationShips,
-                newEntries
+                newEntries,
+                error,
+                isValid
             } = await parseClassDiagram(parsedXml.classxml, { x: canvasWidth, y: canvasHeight });
-            newEntries.forEach((newEntry) => {
-                dispatch(addNewElementEntry(newEntry));
-            });
-            newElements.forEach((newElement) => {
-                dispatch(addNewElement(newElement));
-            });
-            newRelationShipSegments.forEach((newRelationShipSegment) => {
-                dispatch(addNewRelationshipSegment(newRelationShipSegment));
-            });
-            newRelationShips.forEach((newRelationShip) => {
-                dispatch(addNewRelationship(newRelationShip));
-            });
-            dispatch(setDiagramType(DiagramTypeEnum.CLASS));
-            setIsActive(false);
+            if (isValid) {
+                newEntries.forEach((newEntry) => {
+                    dispatch(addNewElementEntry(newEntry));
+                });
+                newElements.forEach((newElement) => {
+                    dispatch(addNewElement(newElement));
+                });
+                newRelationShipSegments.forEach((newRelationShipSegment) => {
+                    dispatch(addNewRelationshipSegment(newRelationShipSegment));
+                });
+                newRelationShips.forEach((newRelationShip) => {
+                    dispatch(addNewRelationship(newRelationShip));
+                });
+                dispatch(setDiagramType(DiagramTypeEnum.CLASS));
+                setIsActive(false);
+            } else {
+                browserAlert(error);
+            }
+        } else {
+            browserAlert('Nepodporovaný XML formát.');
         }
     };
 

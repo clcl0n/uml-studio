@@ -9,7 +9,8 @@ import IStoreState from '@interfaces/IStoreState';
 import { parseStateDiagram } from '@utils/scxmlParser';
 import { addNewRelationship, addNewRelationshipSegment, addNewElement, addNewElementEntry } from '@store/actions/classDiagram.action';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { parseClassDiagram } from '@utils/ccxmlParser';
+import { parseClassDiagram } from '@utils/classxmlParse';
+import { browserAlert } from '@utils/browserAlert';
 
 const DiagramChooserModal = () => {
     const dispatch = useDispatch();
@@ -39,8 +40,7 @@ const DiagramChooserModal = () => {
                 newInitialStateElement,
                 newInitialStateElements,
                 isValid,
-                error,
-                warning
+                error
             } = await parseStateDiagram(parsedXml.scxml, { x: canvasWidth, y: canvasHeight });
             if (isValid) {
                 newStateElements.forEach((newStateElement) => {
@@ -64,29 +64,38 @@ const DiagramChooserModal = () => {
                 dispatch(setDiagramType(DiagramTypeEnum.STATE));
                 setIsActive(false);
             } else {
-                error !== '' ? alert(error) : alert(warning);
+                browserAlert(error);
             }
         } else if (parsedXml.classxml) {
             const {
                 newElements,
                 newRelationShipSegments,
                 newRelationShips,
-                newEntries
+                newEntries,
+                isValid,
+                error
             } = await parseClassDiagram(parsedXml.classxml, { x: canvasWidth, y: canvasHeight });
-            newEntries.forEach((newEntry) => {
-                dispatch(addNewElementEntry(newEntry));
-            });
-            newElements.forEach((newElement) => {
-                dispatch(addNewElement(newElement));
-            });
-            newRelationShipSegments.forEach((newRelationShipSegment) => {
-                dispatch(addNewRelationshipSegment(newRelationShipSegment));
-            });
-            newRelationShips.forEach((newRelationShip) => {
-                dispatch(addNewRelationship(newRelationShip));
-            });
-            dispatch(setDiagramType(DiagramTypeEnum.CLASS));
-            setIsActive(false);
+
+            if (isValid) {
+                newEntries.forEach((newEntry) => {
+                    dispatch(addNewElementEntry(newEntry));
+                });
+                newElements.forEach((newElement) => {
+                    dispatch(addNewElement(newElement));
+                });
+                newRelationShipSegments.forEach((newRelationShipSegment) => {
+                    dispatch(addNewRelationshipSegment(newRelationShipSegment));
+                });
+                newRelationShips.forEach((newRelationShip) => {
+                    dispatch(addNewRelationship(newRelationShip));
+                });
+                dispatch(setDiagramType(DiagramTypeEnum.CLASS));
+                setIsActive(false);
+            } else {
+                browserAlert(error);
+            }
+        } else {
+            browserAlert('Nepodporovaný XML formát.');
         }
     };
 

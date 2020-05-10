@@ -8,6 +8,7 @@ import Canvas from './canvas';
 import SideBar from '@components/app/side-bar';
 import useRemoveSelectedElement from 'hooks/useRemoveSelectedElement';
 import DiagramChooserModal from './diagram-chooser-modal/diagramChooserModal';
+import { browserAlert } from '@utils/browserAlert';
 
 const app = () => {
     const { removeSelectedElement } = useRemoveSelectedElement();
@@ -17,11 +18,19 @@ const app = () => {
             setKeyPressed(127);
         }
     };
+    const beforeunload = (event: BeforeUnloadEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        event.returnValue = '';
+    };
+
     useEffect(() => {
         window.addEventListener('keypress',(ev) => onGlobalKeyPress(ev));
+        window.addEventListener('beforeunload', (ev) => beforeunload(ev));     
 
         return () => {
             window.removeEventListener('keypress',(ev) => onGlobalKeyPress(ev));
+            window.removeEventListener('beforeunload', (ev) => beforeunload(ev));
         };
     }, []);
 

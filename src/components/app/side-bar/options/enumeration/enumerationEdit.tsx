@@ -10,18 +10,50 @@ import EntryEdit from '../common/entryEdit';
 import FrameEdit from '../common/frameEdit';
 import EntryTableEdit from '../common/entryTableEdit';
 import { updateEnumerationGraphicData } from '@utils/elements/enumeration';
-import { updateElement, removeElementEntry, updateElementEntry, addNewElementEntry } from '@store/actions/classDiagram.action';
+import { updateElement, removeElementEntry, updateElementEntry, addNewElementEntry, updateRelationshipSegment, updateRelationship } from '@store/actions/classDiagram.action';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
+import SegmentDirection from '@enums/segmentDirection';
 
 const EnumerationEdit = (props: { enumeration: IEnumeration, entries: Array<IEnumerationEntry> }) => {
     const dispatch = useDispatch();
     const { data } = props.enumeration;
     const { entries } = props;
+    const relationshipsSegments = useSelector((store: IStoreState) => store.classDiagram.relationshipSegments);
+    const relationships = useSelector((store: IStoreState) => store.classDiagram.relationships);
     const updateGraphic = (element: IEnumeration): IEnumeration => updateEnumerationGraphicData(element);
     const removeEntry = (entry: IEnumerationEntry) => {
         const updated = {...props.enumeration};
         updated.data.entryIds.splice(updated.data.entryIds.indexOf(entry.id), 1);
-        dispatch(updateElement(updateGraphic(updated)));
+        const updatedElement = updateGraphic(updated);
+        const toElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].toElementId === updatedElement.id);
+        const toElementRelationships = toElementRelationshipsIds.map((id) => relationships.byId[id]);
+        toElementRelationships.forEach(rel => {
+            if (rel.head.y !== props.enumeration.graphicData.frame.y) {
+                rel.head.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const end = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isEnd)];
+                const endDependent = relationshipsSegments.byId[end.fromSegmentId];
+                let yDiff = -25;
+                end.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height; 
+                if (end.direction === SegmentDirection.HORIZONTAL) {
+                    endDependent.lineToY += yDiff;
+                } else {
+                    if (end.y < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        end.lineToY += yDiff;
+                    } else {
+                        end.y -= end.lineToY;
+                        endDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[endDependent.fromSegmentId];
+                        dependentToEndDependent.lineToY += yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                }
+                dispatch(updateRelationshipSegment(end));
+                dispatch(updateRelationshipSegment(endDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
+
+        dispatch(updateElement(updatedElement));
         dispatch(removeElementEntry(entry));
     };
     const updateEntry= (newMethodName: string, classMethod: IEnumerationEntry) => {
@@ -53,7 +85,37 @@ const EnumerationEdit = (props: { enumeration: IEnumeration, entries: Array<IEnu
         }));
         const updated = {...props.enumeration};
         updated.data.entryIds.push(newPropertyId);
-        dispatch(updateElement(updateGraphic(updated)));
+
+        const updatedElement = updateGraphic(updated);
+        const toElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].toElementId === updatedElement.id);
+        const toElementRelationships = toElementRelationshipsIds.map((id) => relationships.byId[id]);
+        toElementRelationships.forEach(rel => {
+            if (rel.head.y !== props.enumeration.graphicData.frame.y) {
+                rel.head.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const end = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isEnd)];
+                const endDependent = relationshipsSegments.byId[end.fromSegmentId];
+                let yDiff = 25;
+                end.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height; 
+                if (end.direction === SegmentDirection.HORIZONTAL) {
+                    endDependent.lineToY += yDiff;
+                } else {
+                    if (end.y < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        end.lineToY += yDiff;
+                    } else {
+                        end.y -= end.lineToY;
+                        endDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[endDependent.fromSegmentId];
+                        dependentToEndDependent.lineToY += yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                }
+                dispatch(updateRelationshipSegment(end));
+                dispatch(updateRelationshipSegment(endDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
+
+        dispatch(updateElement(updatedElement));
     };
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const updated = {...props.enumeration};
