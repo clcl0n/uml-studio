@@ -425,14 +425,14 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
         
                             if (elementsToProcess.graphicData.frame.y >= targetElement.graphicData.frame.y) {
                                 // nad y urovnou
-                                transitionTail.y = (elementsToProcess.graphicData.frame.height / 3) + elementsToProcess.graphicData.frame.y;
+                                transitionTail.y = elementsToProcess.graphicData.frame.y;
                                 if (offsetUp1 >= minOffset) {
                                     offsetUp1 -= offsetStep;
                                 }
                                 currentOffset = offsetUp1;
                             } else {
                                 // pod y
-                                transitionTail.y = ((elementsToProcess.graphicData.frame.height / 3) * 2) + elementsToProcess.graphicData.frame.y;
+                                transitionTail.y = elementsToProcess.graphicData.frame.y + elementsToProcess.graphicData.frame.height;
                                 if (offsetDown1 >= minOffset) {
                                     offsetDown1 -= offsetStep;
                                 }

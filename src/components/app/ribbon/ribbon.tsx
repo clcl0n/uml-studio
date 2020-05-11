@@ -118,7 +118,7 @@ const Ribbon = () => {
             });
             saveAs(xmlBlob, 'classcxml.xml');
         } else {
-            const xml = serializeSCXML(stateDiagram, classDiagram);
+            const xml = serializeSCXML(stateDiagram, classDiagram, { x: canvasWidth, y: canvasHeight });
             const xmlBlob = new Blob([xml], {
                 type: 'text/plain;charset=utf-8'
             });
@@ -145,8 +145,11 @@ const Ribbon = () => {
                 newInitialStateElement,
                 newInitialStateElements,
                 isValid,
-                error
+                error,
+                newCanvasDimensions
             } = await parseStateDiagram(parsedXml.scxml, { x: canvasWidth, y: canvasHeight });
+
+            dispatch(setCanvasDimensions(newCanvasDimensions));
             if (isValid) {
                 newStateElements.forEach((newStateElement) => {
                     dispatch(addNewStateElement(newStateElement));

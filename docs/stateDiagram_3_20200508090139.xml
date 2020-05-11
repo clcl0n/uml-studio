@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scxml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/07/scxml">
+  <state id="RelayElCentralStart_OFF">
+    <transition cond="WinterSystem::responseAcPwrDown-&gt;state == InputRelayStatesEnum::OFF &amp;&amp; WinterSystem::stateElCentral-&gt;isInState(new StateElCentral_OFF())" target="RelayElCentralStart_ON" />
+  </state>
+  <state id="RelayElCentralStart_ON">
+    <transition cond="WinterSystem::responseAcPwrDown-&gt;state == InputRelayStatesEnum::ON &amp;&amp; relayElCentralStart-&gt;timer &gt; 2" target="RelayElCentralStart_OFF" />
+  </state>
+</scxml>

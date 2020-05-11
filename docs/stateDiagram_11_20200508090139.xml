@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scxml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/07/scxml">
+  <state id="Tuv_COLD_DOWN">
+    <transition cond="tuv-&gt;temperature &gt; 10" target="Tuv_WARMED_UP" />
+    <transition cond="tuv-&gt;temperature &gt; 40" target="Tuv_OVERHEAT" />
+  </state>
+  <state id="Tuv_WARMED_UP">
+    <transition cond="tuv-&gt;temperature &lt; 5" target="Tuv_COLD_DOWN" />
+    <transition cond="tuv-&gt;temperature &gt; 40" target="Tuv_OVERHEAT" />
+  </state>
+  <state id="Tuv_OVERHEAT">
+    <transition cond="tuv-&gt;temperature &lt; 30" target="Tuv_WARMED_UP" />
+  </state>
+</scxml>

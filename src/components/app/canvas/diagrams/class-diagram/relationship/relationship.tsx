@@ -19,6 +19,14 @@ const Relationship = (props: { relationship: IRelationship, relationshipSegments
     const dispatch = useDispatch();
     const { relationship, relationshipSegments } = props;
     const { selectedElementId } = useSelectedElement();
+
+    const textElipsis = (text: string) => {
+        if (text.length > 35) {
+            return text.slice(0, 50) + '...';
+        }
+        return text;
+    };
+
     const segments = relationshipSegments.map((relationshipSegment, index) => {
         if (relationshipSegment.isStart) {
             let segmentDirection = Direction.NONE;
@@ -88,7 +96,7 @@ const Relationship = (props: { relationship: IRelationship, relationshipSegments
 
             return (
                 <g key={index}>
-                    {index === 1 && <text className='svg-text svg-text-center' writingMode={Math.abs(relationshipSegment.lineToY) < 30 ? 'lr' : 'tb'} x={textX} y={textY}>{relationship.relationshipValue}</text>}
+                    {index === 1 && <text className='svg-text svg-text-center' writingMode={Math.abs(relationshipSegment.lineToY) < 30 ? 'lr' : 'tb'} x={textX} y={textY}>{textElipsis(relationship.relationshipValue)}</text>}
                     <RelationshipSegment type={relationship.type} segment={relationshipSegment} relationId={relationship.id}/>
                 </g>
             );

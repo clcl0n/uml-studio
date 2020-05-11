@@ -40,8 +40,10 @@ const DiagramChooserModal = () => {
                 newInitialStateElement,
                 newInitialStateElements,
                 isValid,
-                error
+                error,
+                newCanvasDimensions
             } = await parseStateDiagram(parsedXml.scxml, { x: canvasWidth, y: canvasHeight });
+            dispatch(setCanvasDimensions(newCanvasDimensions));
             if (isValid) {
                 newStateElements.forEach((newStateElement) => {
                     dispatch(addNewStateElement(newStateElement));

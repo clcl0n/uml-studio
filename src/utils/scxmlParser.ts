@@ -1,4 +1,3 @@
-import { parseStringPromise } from 'xml2js';
 import ICoordinates from '@interfaces/ICoordinates';
 import ISCXML from '@interfaces/scxml/ISCXML';
 import ISCXMLState from '@interfaces/scxml/ISCXMLState';
@@ -9,7 +8,7 @@ import ISCXMLParallel from '@interfaces/scxml/ISCXMLParallel';
 import ICSXMLFinal from '@interfaces/scxml/ICSXMLFinal';
 import IFinalStateElement from '@interfaces/state-diagram/final-state/IFinalStateElement';
 import StateDiagramElementsEnum from '@enums/stateDiagramElementsEnum';
-import { createNewRelationship, createNewRelationshipSameLayerSCXML } from './elements/relationship';
+import { createNewRelationship } from './elements/relationship';
 import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 import IRelationship from '@interfaces/class-diagram/relationships/IRelationship';
 import IRelationshipSegment from '@interfaces/class-diagram/relationships/IRelationshipSegment';
@@ -26,13 +25,18 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
     const newRelationShipSegments: Array<IRelationshipSegment> = [];
     const newInitialStateElements: Array<IInitialStateElement> = [];
     let newInitialStateElement: IInitialStateElement;
-    const scxmlExistingStates: Array<string> = [];
+    let scxmlExistingStates: Array<string> = [];
 
     const canvasMiddle: ICoordinates = { x: canvasDimensions.x / 2, y: canvasDimensions.y / 2 };
-    const coordinates: ICoordinates = { x: canvasMiddle.x, y: canvasMiddle.y };
-
-    const layerDistance = 300;
-    const elementDistance = 120;
+    let coordinates: ICoordinates = { x: canvasMiddle.x, y: canvasMiddle.y };
+    let newCanvasDimensions: ICoordinates = {
+        x: canvasDimensions.x,
+        y: canvasDimensions.x
+    };
+    const layerDistance = 400;
+    const elementDistance = 100;
+    let maxHeight = 0;
+    let maxWidth = 0;
 
     const { isValid, warning, error } = isSCXMLValid(scxml);
 
@@ -47,28 +51,9 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
                     x: coordinates.x - (layerDistance / 2),
                     y: coordinates.y
                 }, 'initial').initialStateElement;
-                const { relationship, relationshipSegments } = createNewRelationship(
-                    ClassDiagramRelationshipTypesEnum.ASSOCIATION,
-                    {
-                        x1: coordinates.x - (layerDistance / 2) + newInitialStateElement.graphicData.r,
-                        y1: newInitialStateElement.graphicData.y,
-                        x2: initialState.type === StateDiagramElementsEnum.STATE ? 
-                            (initialState as IStateElement).graphicData.frame.x : 
-                            (initialState as IFinalStateElement).graphicData.x,
-                        y2:  initialState.type === StateDiagramElementsEnum.STATE ? 
-                        (initialState as IStateElement).graphicData.frame.y + (initialState as IStateElement).graphicData.rx : 
-                        (initialState as IFinalStateElement).graphicData.y
-                    },
-                    newInitialStateElement.id,
-                    initialState.id
-                );
-                newRelationShips.push(relationship);
-                newRelationShipSegments.push(...relationshipSegments);
                 if(initialState.type === StateDiagramElementsEnum.STATE) {
-                    newStateElements.push(initialState as IStateElement);
                     scxmlExistingStates.push(scxmlInitialState.$.id);
                 } else if (initialState.type === StateDiagramElementsEnum.FINAL_STATE) {
-                    newFinalStateElements.push(initialState as IFinalStateElement);
                     scxmlExistingStates.push(scxmlInitialState.$.id);
                 }
     
@@ -82,6 +67,107 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
                     let currentLayer: Array<ISCXMLState> = [];
                     const maxIterations = 3000000;
                     let i = 0;
+                    // calculate diagram size
+                    while (elementsToAdd.length > 0) {
+                        i++;
+                        if (maxIterations === i) {
+                            throw 'Timeout';
+                        }
+                        currentLayer = [];
+                        coordinates.x += layerDistance;
+                        let toAdd: Array<ISCXMLTransition> = [];
+                        previousLayer.forEach((scxmlState) => {
+                            if (scxmlState.transition && scxmlState.transition.length > 0) {
+                                const statesToAdd = scxmlState.transition.filter((transition) => elementsToAdd.findIndex((t) => t.$.id === transition.$.target) !== -1);
+                                toAdd.push(...statesToAdd);
+                                
+                                scxmlExistingStates.push(...statesToAdd.map((t) => t.$.target));
+                                elementsToAdd = [
+                                    ...scxmlStates.filter((scxmlState) => scxmlExistingStates.indexOf(scxmlState.$.id) === -1),
+                                    ...scxmlParallels.filter((scxmlParallel) => scxmlExistingStates.indexOf(scxmlParallel.$.id) === -1),
+                                    ...scxmlFinals.filter((scxmlFinal) => scxmlExistingStates.indexOf(scxmlFinal.$.id) === -1)
+                                ];
+                            }
+                        });
+        
+                        if (toAdd.length % 2 === 0) {
+                            coordinates.y -= elementDistance + 100 * (toAdd.length / 2);
+                        } else if (toAdd.length > 1) {
+                            coordinates.y -= (elementDistance + 100 * ((toAdd.length - 1) / 2)) + elementDistance + 100;
+                        }
+                        
+                        toAdd.forEach((transition) => {
+                            const { newState, scxmlState, newFinal } = createTargetedState(scxmlStates, scxmlParallels, scxmlFinals, transition, coordinates);
+                            if (newState) {
+                                maxHeight += newState.graphicData.frame.height + elementDistance;
+                                coordinates.y += elementDistance + newState.graphicData.frame.height;
+                            }
+                            if (newFinal) {
+                                maxHeight += newFinal.graphicData.r2 * 2 + elementDistance;
+                                coordinates.y += elementDistance;
+                            }
+                            currentLayer.push(scxmlState);
+                        });
+    
+                        maxWidth += layerDistance + 100;
+                        coordinates.y = canvasMiddle.y;
+                        previousLayer = currentLayer;
+                    }
+
+                    console.warn(`x: ${maxWidth} y: ${maxHeight}`);
+
+                    const halfMaxWidth = maxWidth / 2;
+                    const halfMaxHeight = maxHeight / 2;
+                    console.warn(maxHeight);
+                    if (halfMaxHeight + canvasMiddle.y > canvasDimensions.y) {
+                        newCanvasDimensions.y = maxHeight + canvasMiddle.y;
+                    }
+                    
+                    if (coordinates.x > canvasDimensions.x) {
+                        newCanvasDimensions.x = maxWidth + canvasMiddle.x;
+                    }
+
+                    coordinates = { x: (newCanvasDimensions.x / 2) - (halfMaxWidth / 2), y: (newCanvasDimensions.y / 2)};
+                    scxmlExistingStates = [];
+                    const { scxmlInitialState: ini, newInitialStateElement: initialState } = createInitialDiagramState(scxml, coordinates);
+                    newInitialStateElement = createNewInitialStateElement({
+                        x: coordinates.x - (layerDistance / 2),
+                        y: coordinates.y
+                    }, 'initial').initialStateElement;
+                    if(initialState.type === StateDiagramElementsEnum.STATE) {
+                        newStateElements.push(initialState as IStateElement);
+                        scxmlExistingStates.push(scxmlInitialState.$.id);
+                    } else if (initialState.type === StateDiagramElementsEnum.FINAL_STATE) {
+                        newFinalStateElements.push(initialState as IFinalStateElement);
+                        scxmlExistingStates.push(scxmlInitialState.$.id);
+                    }
+                    const { relationship, relationshipSegments } = createNewRelationship(
+                        ClassDiagramRelationshipTypesEnum.ASSOCIATION,
+                        {
+                            x1: coordinates.x - (layerDistance / 2) + newInitialStateElement.graphicData.r,
+                            y1: newInitialStateElement.graphicData.y,
+                            x2: initialState.type === StateDiagramElementsEnum.STATE ? 
+                                (initialState as IStateElement).graphicData.frame.x : 
+                                (initialState as IFinalStateElement).graphicData.x,
+                            y2:  initialState.type === StateDiagramElementsEnum.STATE ? 
+                            (initialState as IStateElement).graphicData.frame.y + (initialState as IStateElement).graphicData.rx : 
+                            (initialState as IFinalStateElement).graphicData.y
+                        },
+                        newInitialStateElement.id,
+                        initialState.id
+                    );
+                    newRelationShips.push(relationship);
+                    newRelationShipSegments.push(...relationshipSegments);
+
+                    previousLayer = [ini];
+                    currentLayer = [];
+                    i = 0;
+                    elementsToAdd = [
+                        ...scxmlStates.filter((scxmlState) => scxmlExistingStates.indexOf(scxmlState.$.id) === -1),
+                        ...scxmlParallels.filter((scxmlParallel) => scxmlExistingStates.indexOf(scxmlParallel.$.id) === -1),
+                        ...scxmlFinals.filter((scxmlFinal) => scxmlExistingStates.indexOf(scxmlFinal.$.id) === -1)
+                    ];
+                    //draw diagram
                     while (elementsToAdd.length > 0) {
                         i++;
                         if (maxIterations === i) {
@@ -116,11 +202,11 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
                         });
         
                         if (toAdd.length % 2 === 0) {
-                            coordinates.y -= elementDistance * (toAdd.length / 2);
+                            coordinates.y -= elementDistance + 100 * (toAdd.length / 2);
                         } else if (toAdd.length > 1) {
-                            coordinates.y -= elementDistance * ((toAdd.length - 1) / 2);
+                            coordinates.y -= (elementDistance + 100 * ((toAdd.length - 1) / 2)) + elementDistance + 100;
                         }
-                        
+
                         toAdd.forEach((transition) => {
                             const { newState, scxmlState, newFinal } = createTargetedState(scxmlStates, scxmlParallels, scxmlFinals, transition, coordinates);
                             if (newState) {
@@ -134,7 +220,7 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
                             currentLayer.push(scxmlState);
                         });
     
-                        coordinates.y = canvasMiddle.y;
+                        coordinates.y = (newCanvasDimensions.y / 2);
                         previousLayer = currentLayer;
                     }
     
@@ -235,7 +321,8 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
                                         },
                                         fromState.id,
                                         toStateElement ? toStateElement.id : toFinalStateElement.id,
-                                        20
+                                        20,
+                                        scxmlTransition.$.cond
                                     );
                                     newRelationShips.push(relationship);
                                     newRelationShipSegments.push(...relationshipSegments);
@@ -253,7 +340,7 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
                                         fromState.id,
                                         toStateElement ? toStateElement.id : toFinalStateElement.id,
                                         offsetRelation,
-                                        scxmlTransition.$.event
+                                        scxmlTransition.$.cond
                                     );
                                     newRelationShips.push(relationship);
                                     newRelationShipSegments.push(...relationshipSegments);
@@ -265,6 +352,8 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
                 }
             }
         } else if (scxml.$.coordinates === 'true') {
+            newCanvasDimensions.x = Number.parseFloat(scxml.$.width);
+            newCanvasDimensions.y = Number.parseFloat(scxml.$.height);
             scxml?.state?.forEach(e => {
                 const stateElement = createNewStateElementFromSCXML(e, { x: Number.parseFloat(e.$.x), y: Number.parseFloat(e.$.y) });
                 newStateElements.push(stateElement);
@@ -322,7 +411,7 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
                         direction: t.$.direction.toUpperCase() as Direction,
                         headValue: '',
                         tailValue: '',
-                        relationshipValue: t.$.event,
+                        relationshipValue: t.$.cond,
                         segmentIds: relationshipSegmentIds,
                         type: t.$.type.toUpperCase() as ClassDiagramRelationshipTypesEnum,
                         head: headCoord,
@@ -367,7 +456,8 @@ export const parseStateDiagram =  async (scxml: ISCXML, canvasDimensions: ICoord
         newInitialStateElements,
         newInitialStateElement,
         isValid: true,
-        error
+        error,
+        newCanvasDimensions
     };
 };
 
