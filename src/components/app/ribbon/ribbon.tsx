@@ -25,7 +25,7 @@ import { parseStringPromise } from 'xml2js';
 import { parseStateDiagram } from '@utils/scxmlParser';
 import { addNewStateElement, addNewFinalStateElement, addNewInitialStateElement, clearFinalStateElements, clearInitialStateElements, clearStateElements } from '@store/actions/stateDiagram.action';
 import { addNewRelationshipSegment, addNewRelationship, addNewElementEntry, addNewElement, clearRelationshipSegments, clearRelationships, clearElementEntries, clearElements } from '@store/actions/classDiagram.action';
-import { setDiagramType } from '@store/actions/canvas.action';
+import { setDiagramType, setCanvasDimensions } from '@store/actions/canvas.action';
 import { parseClassDiagram } from '@utils/classxmlParse';
 import { useCanvasUndo } from 'hooks/useCanvasUndo';
 import { useCanvasRedo } from 'hooks/useCanvasRedo';
@@ -112,7 +112,7 @@ const Ribbon = () => {
 
     const save = () => {
         if (diagramType === DiagramTypeEnum.CLASS) {
-            const xml = serializeCCXML(classDiagram);
+            const xml = serializeCCXML(classDiagram, { x: canvasWidth, y: canvasHeight });
             const xmlBlob = new Blob([xml], {
                 type: 'text/plain;charset=utf-8'
             });
@@ -178,8 +178,11 @@ const Ribbon = () => {
                 newRelationShips,
                 newEntries,
                 error,
-                isValid
+                isValid,
+                newCanvasDimensions
             } = await parseClassDiagram(parsedXml.classxml, { x: canvasWidth, y: canvasHeight });
+            dispatch(setCanvasDimensions(newCanvasDimensions));
+            
             if (isValid) {
                 newEntries.forEach((newEntry) => {
                     dispatch(addNewElementEntry(newEntry));

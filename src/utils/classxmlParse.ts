@@ -44,17 +44,26 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
     const allElements: Array<ICCXMLBaseElement> = [...classes, ...dataTypes, ...enumerations, ...interfaces, ...objects, ...primitiveTypes, ...utilities];
 
     const canvasMiddle: ICoordinates = { x: canvasDimensions.x / 2, y: canvasDimensions.x / 2 };
-    const coordinates: ICoordinates = { x: canvasMiddle.x, y: canvasMiddle.y };
+    let coordinates: ICoordinates = { x: canvasMiddle.x, y: canvasMiddle.y };
 
     const layerDistance = 400;
     const elementsDistance = 50;
+    let maxHeight = 0;
+    let maxWidth = 0;
+
+    let newCanvasDimensions: ICoordinates = {
+        x: canvasDimensions.x,
+        y: canvasDimensions.x
+    };
 
     try {
         if (classXML.$.coordinates === 'true') {
+            newCanvasDimensions.x = Number.parseFloat(classXML.$.width);
+            newCanvasDimensions.y = Number.parseFloat(classXML.$.height);
             (classXML.classes?.[0]?.class ?? []).forEach(e => {
                 const { entries, newClass } = createNewClassFromCCXML({ x: Number.parseFloat(e.$.x), y: Number.parseFloat(e.$.y) }, e);
                 elementsToReturn.push(newClass);
-                entriesToReturn.push(...entries);
+                entriesToReturn.push(...entries);   
             });
             (classXML.dataTypes?.[0]?.dataType ?? []).forEach(e => {
                 const { entries, newDataType } = createNewDataTypeFromCCXML({ x: Number.parseFloat(e.$.x), y: Number.parseFloat(e.$.y) }, e);
@@ -151,16 +160,18 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
             (classXML.utilities?.[0]?.utility ?? []).forEach(e => createRelationships(e));
         } else {
             const { diagrams } = analizeClassDiagram([...allElements]);
-        
-            diagrams.sort((a, b) => a.length > b.length ? -1 : 0).forEach(diagram => {
-                const diagramClasses: Array<{ element: ICCXMLClass, type: ClassDiagramElementsEnum }> = [];
-                const diagramDataTypes: Array<{ element: ICCXMLDataType, type: ClassDiagramElementsEnum }> = [];
-                const diagramEnumerations: Array<{ element: ICCXMLEnumeration, type: ClassDiagramElementsEnum }> = [];
-                const diagramInterfaces: Array<{ element: ICCXMLInterface, type: ClassDiagramElementsEnum }> = [];
-                const diagramObjects: Array<{ element: ICCXMLObject, type: ClassDiagramElementsEnum }> = [];
-                const diagramPrimitiveTypes: Array<{ element: ICCXMLPrimitive, type: ClassDiagramElementsEnum }> = [];
-                const diagramUtilities: Array<{ element: ICCXMLUtility, type: ClassDiagramElementsEnum }> = [];
-        
+
+            const sortedDiagram = diagrams.sort((a, b) => a.length > b.length ? -1 : 0);
+            const diagramClasses: Array<{ element: ICCXMLClass, type: ClassDiagramElementsEnum }> = [];
+            const diagramDataTypes: Array<{ element: ICCXMLDataType, type: ClassDiagramElementsEnum }> = [];
+            const diagramEnumerations: Array<{ element: ICCXMLEnumeration, type: ClassDiagramElementsEnum }> = [];
+            const diagramInterfaces: Array<{ element: ICCXMLInterface, type: ClassDiagramElementsEnum }> = [];
+            const diagramObjects: Array<{ element: ICCXMLObject, type: ClassDiagramElementsEnum }> = [];
+            const diagramPrimitiveTypes: Array<{ element: ICCXMLPrimitive, type: ClassDiagramElementsEnum }> = [];
+            const diagramUtilities: Array<{ element: ICCXMLUtility, type: ClassDiagramElementsEnum }> = [];
+            let diagramAllElementsOrigin: Array<{ element: ICCXMLPrimitive, type: ClassDiagramElementsEnum }> = [];
+            
+            sortedDiagram.forEach(diagram => {
                 diagram.forEach(elementId => {
                     if (classes.some(c => c.$.id === elementId)) {
                         diagramClasses.push({ 
@@ -199,9 +210,87 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
                         });
                     }
                 });
-        
-                const diagramAllElementsOrigin = [...diagramClasses, ...diagramDataTypes, ...diagramEnumerations, ...diagramInterfaces, ...diagramObjects, ...diagramPrimitiveTypes, ...diagramUtilities];        
-                const diagramAllElements = [...diagramAllElementsOrigin];
+                diagramAllElementsOrigin = [...diagramClasses, ...diagramDataTypes, ...diagramEnumerations, ...diagramInterfaces, ...diagramObjects, ...diagramPrimitiveTypes, ...diagramUtilities];        
+                let diagramAllElements = [...diagramAllElementsOrigin];
+                // pociatocni element je element ktory ma najviac transitions
+                let initialElement = diagramAllElements.filter(all => !diagramAllElements
+                    .some(a => getElementTransitions(a.element)
+                    .some(t => t.$.target === all.element.$.id)))
+                    .sort((a, b) => {
+                        return getElementTransitions(a.element).length > getElementTransitions(b.element).length ? -1 : 0;
+                })[0];
+
+                initialElement = initialElement ?? diagramAllElements.sort((a, b) => getElementTransitions(a.element).length > getElementTransitions(b.element).length ? -1 : 0)[0];
+                diagramAllElements.splice(diagramAllElements.findIndex(e => e.element.$.id === initialElement.element.$.id), 1);
+                let currentLayer: Array<{ element: ICCXMLBaseElement, type: ClassDiagramElementsEnum }> = [initialElement];
+                let nextLayer: Array<{ element: ICCXMLBaseElement, type: ClassDiagramElementsEnum }> = [];
+
+                const maxIterations = 3000000;
+                let i = 0;
+
+                // get diagram dimensions
+                while (currentLayer.length > 0) {
+                    i++;
+                    if (maxIterations === i) {
+                        throw 'Timeout';
+                    }
+                    nextLayer = [];
+                    const elementHeights: Array<number> = [];
+                    if (currentLayer.length > 1) {
+                        const currentLayerHeight = currentLayer.map((e) => {
+                            let { element: newElement, entries, target } = addNewElement(e, coordinates);
+                            elementHeights.push(newElement.graphicData.frame.height);
+                            return newElement.graphicData.frame.height;
+                        }).reduce((p, c) => p + c);
+                        if (maxHeight < currentLayerHeight) {
+                            maxHeight = currentLayerHeight;
+                        }
+                        coordinates.y -= currentLayerHeight / 2;
+                    } else {
+                        elementHeights.push(0);
+                    }
+
+                    currentLayer.forEach((elementToProcess, index) => {
+                        coordinates.y += elementHeights[index] / 2;
+                        let { element: newElement } = addNewElement(elementToProcess, coordinates);
+                        coordinates.y += elementsDistance + (elementHeights[index] / 2);
+                        if (elementHasTransitions(elementToProcess.element)) {
+                            // este nevykreslene elementy
+                            const elementIdsToAdd = getElementTransitions(elementToProcess.element).filter(t => !elementsToReturn.some(e => e.id === t.$.target)).map(t => t.$.target);
+                            elementIdsToAdd.push(...diagramAllElements.filter(e => getElementTransitions(e.element).some(t => t.$.target === elementToProcess.element.$.id)).map(r => r.element.$.id));
+                            if (elementIdsToAdd.length > 0) {
+                                const dependetElements = diagramAllElements.filter(e => elementIdsToAdd.some(id => id === e.element.$.id));
+                                dependetElements.forEach(de => {
+                                    diagramAllElements.splice(diagramAllElements.findIndex(e => e.element.$.id === de.element.$.id), 1);
+                                    if (!nextLayer.some(nl => nl.element.$.id === de.element.$.id)) {
+                                        nextLayer.push(de);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    coordinates.y = canvasMiddle.y;
+                    coordinates.x += layerDistance;
+                    maxWidth += layerDistance + 100;
+                    currentLayer = nextLayer;
+                }
+            });
+
+            const halfMaxHeight = maxHeight / 2;
+            const halfMaxWidth = maxWidth / 2;
+            console.warn(maxHeight);
+            if (halfMaxHeight + canvasMiddle.y > canvasDimensions.y) {
+                newCanvasDimensions.y = 2 * maxHeight + canvasMiddle.y;
+            }
+            
+            if (coordinates.x > canvasDimensions.x) {
+                newCanvasDimensions.x = maxWidth + canvasMiddle.x;
+            }
+            console.warn(`x: ${newCanvasDimensions.x} y: ${newCanvasDimensions.y}`);
+
+            coordinates = { x: (newCanvasDimensions.x / 2) - (halfMaxWidth / 2), y: (canvasMiddle.y + halfMaxHeight)};
+            sortedDiagram.forEach(diagram => {
+                let diagramAllElements = [...diagramAllElementsOrigin.filter(d => diagram.some(id => id === d.element.$.id))];
                 // pociatocni element je element ktory ma najviac transitions
                 let initialElement = diagramAllElements.filter(all => !diagramAllElements
                     .some(a => getElementTransitions(a.element)
@@ -216,9 +305,14 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
                 let currentLayer: Array<{ element: ICCXMLBaseElement, type: ClassDiagramElementsEnum }> = [initialElement];
                 let nextLayer: Array<{ element: ICCXMLBaseElement, type: ClassDiagramElementsEnum }> = [];
         
-                // draw element
                 const maxIterations = 3000000;
                 let i = 0;
+                
+                //draw elements
+                currentLayer = [initialElement];
+                diagramAllElements = [...diagramAllElementsOrigin];
+                nextLayer = [];
+                i = 0;
                 while (currentLayer.length > 0) {
                     i++;
                     if (maxIterations === i) {
@@ -232,6 +326,7 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
                             elementHeights.push(newElement.graphicData.frame.height);
                             return newElement.graphicData.frame.height;
                         }).reduce((p, c) => p + c);
+                      
                         coordinates.y -= currentLayerHeight / 2;
                     } else {
                         elementHeights.push(0);
@@ -258,7 +353,7 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
                             }
                         }
                     });
-                    coordinates.y = canvasMiddle.y;
+                    coordinates.y =  (canvasMiddle.y + halfMaxHeight);
                     coordinates.x += layerDistance;
                     currentLayer = nextLayer;
                 }
@@ -378,12 +473,14 @@ export const parseClassDiagram = async (classXML: ICCXML, canvasDimensions: ICoo
     }
 
     return {
+
         newElements: elementsToReturn,
         newEntries: entriesToReturn,
         newRelationShips,
         newRelationShipSegments,
         isValid: true,
-        error: undefined
+        error: '',
+        newCanvasDimensions
     }
 }
 

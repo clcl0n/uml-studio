@@ -17,6 +17,7 @@ import ICCXMLObject from '@interfaces/ccxml/ICCXMLObject';
 import ICCXMLSlot from '@interfaces/ccxml/ICCXMLSlot';
 import ICCXMLPrimitive from '@interfaces/ccxml/ICCXMLPrimitive';
 import ICCXMLUtility from '@interfaces/ccxml/ICCXMLUtility';
+import ICoordinates from '@interfaces/ICoordinates';
 
 const getElementEntries = (classDiagram: IClassDiagramState, element: IBaseElement<any>) => {
     return element.data.entryIds.map((id) => classDiagram.elementEntries.byId[id]);
@@ -103,7 +104,7 @@ const getElementsTransitions = (classDiagram: IClassDiagramState, element: IBase
         });
 }; 
 
-export const serializeCCXML = (classDiagram: IClassDiagramState) => {
+export const serializeCCXML = (classDiagram: IClassDiagramState, canvasDimentsion: ICoordinates) => {
     const ccxmlClasses: Array<ICCXMLClass> = getElementsByType(classDiagram, ClassDiagramElementsEnum.CLASS).map((classElement): ICCXMLClass  => {
         const entries = getElementEntries(classDiagram, classElement);
         
@@ -268,7 +269,9 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
         $: {
             initialclass: '',
             version: '1.0',
-            coordinates: 'true'
+            coordinates: 'true',
+            width: canvasDimentsion.x.toString(),
+            height: canvasDimentsion.y.toString()
         },
         classes: [
             {

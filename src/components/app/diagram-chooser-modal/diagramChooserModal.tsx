@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDiagramType } from '@store/actions/canvas.action';
+import { setDiagramType, setCanvasDimensions } from '@store/actions/canvas.action';
 import DiagramTypeEnum from '@enums/diagramTypeEnum';
 import  { parseStringPromise } from 'xml2js';
 import { addNewStateElement, addNewFinalStateElement, addNewInitialStateElement } from '@store/actions/stateDiagram.action';
@@ -73,8 +73,10 @@ const DiagramChooserModal = () => {
                 newRelationShips,
                 newEntries,
                 isValid,
-                error
+                error,
+                newCanvasDimensions
             } = await parseClassDiagram(parsedXml.classxml, { x: canvasWidth, y: canvasHeight });
+            dispatch(setCanvasDimensions(newCanvasDimensions));
 
             if (isValid) {
                 newEntries.forEach((newEntry) => {

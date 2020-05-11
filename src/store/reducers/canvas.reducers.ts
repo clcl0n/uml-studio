@@ -20,8 +20,13 @@ const canvasDimensionsState: ICoordinates = {
     y: 4684
 };
 
-export const canvasDimensionsReducer = (state = canvasDimensionsState) => {
-    return state;
+export const canvasDimensionsReducer = (state = canvasDimensionsState, payload: IReducerPayload<CanvasActionEnum, ICoordinates>) => {
+    switch (payload.type) {
+        case CanvasActionEnum.SET_CANVAS_DIMENSIONS:
+            return { ...payload.data };
+        default:
+            return state;
+    }
 };
 
 export const diagramTypeReducer = (state = diagramType, payload: IReducerPayload<CanvasActionEnum, DiagramTypeEnum>) => {

@@ -12,6 +12,8 @@ export default interface ICCXML {
         version?: string;
         initialclass?: string;
         coordinates?: string;
+        height?: string;
+        width?: string;
     };
     classes: Array<{ class: Array<ICCXMLClass> }>;
     utilities: Array<{ utility: Array<ICCXMLUtility> }>;

@@ -30,10 +30,10 @@ const Canvas = () => {
     }, []);
 
     const { x: paperWidth, y: paperHeight} = useSelector((state: IStoreState) => state.canvas.canvasDimensions);
-    const [canvasDimensions, setCanvasDimensions] = useState({
-        canvasWidth: paperWidth,
-        canvasHeight: paperHeight
-    });
+    // const [canvasDimensions, setCanvasDimensions] = useState({
+    //     canvasWidth: paperWidth,
+    //     canvasHeight: paperHeight
+    // });
     const { previousMousePosition, setPreviousMousePosition } = usePreviousMousePosition();
     const { canvasOperation } = useCanvasOperation();
     const { onMouseMove } = useCanvasMouseMove(classDiagram, stateDiagram, canvasOperation);
@@ -80,17 +80,17 @@ const Canvas = () => {
 
     return (
         <div ref={canvasRef} id='canvas'>
-            <div style={{width: 400 + (canvasDimensions.canvasWidth * (canvasZoom/100)), height: 400 + (canvasDimensions.canvasHeight * (canvasZoom/100))}} className='canvas-wrapper'>
+            <div style={{width: 400 + (paperWidth * (canvasZoom/100)), height: 400 + (paperHeight * (canvasZoom/100))}} className='canvas-wrapper'>
                 <svg
                     id='svg-canvas'
                     onMouseUp={(ev) => resetCanvasOperation(ev)}
                     onDragOver={(ev) => CanvasOnDragOver(ev)}
                     onDrop={(ev) => onCanvasDrop(ev)}
                     onMouseMove={(ev) => onCanvasMouseMove(ev)}
-                    viewBox={`0 0 ${canvasDimensions.canvasWidth} ${canvasDimensions.canvasHeight}`}
+                    viewBox={`0 0 ${paperWidth} ${paperHeight}`}
                     transform={`scale(${canvasZoom/100})`}  
-                    width={canvasDimensions.canvasWidth}
-                    height={canvasDimensions.canvasHeight}
+                    width={paperWidth}
+                    height={paperHeight}
                 >
                     <Diagram/>
                 </svg>

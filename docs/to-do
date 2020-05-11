@@ -1,29 +1,12 @@
 to-do
 
-// fixnutie ciar konkretne v class 
-zvacsit kresliacu plochu ak ide obrazok cez
-class diagram ak je viac diagramou treba ich oddelit // posunut - mozno dnes
+on drop zase nefunguje po druhz krat ked chcem dat na ibz element // uz to akosi funguje
+
+zvacsit kresliacu plochu ak ide obrazok cez (done pre class)
+upravit joints pri class diagrame
+nezabudnut pridat velkost canvasu do xml
+
 skontrolovat posledny krat ci sedia formatz scxml a classxml
 premenovavanie z anglickeho do slovenskeho
 
-
-doriesit onentry a on exit (nika zda sa mi ze to nebudeme podporovat) ----> nebude to tam
-
-//////////////////////////////////////////////////////
-
-mozno upravit layout algo pri class diagram - kaslat
-v class diagrame zmenit polohu joints - kaslat
-
-//////////////////////////////////////////////////////
-
-+ validacia chyb // done
-popup pred odchodom z stranky ci naozaj chceme opustit  // done
-skontrolovat undo, redo //done
-chyba pri resize a naslednom premiestneni // done
-
-skontrolovat spajanie ciar v class diagrame // done
-pridavanie entries neposuva ciaru - dnes (hotovo uz len posuvanie from hotove je to) // done
-
-
-
-on drop zase nefunguje po druhz krat ked chcem dat na ibz element
+class diagram ak je viac diagramou treba ich oddelit // done

@@ -3,6 +3,14 @@ import CanvasActionEnum from '@enums/canvasActionEnum';
 import ICanvasOperation from '@interfaces/ICanvasOperation';
 import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
 import DiagramTypeEnum from '@enums/diagramTypeEnum';
+import ICoordinates from '@interfaces/ICoordinates';
+
+export const setCanvasDimensions = (dimensions: ICoordinates): IReducerPayload<CanvasActionEnum, ICoordinates> => {
+    return {
+        type: CanvasActionEnum.SET_CANVAS_DIMENSIONS,
+        data: dimensions
+    };
+};
 
 export const setDiagramType = (diagramType: DiagramTypeEnum): IReducerPayload<CanvasActionEnum, DiagramTypeEnum> => {
     return {
