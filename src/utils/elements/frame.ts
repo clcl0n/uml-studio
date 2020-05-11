@@ -8,12 +8,16 @@ import IStateElement from '@interfaces/state-diagram/state/IStateElement';
 const minWidth = 100;
 const minHeight = 100;
 
-export const createFrame = (coordinates: ICoordinates, numerOfRows: number, rowHeight: number = 25, width: number = 100): IFrame => {
+export const createFrame = (coordinates: ICoordinates, numerOfRows: number, rowHeight: number = 25, width: number = 100, isCoordinatesCenter: boolean = true): IFrame => {
     const height: number = numerOfRows * rowHeight;
-    const xElementCenter: number = coordinates.x;
-    const yElementCenter: number = coordinates.y;
-    const x: number = xElementCenter - (width / 2);
-    const y: number = yElementCenter - (height / 2);
+    let xElementCenter: number = coordinates.x;
+    let yElementCenter: number = coordinates.y;
+    let x: number = xElementCenter - (width / 2);
+    let y: number = yElementCenter - (height / 2);
+    // if (!isCoordinatesCenter) {
+    //     yElementCenter = y;
+    //     y = coordinates.y
+    // }
     const fontPixelSize: number = 12;
     const fontMargin: number = 5;
 
@@ -37,13 +41,13 @@ export const moveFrame = (
 ): IFrame => {
     const { frame } = element.graphicData;
 
-    const xShift = coordinates.x - oldCursorPosition.x;
-    const yShift = coordinates.y - oldCursorPosition.y;
+    const xShift = coordinates.x + (element.graphicData.frame.x - oldCursorPosition.x);
+    const yShift = coordinates.y + (element.graphicData.frame.y - oldCursorPosition.y);
 
-    const xElementCenter: number = frame.xCenter + xShift;
-    const yElementCenter: number = frame.yCenter + yShift;
-    const x: number = xElementCenter - (frame.width / 2);
-    const y: number = yElementCenter - (frame.height / 2);
+    const xElementCenter: number = xShift + (element.graphicData.frame.width / 2);
+    const yElementCenter: number = yShift + (element.graphicData.frame.height / 2);
+    const x: number = xShift;
+    const y: number = yShift;
 
     return {
         ...frame,

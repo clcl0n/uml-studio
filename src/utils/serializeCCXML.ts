@@ -17,6 +17,7 @@ import ICCXMLObject from '@interfaces/ccxml/ICCXMLObject';
 import ICCXMLSlot from '@interfaces/ccxml/ICCXMLSlot';
 import ICCXMLPrimitive from '@interfaces/ccxml/ICCXMLPrimitive';
 import ICCXMLUtility from '@interfaces/ccxml/ICCXMLUtility';
+import ICoordinates from '@interfaces/ICoordinates';
 
 const getElementEntries = (classDiagram: IClassDiagramState, element: IBaseElement<any>) => {
     return element.data.entryIds.map((id) => classDiagram.elementEntries.byId[id]);
@@ -38,7 +39,7 @@ const convertEntriesToCCXMLSlot = (entries: Array<IEntry>) => {
 };
 
 const convertEntriesToCCXMLEntries = (entries: Array<IEntry>) => {
-    return entries.filter((entry) => entry.type === EntryTypeEnum.PROPERTY).map((entry): ICCXMLEntry => {
+    return entries.filter((entry) => entry.type === EntryTypeEnum.BASE).map((entry): ICCXMLEntry => {
         return {
             $: {
                 value: entry.value
@@ -52,7 +53,8 @@ const convertEntriesToCCXMLProperties = (entries: Array<IEntry>) => {
         return {
             $: {
                 accessModifier: entry.accessModifier.toLowerCase(),
-                name: entry.value
+                name: entry.value.split(': ')[0],
+                dataType: entry.value.split(': ')[1]
             }
         };
     });
@@ -63,7 +65,8 @@ const convertEntriesToCCXMLMethods = (entries: Array<IEntry>) => {
         return {
             $: {
                 accessModifier: entry.accessModifier.toLowerCase(),
-                name: entry.value
+                name: entry.value.split(': ')[0],
+                dataType: entry.value.split(': ')[1]
             }
         };
     });
@@ -87,7 +90,7 @@ const getElementsTransitions = (classDiagram: IClassDiagramState, element: IBase
 
             return {
                 $: {
-                    head: relationship.headValue,
+                    multiplicity: relationship.headValue,
                     tail: relationship.tailValue,
                     target: getElementName(classDiagram, relationship.toElementId),
                     headCoord: `${relationship.head.x}:${relationship.head.y}`,
@@ -95,13 +98,13 @@ const getElementsTransitions = (classDiagram: IClassDiagramState, element: IBase
                     segments: segmentsCoord.join(';'),
                     value: relationship.relationshipValue,
                     direction: relationship.direction.toLowerCase(),
-                    type: relationship.type.toLowerCase()
+                    relationType: relationship.type.toLowerCase()
                 }
             };
         });
 }; 
 
-export const serializeCCXML = (classDiagram: IClassDiagramState) => {
+export const serializeCCXML = (classDiagram: IClassDiagramState, canvasDimentsion: ICoordinates) => {
     const ccxmlClasses: Array<ICCXMLClass> = getElementsByType(classDiagram, ClassDiagramElementsEnum.CLASS).map((classElement): ICCXMLClass  => {
         const entries = getElementEntries(classDiagram, classElement);
         
@@ -265,9 +268,10 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
     const newCCXML: ICCXML = {
         $: {
             initialclass: '',
-            name: 'Ccxml',
             version: '1.0',
-            coordinates: 'true'
+            coordinates: 'true',
+            width: canvasDimentsion.x.toString(),
+            height: canvasDimentsion.y.toString()
         },
         classes: [
             {
@@ -307,7 +311,7 @@ export const serializeCCXML = (classDiagram: IClassDiagramState) => {
     };
 
     const builder = new Builder({
-        rootName: 'ccxml'
+        rootName: 'classxml'
     });
     return builder.buildObject(newCCXML);
 };

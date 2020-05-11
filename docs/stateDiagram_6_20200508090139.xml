@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scxml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/07/scxml">
+  <state id="RelayPumpM1_OFF">
+    <transition cond="WinterSystem::tBoiler-&gt;temperatureInputState == BoilerTemperatureInputStatesEnum::ANTIFREEZ || WinterSystem::tBoiler-&gt;temperatureInputState == BoilerTemperatureInputStatesEnum::DOWN_UP || WinterSystem::tBoiler-&gt;temperatureInputState == BoilerTemperatureInputStatesEnum::UP_HIGH || WinterSystem::tBoiler-&gt;temperatureInputState == BoilerTemperatureInputStatesEnum::DANGER" target="RelayPumpM1_ON" />
+  </state>
+  <state id="RelayPumpM1_ON">
+    <transition cond="WinterSystem::tBoiler-&gt;temperatureInputState == BoilerTemperatureInputStatesEnum::ANT_DOWN || WinterSystem::tBoiler-&gt;temperatureInputState == BoilerTemperatureInputStatesEnum::DOWN_UP" target="RelayPumpM1_OFF" />
+  </state>
+</scxml>

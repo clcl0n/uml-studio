@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import IUtility from '@interfaces/class-diagram/utility/IUtility';
-import {  useDispatch } from 'react-redux';
+import {  useDispatch, useSelector } from 'react-redux';
 import IUtilityProperty from '@interfaces/class-diagram/utility/IUtilityProperty';
 import IUtilityMethod from '@interfaces/class-diagram/utility/IUtilityMethod';
 import AccessModifierEnum from '@enums/accessModifierEnum';
@@ -10,15 +10,19 @@ import log = require('loglevel');
 import { v4 } from 'uuid';
 import FrameEdit from '../common/frameEdit';
 import { updateUtilityGraphicData } from '@utils/elements/utility';
-import { updateElement, addNewElementEntry, removeElementEntry, updateElementEntry } from '@store/actions/classDiagram.action';
+import { updateElement, addNewElementEntry, removeElementEntry, updateElementEntry, updateRelationshipSegment, updateRelationship } from '@store/actions/classDiagram.action';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
 import ClassPropertyEdit from '../class/classPropertyEdit';
 import ClassMethodEdit from '../class/classMethodEdit';
+import SegmentDirection from '@enums/segmentDirection';
+import IStoreState from '@interfaces/IStoreState';
 
 const UtilityEdit = (props: { utility: IUtility, properties: Array<IUtilityProperty>, methods: Array<IUtilityMethod> }) => {
     const dispatch = useDispatch();
     const { data } = props.utility;
     const { methods, properties } = props;
+    const relationshipsSegments = useSelector((store: IStoreState) => store.classDiagram.relationshipSegments);
+    const relationships = useSelector((store: IStoreState) => store.classDiagram.relationships);
 
     const updateGraphic = (utilityElement: IUtility, propertiesLength: number, methodsLength: number): IUtility => {
         return updateUtilityGraphicData(utilityElement, propertiesLength, methodsLength);
@@ -30,7 +34,68 @@ const UtilityEdit = (props: { utility: IUtility, properties: Array<IUtilityPrope
         let methodsLength = methods.length;
         entry.type === EntryTypeEnum.PROPERTY ? propertiesLength-- : methodsLength--;
         updatedInterface.data.entryIds.splice(updatedInterface.data.entryIds.indexOf(entry.id), 1);
-        dispatch(updateElement(updateGraphic(updatedInterface, propertiesLength, methodsLength)));
+
+        const updatedElement = updateGraphic(updatedInterface, propertiesLength, methodsLength);
+        const toElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].toElementId === updatedElement.id);
+        const toElementRelationships = toElementRelationshipsIds.map((id) => relationships.byId[id]);
+        toElementRelationships.forEach(rel => {
+            if (rel.head.y !== props.utility.graphicData.frame.y) {
+                rel.head.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const end = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isEnd)];
+                const endDependent = relationshipsSegments.byId[end.fromSegmentId];
+                let yDiff = -25;
+                end.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height; 
+                if (end.direction === SegmentDirection.HORIZONTAL) {
+                    endDependent.lineToY += yDiff;
+                } else {
+                    if (end.y < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        end.lineToY += yDiff;
+                    } else {
+                        end.y -= end.lineToY;
+                        endDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[endDependent.fromSegmentId];
+                        dependentToEndDependent.lineToY += yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                }
+                dispatch(updateRelationshipSegment(end));
+                dispatch(updateRelationshipSegment(endDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
+
+        const fromElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].fromElementId === updatedElement.id);
+        const fromElementRelationships = fromElementRelationshipsIds.map((id) => relationships.byId[id]);
+        fromElementRelationships.forEach(rel => {
+            if (rel.tail.y !== props.utility.graphicData.frame.y) {
+                rel.tail.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const start = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isStart)];
+                const startDependent = relationshipsSegments.byId[start.toSegmentId];
+                let yDiff = -25;
+                start.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                if (start.direction === SegmentDirection.HORIZONTAL) {
+                    startDependent.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                    startDependent.lineToY -= yDiff;
+                } 
+                else {
+                    if (start.y + start.lineToY < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        start.lineToY -= yDiff;
+                    } 
+                    else {
+                        startDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[startDependent.toSegmentId];
+                        dependentToEndDependent.y += yDiff
+                        dependentToEndDependent.lineToY -= yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                }
+                dispatch(updateRelationshipSegment(start));
+                dispatch(updateRelationshipSegment(startDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
+        
+        dispatch(updateElement(updatedElement));
         dispatch(removeElementEntry(entry));
     };
     
@@ -96,6 +161,65 @@ const UtilityEdit = (props: { utility: IUtility, properties: Array<IUtilityPrope
         let propertiesLength = properties.length;
         let methodsLength = methods.length;
         entryType === EntryTypeEnum.PROPERTY ? propertiesLength++ : methodsLength++;
+
+        const updatedElement = updateGraphic(updatedClass, propertiesLength, methodsLength);
+        const toElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].toElementId === updatedElement.id);
+        const toElementRelationships = toElementRelationshipsIds.map((id) => relationships.byId[id]);
+        toElementRelationships.forEach(rel => {
+            if (rel.head.y !== props.utility.graphicData.frame.y) {
+                rel.head.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const end = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isEnd)];
+                const endDependent = relationshipsSegments.byId[end.fromSegmentId];
+                let yDiff = 25;
+                end.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height; 
+                if (end.direction === SegmentDirection.HORIZONTAL) {
+                    endDependent.lineToY += yDiff;
+                } else {
+                    if (end.y < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        end.lineToY += yDiff;
+                    } else {
+                        end.y -= end.lineToY;
+                        endDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[endDependent.fromSegmentId];
+                        dependentToEndDependent.lineToY += yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                }
+                dispatch(updateRelationshipSegment(end));
+                dispatch(updateRelationshipSegment(endDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
+        const fromElementRelationshipsIds = relationships.allIds.filter(id => relationships.byId[id].fromElementId === updatedElement.id);
+        const fromElementRelationships = fromElementRelationshipsIds.map((id) => relationships.byId[id]);
+        fromElementRelationships.forEach(rel => {
+            if (rel.tail.y !== props.utility.graphicData.frame.y) {
+                rel.tail.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                const start = relationshipsSegments.byId[rel.segmentIds.find(segmentId => relationshipsSegments.byId[segmentId].isStart)];
+                const startDependent = relationshipsSegments.byId[start.toSegmentId];
+                let yDiff = 25;
+                start.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                if (start.direction === SegmentDirection.HORIZONTAL) {
+                    startDependent.y = updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height;
+                    startDependent.lineToY -= yDiff;
+                } 
+                else {
+                    if (start.y + start.lineToY < updatedElement.graphicData.frame.y + updatedElement.graphicData.frame.height) {
+                        start.lineToY -= yDiff;
+                    } 
+                    else {
+                        startDependent.y += yDiff;
+                        const dependentToEndDependent = relationshipsSegments.byId[startDependent.toSegmentId];
+                        dependentToEndDependent.y += yDiff
+                        dependentToEndDependent.lineToY -= yDiff;
+                        dispatch(updateRelationshipSegment(dependentToEndDependent));
+                    }
+                }
+                dispatch(updateRelationshipSegment(start));
+                dispatch(updateRelationshipSegment(startDependent));
+                dispatch(updateRelationship(rel));
+            }
+        });
         dispatch(updateElement(updateGraphic(updatedClass, propertiesLength, methodsLength)));
     };
 

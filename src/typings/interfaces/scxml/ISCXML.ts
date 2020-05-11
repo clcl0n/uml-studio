@@ -12,6 +12,8 @@ export default interface ISCXML {
         datamodel?: string;
         binding?: string;
         coordinates?: string;
+        width?: string;
+        height?: string;
     };
     state: Array<ISCXMLState>;
     parallel: Array<ISCXMLParallel>;

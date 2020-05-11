@@ -8,6 +8,7 @@ import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import useSelectedElement from 'hooks/useSelectedElement';
 import IStoreState from '@interfaces/IStoreState';
 import ClassDiagramRelationshipTypesEnum from '@enums/classDiagramRelationshipTypesEnum';
+import { getClassHeadOffset } from '@utils/elements/relationship';
 
 const RelationshipSegment = (
     props: { 
@@ -19,6 +20,7 @@ const RelationshipSegment = (
     const dispatch = useDispatch();
     const { segment, relationId, type } = props;
     const { selectedElementId } = useSelectedElement();
+    const relationship = useSelector((store: IStoreState) => store.classDiagram.relationships.byId[props.relationId]);
     const isCanvasMouseDown = useSelector((state: IStoreState) => state.canvas.isMouseDown);
 
     const moveSegment = () => {
@@ -48,22 +50,16 @@ const RelationshipSegment = (
     const segmentJoint = () => {
         let cx = 0;
         let cy = 0;
-        let fixX = 0;
+        let fixX = getClassHeadOffset(props.type);
+
         if (segment.isEnd) {
-            if (
-                type === ClassDiagramRelationshipTypesEnum.AGGREGATION ||
-                type === ClassDiagramRelationshipTypesEnum.COMPOSITION
-            ) {
-                fixX = -30;
-            } else if (
-                type === ClassDiagramRelationshipTypesEnum.EXTENSION
-            ) {
-                fixX = -20;
+            if (segment.direction === SegmentDirection.HORIZONTAL) {
+                cx = segment.x + segment.lineToX + (segment.lineToX > 0 ? fixX : -fixX);
+                cy = segment.y + segment.lineToY;
+            } else {
+                cx = segment.x + segment.lineToX + (segment.x > relationship.head.x ? -fixX : +fixX);
+                cy = segment.y + segment.lineToY;
             }
-        }
-        if (segment.isEnd) {
-            cx = segment.x + segment.lineToX;
-            cy = segment.y + segment.lineToY;
         } else if (segment.isStart) {
             cx = segment.x;
             cy = segment.y;
@@ -71,7 +67,7 @@ const RelationshipSegment = (
 
         return (segment.isEnd || segment.isStart) && selectedElementId === relationId && !isCanvasMouseDown ? (
             <g cursor='pointer' onMouseDown={() => { segment.isStart ? moveTail() : moveHead();}}>
-                <circle stroke='black' cx={cx - fixX} cy={cy} r='5'/>
+                <circle stroke='black' cx={cx} cy={cy} r='5'/>
             </g>
         ) : <g/>;
     };

@@ -7,9 +7,9 @@ import ICoordinates from '@interfaces/ICoordinates';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
 import ICCXMLEnumeration from '@interfaces/ccxml/ICCXMLEnumeration';
 
-export const createNewEnumerationFromCCXML = (coordinates: ICoordinates, ccxmlEnumeration: ICCXMLEnumeration) => {
+export const createNewEnumerationFromCCXML = (coordinates: ICoordinates, ccxmlEnumeration: ICCXMLEnumeration, isCoordinatesCenter: boolean = true) => {
     const dataEntries = ccxmlEnumeration.entries?.[0]?.entry ?? [];
-    const frame = createFrame(coordinates, dataEntries.length + 1);
+    const frame = createFrame(coordinates, dataEntries.length + 1, 25, 100, isCoordinatesCenter);
     frame.height += (frame.rowHeight / 2);
 
     const entryIds: Array<string> = [];

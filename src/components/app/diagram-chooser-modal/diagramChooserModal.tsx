@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDiagramType } from '@store/actions/canvas.action';
+import { setDiagramType, setCanvasDimensions } from '@store/actions/canvas.action';
 import DiagramTypeEnum from '@enums/diagramTypeEnum';
 import  { parseStringPromise } from 'xml2js';
 import { addNewStateElement, addNewFinalStateElement, addNewInitialStateElement } from '@store/actions/stateDiagram.action';
@@ -9,7 +9,8 @@ import IStoreState from '@interfaces/IStoreState';
 import { parseStateDiagram } from '@utils/scxmlParser';
 import { addNewRelationship, addNewRelationshipSegment, addNewElement, addNewElementEntry } from '@store/actions/classDiagram.action';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { parseClassDiagram } from '@utils/ccxmlParser';
+import { parseClassDiagram } from '@utils/classxmlParse';
+import { browserAlert } from '@utils/browserAlert';
 
 const DiagramChooserModal = () => {
     const dispatch = useDispatch();
@@ -40,8 +41,9 @@ const DiagramChooserModal = () => {
                 newInitialStateElements,
                 isValid,
                 error,
-                warning
+                newCanvasDimensions
             } = await parseStateDiagram(parsedXml.scxml, { x: canvasWidth, y: canvasHeight });
+            dispatch(setCanvasDimensions(newCanvasDimensions));
             if (isValid) {
                 newStateElements.forEach((newStateElement) => {
                     dispatch(addNewStateElement(newStateElement));
@@ -64,29 +66,40 @@ const DiagramChooserModal = () => {
                 dispatch(setDiagramType(DiagramTypeEnum.STATE));
                 setIsActive(false);
             } else {
-                error !== '' ? alert(error) : alert(warning);
+                browserAlert(error);
             }
         } else if (parsedXml.classxml) {
             const {
                 newElements,
                 newRelationShipSegments,
                 newRelationShips,
-                newEntries
+                newEntries,
+                isValid,
+                error,
+                newCanvasDimensions
             } = await parseClassDiagram(parsedXml.classxml, { x: canvasWidth, y: canvasHeight });
-            newEntries.forEach((newEntry) => {
-                dispatch(addNewElementEntry(newEntry));
-            });
-            newElements.forEach((newElement) => {
-                dispatch(addNewElement(newElement));
-            });
-            newRelationShipSegments.forEach((newRelationShipSegment) => {
-                dispatch(addNewRelationshipSegment(newRelationShipSegment));
-            });
-            newRelationShips.forEach((newRelationShip) => {
-                dispatch(addNewRelationship(newRelationShip));
-            });
-            dispatch(setDiagramType(DiagramTypeEnum.CLASS));
-            setIsActive(false);
+            dispatch(setCanvasDimensions(newCanvasDimensions));
+
+            if (isValid) {
+                newEntries.forEach((newEntry) => {
+                    dispatch(addNewElementEntry(newEntry));
+                });
+                newElements.forEach((newElement) => {
+                    dispatch(addNewElement(newElement));
+                });
+                newRelationShipSegments.forEach((newRelationShipSegment) => {
+                    dispatch(addNewRelationshipSegment(newRelationShipSegment));
+                });
+                newRelationShips.forEach((newRelationShip) => {
+                    dispatch(addNewRelationship(newRelationShip));
+                });
+                dispatch(setDiagramType(DiagramTypeEnum.CLASS));
+                setIsActive(false);
+            } else {
+                browserAlert(error);
+            }
+        } else {
+            browserAlert('Nepodporovaný XML formát.');
         }
     };
 

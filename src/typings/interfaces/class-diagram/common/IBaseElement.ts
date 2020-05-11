@@ -5,6 +5,6 @@ import IBaseElementData from './IBaseElementData';
 export default interface IBaseElement<T> {
     id: string;
     type: ClassDiagramElementsEnum;
-    graphicData: T;
+    graphicData: T ;
     data: IBaseElementData;
 }

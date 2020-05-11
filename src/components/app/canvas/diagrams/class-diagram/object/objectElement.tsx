@@ -19,10 +19,12 @@ import ObjectHead from './objectHead';
 import Frame from '../common/frame';
 import FrameSegment from '../common/frameSegment';
 import IStoreState from '@interfaces/IStoreState';
+import useCanvasOperation from 'hooks/useCanvasOperation';
 
 const ObjectElement = (props: IObjectProps) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
+    const { canvasOperation } = useCanvasOperation();
     const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const { frame } = props.object.graphicData;
     const { data } = props.object;
@@ -85,7 +87,11 @@ const ObjectElement = (props: IObjectProps) => {
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            if (isMouseDownState) {
+            if (
+                canvasOperation.type === CanvasOperationEnum.RESIZE_ELEMENT_RIGHT ||
+                canvasOperation.type === CanvasOperationEnum.RESIZE_ELEMENT_LEFT ||
+                canvasOperation.type === CanvasOperationEnum.MOVE_ELEMENT
+            ) {
                 setJoints(<g/>);
             } else {
                 setJoints((

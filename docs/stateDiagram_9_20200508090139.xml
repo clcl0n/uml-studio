@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scxml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/07/scxml">
+  <state id="RelayValve_OFF">
+    <transition cond="WinterSystem::houseStatus-&gt;isInState(new HouseStatus_OFF()) &amp;&amp; WinterSystem::relayPumpM1-&gt;isInState(new RelayPumpM1_ON()) || WinterSystem::accum1-&gt;temperatureInputState !=AccumTemperatureInputStatesEnum::TARGET_DOWN" target="RelayValve_ON" />
+  </state>
+  <state id="RelayValve_ON">
+    <transition cond="WinterSystem::houseStatus-&gt;isInState(new HouseStatus_ON()) || !(WinterSystem::houseStatus-&gt;isInState(new HouseStatus_OFF()) &amp;&amp; WinterSystem::relayPumpM1-&gt;isInState(new RelayPumpM1_ON()) || WinterSystem::accum1-&gt;temperatureInputState != AccumTemperatureInputStatesEnum::TARGET_DOWN)" target="RelayValve_OFF" />
+  </state>
+</scxml>

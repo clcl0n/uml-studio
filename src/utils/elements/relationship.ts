@@ -117,7 +117,7 @@ export const createNewRelationshipSameLayerSCXML = (type: ClassDiagramRelationsh
      };
 };
 
-export const createNewRelationship = (type: ClassDiagramRelationshipTypesEnum, coordinates: {x1: number, y1: number, x2: number, y2: number}, fromElementId: string = '', toElementId: string = '', centerOffset = 0, relationshipValue = '') => {
+export const createNewRelationship = (type: ClassDiagramRelationshipTypesEnum, coordinates: {x1: number, y1: number, x2: number, y2: number}, fromElementId: string = '', toElementId: string = '', centerOffset = 0, relationshipValue = '', headValue = '', tailValue = '') => {
     const {x1, y1, x2, y2} = coordinates;
     const relationshipId = v4();
     const direction = x1 > x2 ? Direction.LEFT : Direction.RIGHT;
@@ -211,9 +211,9 @@ export const createNewRelationship = (type: ClassDiagramRelationshipTypesEnum, c
        type,
        fromElementId,
        toElementId,
-       headValue: '',
+       headValue,
        relationshipValue,
-       tailValue: '',
+       tailValue,
        head: {
            x: x2,
            y: y2
@@ -273,6 +273,20 @@ const updateVerticalDependentSegments = (dependentSegments: Array<IRelationshipS
 const pushNewRelationshipSegment = (newRelationshipSegment: IRelationshipSegment, relationship: IRelationship, relationshipSegments: Array<IRelationshipSegment>) => {
     relationship.segmentIds.push(newRelationshipSegment.id);
     relationshipSegments.push(newRelationshipSegment);
+};
+
+export const getClassHeadOffset = (type: ClassDiagramRelationshipTypesEnum): number => {
+    switch (type) {
+        case ClassDiagramRelationshipTypesEnum.ASSOCIATION:
+            return 0;
+        case ClassDiagramRelationshipTypesEnum.EXTENSION:
+            return 20;
+        case ClassDiagramRelationshipTypesEnum.AGGREGATION:
+        case ClassDiagramRelationshipTypesEnum.COMPOSITION:
+            return 30;
+        default:
+            return 0;
+    }
 };
 
 const pushNewStartingSegment = (
@@ -352,7 +366,7 @@ const updateDependentSegment = (direction: SegmentDirection, dependentSegments: 
 export const updateRelationshipHelper = (cooridates: ICoordinates, relationship: IRelationship, movingSegment: IRelationshipSegment, dependentSegments: Array<IRelationshipSegment>) => {
     const { direction } = movingSegment;
     let movingDirection = Direction.NONE;
-
+    
     switch (direction) {
         case SegmentDirection.HORIZONTAL:
             movingDirection = movingSegment.y > cooridates.y ? Direction.UP : Direction.DOWN;
@@ -484,7 +498,7 @@ export const updateRelationshipStartingHelper = (cooridates: ICoordinates, relat
     };
 };
 
-export const updateRelationshipEndingHelper = (cooridates: ICoordinates, relationship: IRelationship, movingSegment: IRelationshipSegment, dependentSegments: Array<IRelationshipSegment>) => {
+export const updateRelationshipEndingHelper = (cooridates: ICoordinates, relationship: IRelationship, dependentSegments: Array<IRelationshipSegment>, movingSegment?: IRelationshipSegment) => {
     const { direction } = movingSegment;
     let movingDirection = Direction.NONE;
     let yLength = 0;

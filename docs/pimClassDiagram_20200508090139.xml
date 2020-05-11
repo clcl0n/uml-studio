@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<classxml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <classes>
+    <class id="Accum">
+      <properties>
+        <property accessModifier="public" name="temperatureValue" dataType="Int" />
+        <property accessModifier="public" name="temperatureInputState" dataType="NonePrimitiveType&lt;AccumTemperatureInputStatesEnum&gt;" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="Accum()" dataType="" />
+      </methods>
+      <transitions>
+        <transition target="AccumTemperatureInputStatesEnum" multiplicity="1" relationType="association" />
+      </transitions>
+    </class>
+    <class id="HouseStatus">
+      <properties>
+        <property accessModifier="public" name="temperature" dataType="Int" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="HouseStatus()" dataType="" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="InputRelay">
+      <properties>
+        <property accessModifier="public" name="state" dataType="NonePrimitiveType&lt;InputRelayStatesEnum&gt;" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="InputRelay()" dataType="" />
+      </methods>
+      <transitions>
+        <transition target="InputRelayStatesEnum" multiplicity="1" relationType="association" />
+      </transitions>
+    </class>
+    <class id="RelayBoilerPower">
+      <properties />
+      <methods>
+        <method accessModifier="public" name="RelayBoilerPower()" dataType="" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="RelayElCentral">
+      <properties />
+      <methods>
+        <method accessModifier="public" name="RelayElCentral()" dataType="" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="RelayElCentralStart">
+      <properties>
+        <property accessModifier="public" name="timer = 0" dataType="Int" />
+        <property accessModifier="public" name="count = 0" dataType="Int" />
+        <property accessModifier="public" name="maxCount = 5" dataType="Int" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="RelayElCentralStart()" dataType="" />
+        <method accessModifier="public" name="setTimer()" dataType="Void" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="RelayMainCircuitBreaker">
+      <properties>
+        <property accessModifier="public" name="timer = 0" dataType="Int" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="RelayMainCircuitBreaker()" dataType="" />
+        <method accessModifier="public" name="setTimer()" dataType="Void" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="RelayPumpM1">
+      <properties />
+      <methods>
+        <method accessModifier="public" name="RelayPumpM1()" dataType="" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="RelayPumpM2">
+      <properties />
+      <methods>
+        <method accessModifier="public" name="RelayPumpM2()" dataType="" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="RelayUnlocking">
+      <properties>
+        <property accessModifier="public" name="timer = 0" dataType="Int" />
+        <property accessModifier="public" name="count = 0" dataType="Int" />
+        <property accessModifier="public" name="isManualTurnedOn = false" dataType="Bool" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="RelayUnlocking()" dataType="" />
+        <method accessModifier="public" name="setTimer()" dataType="Void" />
+        <method accessModifier="public" name="destroyTimer()" dataType="Void" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="RelayValve">
+      <properties />
+      <methods>
+        <method accessModifier="public" name="RelayValve()" dataType="" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="StateElCentral">
+      <properties>
+        <property accessModifier="public" name="timer = 0" dataType="Int" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="StateElCentral()" dataType="" />
+        <method accessModifier="public" name="setTimer()" dataType="Void" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="TBoiler">
+      <properties>
+        <property accessModifier="public" name="temperature" dataType="Int" />
+        <property accessModifier="public" name="temperatureInputState" dataType="NonePrimitiveType&lt;BoilerTemperatureInputStatesEnum&gt;" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="TBoiler()" dataType="" />
+      </methods>
+      <transitions>
+        <transition target="BoilerTemperatureInputStatesEnum" multiplicity="1" relationType="association" />
+      </transitions>
+    </class>
+    <class id="Tuv">
+      <properties>
+        <property accessModifier="public" name="temperature" dataType="Int" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="Tuv()" dataType="" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="Context" relationType="extension" />
+      </transitions>
+    </class>
+    <class id="WinterSystem">
+      <properties>
+        <property accessModifier="public" name="accum1" dataType="NonePrimitiveType&lt;Accum&gt;" />
+        <property accessModifier="public" name="accum2" dataType="NonePrimitiveType&lt;Accum&gt;" />
+        <property accessModifier="public" name="relayBoilerPower" dataType="NonePrimitiveType&lt;RelayBoilerPower&gt;" />
+        <property accessModifier="public" name="tuv" dataType="NonePrimitiveType&lt;Tuv&gt;" />
+        <property accessModifier="public" name="houseStatus" dataType="NonePrimitiveType&lt;HouseStatus&gt;" />
+        <property accessModifier="public" name="tBoiler" dataType="NonePrimitiveType&lt;TBoiler&gt;" />
+        <property accessModifier="public" name="relayPumpM1" dataType="NonePrimitiveType&lt;RelayPumpM1&gt;" />
+        <property accessModifier="public" name="relayValve" dataType="NonePrimitiveType&lt;RelayValve&gt;" />
+        <property accessModifier="public" name="relayElCentral" dataType="NonePrimitiveType&lt;RelayElCentral&gt;" />
+        <property accessModifier="public" name="stateElCentral" dataType="NonePrimitiveType&lt;StateElCentral&gt;" />
+        <property accessModifier="public" name="responseAcPwrDown" dataType="NonePrimitiveType&lt;InputRelay&gt;" />
+        <property accessModifier="public" name="responseReleacAltPwr" dataType="NonePrimitiveType&lt;InputRelay&gt;" />
+        <property accessModifier="public" name="relayMainCircuitBreaker" dataType="NonePrimitiveType&lt;RelayMainCircuitBreaker&gt;" />
+        <property accessModifier="public" name="relayElCentralStart" dataType="NonePrimitiveType&lt;RelayElCentralStart&gt;" />
+        <property accessModifier="public" name="responseReleacError" dataType="NonePrimitiveType&lt;InputRelay&gt;" />
+        <property accessModifier="public" name="relayUnlocking" dataType="NonePrimitiveType&lt;RelayUnlocking&gt;" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="initializeWinterSystem()" dataType="Void" />
+        <method accessModifier="private" name="WinterSystem()" dataType="" />
+      </methods>
+      <transitions>
+        <transition target="Accum" multiplicity="1" relationType="association" />
+        <transition target="Accum" multiplicity="1" relationType="association" />
+        <transition target="RelayBoilerPower" multiplicity="1" relationType="association" />
+        <transition target="Tuv" multiplicity="1" relationType="association" />
+        <transition target="HouseStatus" multiplicity="1" relationType="association" />
+        <transition target="TBoiler" multiplicity="1" relationType="association" />
+        <transition target="RelayPumpM1" multiplicity="1" relationType="association" />
+        <transition target="RelayValve" multiplicity="1" relationType="association" />
+        <transition target="RelayElCentral" multiplicity="1" relationType="association" />
+        <transition target="StateElCentral" multiplicity="1" relationType="association" />
+        <transition target="InputRelay" multiplicity="1" relationType="association" />
+        <transition target="InputRelay" multiplicity="1" relationType="association" />
+        <transition target="RelayMainCircuitBreaker" multiplicity="1" relationType="association" />
+        <transition target="RelayElCentralStart" multiplicity="1" relationType="association" />
+        <transition target="InputRelay" multiplicity="1" relationType="association" />
+        <transition target="RelayUnlocking" multiplicity="1" relationType="association" />
+      </transitions>
+    </class>
+  </classes>
+  <enumerations>
+    <enumeration id="AccumTemperatureInputStatesEnum">
+      <entries>
+        <entry value="TARGET" />
+        <entry value="TARGET_DOWN" />
+        <entry value="TARGET_UP" />
+      </entries>
+    </enumeration>
+    <enumeration id="InputRelayStatesEnum">
+      <entries>
+        <entry value="ON" />
+        <entry value="OFF" />
+      </entries>
+    </enumeration>
+    <enumeration id="BoilerTemperatureInputStatesEnum">
+      <entries>
+        <entry value="ANT_DOWN" />
+        <entry value="ANTIFREEZ" />
+        <entry value="DANGER" />
+        <entry value="DOWN_UP" />
+        <entry value="UP_HIGH" />
+      </entries>
+    </enumeration>
+  </enumerations>
+  <interfaces>
+    <interface id="State">
+      <properties />
+      <methods>
+        <method accessModifier="public" name="~()" dataType="" />
+        <method accessModifier="public" name="makeTransition(ctx: NonePrimitiveType&lt;Context&gt;)" dataType="Void" />
+      </methods>
+      <transitions />
+    </interface>
+    <interface id="Context">
+      <properties>
+        <property accessModifier="protected" name="currentState_" dataType="NonePrimitiveType&lt;State&gt;" />
+      </properties>
+      <methods>
+        <method accessModifier="public" name="getCurrentState()" dataType="NonePrimitiveType&lt;State&gt;" />
+        <method accessModifier="public" name="setCurrentState(newState: NonePrimitiveType&lt;State&gt;)" dataType="Void" />
+        <method accessModifier="public" name="isInState(state: NonePrimitiveType&lt;State&gt;)" dataType="Bool" />
+        <method accessModifier="public" name="Context()" dataType="" />
+        <method accessModifier="public" name="getNextState()" dataType="Void" />
+      </methods>
+      <transitions>
+        <transition target="State" multiplicity="1" relationType="association" />
+        <transition target="State" multiplicity="1" relationType="association" />
+      </transitions>
+    </interface>
+  </interfaces>
+</classxml>

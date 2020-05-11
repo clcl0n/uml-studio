@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scxml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/07/scxml">
+  <state id="HouseStatus_OFF">
+    <transition cond="WinterSystem::tuv-&gt;isInState(new Tuv_WARMED_UP) || WinterSystem::tuv-&gt;isInState(new Tuv_OVERHEAT)" target="HouseStatus_ON" />
+  </state>
+  <state id="HouseStatus_ON">
+    <transition cond="WinterSystem::tuv-&gt;isInState(new Tuv_COLD_DOWN)" target="HouseStatus_OFF" />
+  </state>
+</scxml>

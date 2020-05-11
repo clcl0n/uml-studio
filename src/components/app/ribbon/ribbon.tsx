@@ -25,10 +25,11 @@ import { parseStringPromise } from 'xml2js';
 import { parseStateDiagram } from '@utils/scxmlParser';
 import { addNewStateElement, addNewFinalStateElement, addNewInitialStateElement, clearFinalStateElements, clearInitialStateElements, clearStateElements } from '@store/actions/stateDiagram.action';
 import { addNewRelationshipSegment, addNewRelationship, addNewElementEntry, addNewElement, clearRelationshipSegments, clearRelationships, clearElementEntries, clearElements } from '@store/actions/classDiagram.action';
-import { setDiagramType } from '@store/actions/canvas.action';
-import { parseClassDiagram } from '@utils/ccxmlParser';
+import { setDiagramType, setCanvasDimensions } from '@store/actions/canvas.action';
+import { parseClassDiagram } from '@utils/classxmlParse';
 import { useCanvasUndo } from 'hooks/useCanvasUndo';
 import { useCanvasRedo } from 'hooks/useCanvasRedo';
+import { browserAlert } from '@utils/browserAlert';
 
 const Ribbon = () => {  
     const dispatch = useDispatch();
@@ -111,13 +112,13 @@ const Ribbon = () => {
 
     const save = () => {
         if (diagramType === DiagramTypeEnum.CLASS) {
-            const xml = serializeCCXML(classDiagram);
+            const xml = serializeCCXML(classDiagram, { x: canvasWidth, y: canvasHeight });
             const xmlBlob = new Blob([xml], {
                 type: 'text/plain;charset=utf-8'
             });
-            saveAs(xmlBlob, 'ccxml.xml');
+            saveAs(xmlBlob, 'classcxml.xml');
         } else {
-            const xml = serializeSCXML(stateDiagram, classDiagram);
+            const xml = serializeSCXML(stateDiagram, classDiagram, { x: canvasWidth, y: canvasHeight });
             const xmlBlob = new Blob([xml], {
                 type: 'text/plain;charset=utf-8'
             });
@@ -145,8 +146,10 @@ const Ribbon = () => {
                 newInitialStateElements,
                 isValid,
                 error,
-                warning
+                newCanvasDimensions
             } = await parseStateDiagram(parsedXml.scxml, { x: canvasWidth, y: canvasHeight });
+
+            dispatch(setCanvasDimensions(newCanvasDimensions));
             if (isValid) {
                 newStateElements.forEach((newStateElement) => {
                     dispatch(addNewStateElement(newStateElement));
@@ -169,29 +172,40 @@ const Ribbon = () => {
                 dispatch(setDiagramType(DiagramTypeEnum.STATE));
                 setIsActive(false);
             } else {
-                error !== '' ? alert(error) : alert(warning);
+                browserAlert(error);
             }
-        } else if (parsedXml.ccxml) {
+        } else if (parsedXml.classxml) {
             const {
                 newElements,
                 newRelationShipSegments,
                 newRelationShips,
-                newEntries
-            } = await parseClassDiagram(parsedXml.classDiagram, { x: canvasWidth, y: canvasHeight });
-            newEntries.forEach((newEntry) => {
-                dispatch(addNewElementEntry(newEntry));
-            });
-            newElements.forEach((newElement) => {
-                dispatch(addNewElement(newElement));
-            });
-            newRelationShipSegments.forEach((newRelationShipSegment) => {
-                dispatch(addNewRelationshipSegment(newRelationShipSegment));
-            });
-            newRelationShips.forEach((newRelationShip) => {
-                dispatch(addNewRelationship(newRelationShip));
-            });
-            dispatch(setDiagramType(DiagramTypeEnum.CLASS));
-            setIsActive(false);
+                newEntries,
+                error,
+                isValid,
+                newCanvasDimensions
+            } = await parseClassDiagram(parsedXml.classxml, { x: canvasWidth, y: canvasHeight });
+            dispatch(setCanvasDimensions(newCanvasDimensions));
+            
+            if (isValid) {
+                newEntries.forEach((newEntry) => {
+                    dispatch(addNewElementEntry(newEntry));
+                });
+                newElements.forEach((newElement) => {
+                    dispatch(addNewElement(newElement));
+                });
+                newRelationShipSegments.forEach((newRelationShipSegment) => {
+                    dispatch(addNewRelationshipSegment(newRelationShipSegment));
+                });
+                newRelationShips.forEach((newRelationShip) => {
+                    dispatch(addNewRelationship(newRelationShip));
+                });
+                dispatch(setDiagramType(DiagramTypeEnum.CLASS));
+                setIsActive(false);
+            } else {
+                browserAlert(error);
+            }
+        } else {
+            browserAlert('Nepodporovaný XML formát.');
         }
     };
 

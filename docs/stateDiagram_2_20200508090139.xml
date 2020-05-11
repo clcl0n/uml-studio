@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scxml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/07/scxml">
+  <state id="RelayBoilerPower_OFF">
+    <transition event=" from ReleBoilerPower_OFF to ReleBoilerPower_ON" cond="(WinterSystem::accum1-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_DOWN &amp;&amp; WinterSystem::accum2-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_DOWN) || (WinterSystem::accum1-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET &amp;&amp; WinterSystem::accum2-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_DOWN) || (WinterSystem::accum1-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_UP &amp;&amp; WinterSystem::accum2-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_DOWN) || (WinterSystem::accum1-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_UP &amp;&amp; WinterSystem::accum2-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET)" target="RelayBoilerPower_ON" />
+  </state>
+  <state id="RelayBoilerPower_ON">
+    <transition cond="(WinterSystem::accum1-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_UP &amp;&amp; WinterSystem::accum2-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_UP &amp;&amp; WinterSystem::houseStatus-&gt;isInState(new HouseStatus_ON)) || (WinterSystem::accum1-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_UP &amp;&amp; WinterSystem::accum2-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET) || (WinterSystem::accum1-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_UP &amp;&amp; WinterSystem::accum2-&gt;temperatureInputState == AccumTemperatureInputStatesEnum::TARGET_DOWN)" target="RelayBoilerPower_OFF" />
+  </state>
+</scxml>

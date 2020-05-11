@@ -9,10 +9,10 @@ import ClassDiagramElementsEnum from '@enums/classDiagramElementsEnum';
 import EntryTypeEnum from '@enums/EntryTypeEnum';
 import ICCXMLUtility from '@interfaces/ccxml/ICCXMLUtility';
 
-export const createNewUtilityFromCCXML = (coordinates: ICoordinates, ccxmlUtility: ICCXMLUtility) => {
+export const createNewUtilityFromCCXML = (coordinates: ICoordinates, ccxmlUtility: ICCXMLUtility, isCoordinatesCenter: boolean = true) => {
     const methods = ccxmlUtility.methods?.[0]?.method ?? [];
     const properties = ccxmlUtility.properties?.[0]?.property ?? [];
-    const frame = createFrame(coordinates, methods.length + properties.length + 1);
+    const frame = createFrame(coordinates, methods.length + properties.length + 1, 25, 100, isCoordinatesCenter);
 
     const entryIds: Array<string> = [];
     const entries: Array<IClassProperty | IClassMethod> = [
@@ -23,7 +23,7 @@ export const createNewUtilityFromCCXML = (coordinates: ICoordinates, ccxmlUtilit
                 id: newMethodId,
                 accessModifier: ccxmlMethod.$.accessModifier.toUpperCase() as AccessModifierEnum,
                 type: EntryTypeEnum.METHOD,
-                value: ccxmlMethod.$.name
+                value: `${ccxmlMethod.$.name}${ccxmlMethod.$.dataType ? ': ' + ccxmlMethod.$.dataType : ''}`
             };
         }),
         ...properties.map((ccxmProperty): IClassProperty => {
@@ -34,7 +34,7 @@ export const createNewUtilityFromCCXML = (coordinates: ICoordinates, ccxmlUtilit
                 id: newPropertyId,
                 accessModifier: ccxmProperty.$.accessModifier.toUpperCase() as AccessModifierEnum,
                 type: EntryTypeEnum.PROPERTY,
-                value: ccxmProperty.$.name
+                value: `${ccxmProperty.$.name}${ccxmProperty.$.dataType ? ': ' + ccxmProperty.$.dataType : ''}`
             };
         })
     ];

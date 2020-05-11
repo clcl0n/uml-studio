@@ -94,23 +94,29 @@ export const undoHistoryReducer = (state = undoHistoryState, payload: IReducerPa
 }>  => {
     switch(payload.type) {
         case ClassDiagramActionEnum.ADD_UNDO_RELATIONSHIP:
-            state.byId[(payload.data as IRelationshipHistory).relationship.id] = {
-                type: HistoryTypeEnum.RELATIONSHIP,
-                data: payload.data as IRelationshipHistory
-            };
-            return {
-                ...state,
-                allIds: [...state.allIds, (payload.data as IRelationshipHistory).relationship.id]
-            };
+            if (!state.byId[(payload.data as IRelationshipHistory).relationship.id]) {
+                state.byId[(payload.data as IRelationshipHistory).relationship.id] = {
+                    type: HistoryTypeEnum.RELATIONSHIP,
+                    data: payload.data as IRelationshipHistory
+                };
+                return {
+                    ...state,
+                    allIds: [...state.allIds, (payload.data as IRelationshipHistory).relationship.id]
+                };
+            }
+            return state;
         case ClassDiagramActionEnum.ADD_UNDO_ELEMENT:
-            state.byId[(payload.data as IElementHistory).element.id] = {
-                type: HistoryTypeEnum.ELEMNET,
-                data: payload.data as IElementHistory
-            };
-            return {
-                ...state,
-                allIds: [...state.allIds, (payload.data as IElementHistory).element.id]
-            };
+            if (!state.byId[(payload.data as IElementHistory).element.id]) {
+                state.byId[(payload.data as IElementHistory).element.id] = {
+                    type: HistoryTypeEnum.ELEMNET,
+                    data: payload.data as IElementHistory
+                };
+                return {
+                    ...state,
+                    allIds: [...state.allIds, (payload.data as IElementHistory).element.id]
+                };
+            }
+            return state;
         case ClassDiagramActionEnum.REMOVE_UNDO_RELATIONSHIP:
             state.allIds.splice(state.allIds.indexOf((payload.data as IRelationshipHistory).relationship.id), 1);
             delete state.byId[(payload.data as IRelationshipHistory).relationship.id];

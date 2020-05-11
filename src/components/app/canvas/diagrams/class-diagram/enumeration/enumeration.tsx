@@ -20,10 +20,12 @@ import IEnumerationEntryProps from '@interfaces/class-diagram/enumeration/IEnume
 import CanvasOperationEnum from '@enums/canvasOperationEnum';
 import Direction from '@enums/direction';
 import IStoreState from '@interfaces/IStoreState';
+import useCanvasOperation from 'hooks/useCanvasOperation';
 
 const Enumeration = (props: IEnumerationProps) => {
     const dispatch = useDispatch();
     const [joints, setJoints] = React.useState(<g/>);
+    const { canvasOperation } = useCanvasOperation();
     const isMouseDownState = useSelector((state: IStoreState) => state.canvas.isMouseDown);
     const { frame } = props.enumeration.graphicData;
     const { data } = props.enumeration;
@@ -88,7 +90,11 @@ const Enumeration = (props: IEnumerationProps) => {
             setJoints(<g/>);
         },
         onFrameMouseOver: (event: React.MouseEvent) => {
-            if (isMouseDownState) {
+            if (
+                canvasOperation.type === CanvasOperationEnum.RESIZE_ELEMENT_RIGHT ||
+                canvasOperation.type === CanvasOperationEnum.RESIZE_ELEMENT_LEFT ||
+                canvasOperation.type === CanvasOperationEnum.MOVE_ELEMENT
+            ) {
                 setJoints(<g/>);
             } else {
                 setJoints((

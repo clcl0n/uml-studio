@@ -9,15 +9,18 @@ import useCanvasMouseMove from 'hooks/useCanvasMouseMove';
 import useCanvasAddNewElement from 'hooks/useCanvasAddNewElement';
 import useCanvasOperation from 'hooks/useCanvasOperation';
 import usePreviousMousePosition from 'hooks/usePreviousMousePosition';
-import { clearNewRelationship } from '@store/actions/classDiagram.action';
+import { clearNewRelationship, updateRelationship } from '@store/actions/classDiagram.action';
 import RibbonOperationEnum from '@enums/ribbonOperationEnum';
 import Diagram from './diagrams/diagram';
+import useSelectedElement from 'hooks/useSelectedElement';
 
 const Canvas = () => {
     const dispatch = useDispatch();
     const classDiagram = useSelector((state: IStoreState) => state.classDiagram);
     const stateDiagram = useSelector((state: IStoreState) => state.stateDiagram);
     const canvasZoom = useSelector((state: IStoreState) => state.ribbon.canvasZoom);
+    const canvasOperationState = useSelector((state: IStoreState) => state.canvas.canvasOperation);
+    const { selectedRelationship, selectedRelationshipSegments } = useSelectedElement();
     const canvasRef = useRef(null);
 
     useEffect(() => {
@@ -27,10 +30,10 @@ const Canvas = () => {
     }, []);
 
     const { x: paperWidth, y: paperHeight} = useSelector((state: IStoreState) => state.canvas.canvasDimensions);
-    const [canvasDimensions, setCanvasDimensions] = useState({
-        canvasWidth: paperWidth,
-        canvasHeight: paperHeight
-    });
+    // const [canvasDimensions, setCanvasDimensions] = useState({
+    //     canvasWidth: paperWidth,
+    //     canvasHeight: paperHeight
+    // });
     const { previousMousePosition, setPreviousMousePosition } = usePreviousMousePosition();
     const { canvasOperation } = useCanvasOperation();
     const { onMouseMove } = useCanvasMouseMove(classDiagram, stateDiagram, canvasOperation);
@@ -41,6 +44,14 @@ const Canvas = () => {
     };
 
     const resetCanvasOperation = (event: React.MouseEvent) => {
+        event.persist();
+        if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_HEAD && (event.nativeEvent.target as any).tagName === 'svg') {
+            selectedRelationship.toElementId = '';
+            dispatch(updateRelationship(selectedRelationship));
+        } else if (canvasOperationState.type === CanvasOperationEnum.MOVE_RELATIONSHIP_TAIL && (event.nativeEvent.target as any).tagName === 'svg') {
+            selectedRelationship.fromElementId = '';
+            dispatch(updateRelationship(selectedRelationship));
+        }
         dispatch(isMouseDown(false));
         dispatch(clearNewRelationship());
         dispatch(newCanvasOperation({
@@ -69,17 +80,17 @@ const Canvas = () => {
 
     return (
         <div ref={canvasRef} id='canvas'>
-            <div style={{width: 400 + (canvasDimensions.canvasWidth * (canvasZoom/100)), height: 400 + (canvasDimensions.canvasHeight * (canvasZoom/100))}} className='canvas-wrapper'>
+            <div style={{width: 400 + (paperWidth * (canvasZoom/100)), height: 400 + (paperHeight * (canvasZoom/100))}} className='canvas-wrapper'>
                 <svg
                     id='svg-canvas'
                     onMouseUp={(ev) => resetCanvasOperation(ev)}
                     onDragOver={(ev) => CanvasOnDragOver(ev)}
                     onDrop={(ev) => onCanvasDrop(ev)}
                     onMouseMove={(ev) => onCanvasMouseMove(ev)}
-                    viewBox={`0 0 ${canvasDimensions.canvasWidth} ${canvasDimensions.canvasHeight}`}
+                    viewBox={`0 0 ${paperWidth} ${paperHeight}`}
                     transform={`scale(${canvasZoom/100})`}  
-                    width={canvasDimensions.canvasWidth}
-                    height={canvasDimensions.canvasHeight}
+                    width={paperWidth}
+                    height={paperHeight}
                 >
                     <Diagram/>
                 </svg>

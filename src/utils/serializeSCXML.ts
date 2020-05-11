@@ -9,6 +9,7 @@ import ISCXML from '@interfaces/scxml/ISCXML';
 import { Builder } from 'xml2js';
 import ICSXMLInitial from '@interfaces/scxml/ICSXMLInitial';
 import IInitialStateElement from '@interfaces/state-diagram/initial-state/IInitialStateElement';
+import ICoordinates from '@interfaces/ICoordinates';
 
 const getInitialStateElements = (stateDiagram: IStateDiagramState): Array<IInitialStateElement> => {
     return stateDiagram.initialStateElements.allIds.map(id => stateDiagram.initialStateElements.byId[id]);
@@ -47,7 +48,7 @@ const getStateTransitions = (classDiagram: IClassDiagramState, stateDiagram: ISt
             return {
                 $: {
                     target: getElementName(stateDiagram, relationship.toElementId),
-                    event: relationship.relationshipValue,
+                    cond: relationship.relationshipValue,
                     type: relationship.type.toLocaleLowerCase(),
                     direction: relationship.direction.toLocaleLowerCase(),
                     headCoord: `${relationship.head.x}:${relationship.head.y}`,
@@ -58,7 +59,7 @@ const getStateTransitions = (classDiagram: IClassDiagramState, stateDiagram: ISt
         });
 };
 
-export const serializeSCXML = (stateDiagram: IStateDiagramState, classDiagram: IClassDiagramState) => {
+export const serializeSCXML = (stateDiagram: IStateDiagramState, classDiagram: IClassDiagramState, canvasDimentsion: ICoordinates) => {
     const scxmlStates: Array<ISCXMLState> = getStateElements(stateDiagram).map((state): ISCXMLState => {
         return {
             $: {
@@ -98,13 +99,17 @@ export const serializeSCXML = (stateDiagram: IStateDiagramState, classDiagram: I
         };
     });
 
+    const initialElement = stateDiagram.initialStateElements.byId[stateDiagram.initialStateElements.allIds[0]];
+
     const newSCXML: ISCXML = {
         $: {
-            initial: stateDiagram.initialStateElements.byId[stateDiagram.initialStateElements.allIds[0]].name,
+            initial: initialElement ? initialElement.name : '',
             name: 'Scxml',
             version: '1.0',
             xmlns: 'http://www.w3.org/2005/07/scxml',
-            coordinates: 'true'
+            coordinates: 'true',
+            width: canvasDimentsion.x.toString(),
+            height: canvasDimentsion.y.toString()
         },
         parallel: [],
         final: scxmlFinalStates,

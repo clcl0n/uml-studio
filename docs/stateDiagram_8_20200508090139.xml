@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scxml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/07/scxml">
+  <state id="RelayUnlocking_CLEAR_COUNT">
+    <transition cond="relayUnlocking-&gt;isManualTurnedOn" target="RelayUnlocking_ON" />
+    <transition cond="relayUnlocking-&gt;count &lt; 3" target="RelayUnlocking_OFF" />
+  </state>
+  <state id="RelayUnlocking_ON">
+    <transition cond="relayUnlocking-&gt;timer &gt; 0.002" target="RelayUnlocking_OFF" />
+  </state>
+  <state id="RelayUnlocking_OFF">
+    <transition cond="WinterSystem::responseReleacError-&gt;state == InputRelayStatesEnum::ON &amp;&amp; relayUnlocking-&gt;count &lt; 3" target="RelayUnlocking_ON" />
+    <transition cond="relayUnlocking-&gt;timer &gt; 900" target="RelayUnlocking_CLEAR_COUNT" />
+  </state>
+</scxml>
